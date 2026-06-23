@@ -1,0 +1,6 @@
+{
+  "name": "MetalZone",
+  "description": "Catálogo mundial de bandas, festivais, shows, notícias e merchandising de Heavy Metal e Rock com suporte multilíngue e inteligência artificial.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

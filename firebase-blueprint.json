@@ -1,0 +1,128 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role, language preferences, and favorites.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Account email address"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "user"],
+          "description": "System role (admin for patricioaug@gmail.com, user for others)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name or nickname of the user"
+        },
+        "favoriteBands": {
+          "type": "array",
+          "description": "List of band document IDs favorited by the user"
+        },
+        "favoriteEvents": {
+          "type": "array",
+          "description": "List of event/festival document IDs favorited by the user"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Registration time"
+        }
+      },
+      "required": ["email", "role"]
+    },
+    "Band": {
+      "title": "Band",
+      "description": "Granular detailed information of a Rock or Metal band.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "country": { "type": "string" },
+        "formationYear": { "type": "number" },
+        "genre": { "type": "string", "description": "Granular subgenre e.g. melodic death metal" },
+        "bio": { "type": "string" },
+        "members": { "type": "array" },
+        "discography": { "type": "array" },
+        "socials": { "type": "object" },
+        "contacts": { "type": "object" },
+        "approved": { "type": "boolean" },
+        "submittedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "genre", "approved"]
+    },
+    "Event": {
+      "title": "Event or Festival",
+      "description": "Live rock and metal concerts and massive global festivals.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "date": { "type": "string" },
+        "location": { "type": "string" },
+        "lineup": { "type": "array" },
+        "ticketLink": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "isFestival": { "type": "boolean" },
+        "countdownDate": { "type": "string" },
+        "approved": { "type": "boolean" },
+        "submittedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "date", "location", "isFestival", "approved"]
+    },
+    "News": {
+      "title": "News Post",
+      "description": "Rock/Metal news and announcements.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "approved": { "type": "boolean" },
+        "submittedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "approved"]
+    },
+    "Merchandise": {
+      "title": "Merch Item",
+      "description": "Exclusive admin merchandise.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "imageUrl": { "type": "string" },
+        "purchaseLink": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "price", "purchaseLink"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and favorites"
+    },
+    "bands/{bandId}": {
+      "schema": "Band",
+      "description": "Heavy metal and rock bands database"
+    },
+    "events/{eventId}": {
+      "schema": "Event",
+      "description": "Rock/Metal shows and festivals globally"
+    },
+    "news/{newsId}": {
+      "schema": "News",
+      "description": "News and tournament announcements"
+    },
+    "merch/{merchId}": {
+      "schema": "Merchandise",
+      "description": "Merchandising catalog owned by admin"
+    }
+  }
+}

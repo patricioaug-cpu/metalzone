@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if the authenticated user is the designated admin (patricioaug@gmail.com)
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.email == 'patricioaug@gmail.com';
+    }
+
+    // Check if the user is updating their own document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // --- Users Collection ---
+    match /users/{userId} {
+      allow read: if true; // Public access to user profiles or statistics
+      allow create, update: if isAuthenticated() && isOwner(userId);
+      allow delete: if isAdmin();
+    }
+
+    // --- Bands Collection ---
+    match /bands/{bandId} {
+      // Anyone can read approved bands. Admin can read all bands.
+      allow read: if resource.data.approved == true || isAdmin() || (isAuthenticated() && resource.data.submittedBy == request.auth.uid);
+      
+      // Logged in users can create bands (initially pending approval)
+      allow create: if isAuthenticated() && request.resource.data.approved == false && request.resource.data.submittedBy == request.auth.uid;
+      
+      // Only Admin can update or delete bands, or approve pending ones
+      allow update, delete: if isAdmin();
+    }
+
+    // --- Events (and Festivals) Collection ---
+    match /events/{eventId} {
+      // Anyone can read approved events. Admin can read all.
+      allow read: if resource.data.approved == true || isAdmin() || (isAuthenticated() && resource.data.submittedBy == request.auth.uid);
+      
+      // Logged in users can submit events (initially pending approval)
+      allow create: if isAuthenticated() && request.resource.data.approved == false && request.resource.data.submittedBy == request.auth.uid;
+      
+      // Only Admin can update or delete events
+      allow update, delete: if isAdmin();
+    }
+
+    // --- News Collection ---
+    match /news/{newsId} {
+      allow read: if resource.data.approved == true || isAdmin() || (isAuthenticated() && resource.data.submittedBy == request.auth.uid);
+      
+      // Logged-in users can submit news
+      allow create: if isAuthenticated() && request.resource.data.approved == false && request.resource.data.submittedBy == request.auth.uid;
+      
+      // Only Admin can update/delete news
+      allow update, delete: if isAdmin();
+    }
+
+    // --- Merchandise Collection ---
+    match /merch/{merchId} {
+      allow read: if true; // Anyone can view administrative merchandising
+      allow write: if isAdmin(); // Only Admin can add/edit/delete merchandising
+    }
+
+    // --- App System Stats (Total Users, and online counters can be stored here or managed client-side) ---
+    match /stats/{statId} {
+      allow read: if true;
+      allow write: if true; // Users can update online counter or total users
+    }
+  }
+}
