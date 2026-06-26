@@ -507,10 +507,28 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     country: "Brazil",
     formationYear: 2010,
     genre: "Thrash / Death Metal",
-    bio: "Banda brasileira exclusivamente feminina fundada por Prika Amaral, que alcançou prestígio internacional tocando thrash agressivo e direto.",
-    members: [{ name: "Prika Amaral", role: "Vocals & Guitars", status: "active" }],
-    discography: [{ title: "Jailbreak", year: 2023, type: "Album" }],
-    socials: { instagram: "@nervosathrash" }, contacts: {}, approved: true, submittedBy: "system"
+    bio: {
+      pt: "Banda brasileira de thrash/death metal formada em São Paulo em 2010 pela guitarrista Prika Amaral. Reconhecida internacionalmente por sua sonoridade agressiva, rápida e puramente feminina, a Nervosa consolidou seu espaço no cenário mundial do metal extremo.",
+      en: "Brazilian thrash/death metal band formed in São Paulo in 2010 by guitarist Prika Amaral. Internationally acclaimed for their aggressive, fast-paced, all-female lineup sound, Nervosa has firmly established their place in the global extreme metal scene.",
+      es: "Banda brasileña de thrash/death metal formada en São Paulo en 2010 por la guitarrista Prika Amaral. Aclamada internacionalmente por su sonido agresivo y rápido, Nervosa se ha establecido firmemente en la escena mundial del metal extremo."
+    },
+    members: [
+      { name: "Prika Amaral", role: "Vocals & Rhythm Guitar", status: "active" },
+      { name: "Helena Kotina", role: "Lead Guitar", status: "active" },
+      { name: "Hel Pyre", role: "Bass", status: "active" },
+      { name: "Gabriela Abud", role: "Drums", status: "active" }
+    ],
+    discography: [
+      { title: "Victim of Yourself", year: 2014, type: "Album" },
+      { title: "Agony", year: 2016, type: "Album" },
+      { title: "Downfall of Mankind", year: 2018, type: "Album" },
+      { title: "Perpetual Chaos", year: 2021, type: "Album" },
+      { title: "Jailbreak", year: 2023, type: "Album" }
+    ],
+    socials: { instagram: "@nervosathrash" },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
   },
   {
     name: "Project46",
@@ -2572,6 +2590,87 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     discography: [],
     socials: {
       instagram: "@give_it_uai"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Crypta",
+    country: "Brazil",
+    formationYear: 2019,
+    genre: "Death Metal",
+    bio: {
+      pt: "Banda brasileira de death metal formada em 2019 pela baixista e vocalista Fernanda Lira e pela baterista Luana Dametto, após suas saídas da banda Nervosa. Com uma sonoridade pesada, técnica e sombria, a Crypta rapidamente se tornou uma das principais forças do metal extremo internacional.",
+      en: "Brazilian death metal band formed in 2019 by bassist and vocalist Fernanda Lira and drummer Luana Dametto, following their departure from Nervosa. With a heavy, technical, and dark sound, Crypta quickly became one of the leading forces in international extreme metal.",
+      es: "Banda brasileña de death metal formada en 2019 por la bajista y vocalista Fernanda Lira y la baterista Luana Dametto, tras su salida de Nervosa. Con un sonido pesado, técnico y oscuro, Crypta se convirtió rápidamente en una de las principales fuerzas del metal extremo internacional."
+    },
+    members: [
+      { name: "Fernanda Lira", role: "Vocals & Bass", status: "active" },
+      { name: "Luana Dametto", role: "Drums", status: "active" },
+      { name: "Tainá Bergamaschi", role: "Guitars", status: "active" },
+      { name: "Jéssica di Falchi", role: "Guitars", status: "active" }
+    ],
+    discography: [
+      { title: "Echoes of the Soul", year: 2021, type: "Album" },
+      { title: "Shades of Sorrow", year: 2023, type: "Album" }
+    ],
+    socials: {
+      instagram: "@cryptadeath"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "The Troops of Doom",
+    country: "Brazil",
+    formationYear: 2020,
+    genre: "Death / Thrash Metal",
+    bio: {
+      pt: "Supergrupo de death/thrash metal fundado em 2020 por Jairo 'Tormentor' Guedz, guitarrista original do Sepultura. A proposta é resgatar a sonoridade clássica e crua do metal extremo dos anos 80.",
+      en: "Death/thrash metal supergroup founded in 2020 by Jairo 'Tormentor' Guedz, the original guitarist of Sepultura. Their mission is to revive the classic, raw sound of 1980s extreme metal.",
+      es: "Supergrupo de death/thrash metal fundado en 2020 por Jairo 'Tormentor' Guedz, guitarrista original de Sepultura. Su misión es revivir el sonido clásico y crudo del metal extremo de los años 80."
+    },
+    members: [
+      { name: "Jairo Guedz", role: "Guitars", status: "active" },
+      { name: "Alex Kafer", role: "Vocals & Bass", status: "active" },
+      { name: "Marcelo Vasco", role: "Guitars", status: "active" },
+      { name: "Alexandre Oliveira", role: "Drums", status: "active" }
+    ],
+    discography: [
+      { title: "The Gate", year: 2020, type: "EP" },
+      { title: "Antichrist Reborn", year: 2022, type: "Album" },
+      { title: "A Mass to the Grotesque", year: 2024, type: "Album" }
+    ],
+    socials: {
+      instagram: "@thetroopsofdoom"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Cerimonial Sacred",
+    country: "Brazil",
+    formationYear: 1998,
+    genre: "Symphonic Black Metal",
+    bio: {
+      pt: "Banda paranaense de Symphonic Black Metal formada em Ponta Grossa em 1998. Destaca-se pelas atmosferas sombrias, arranjos de teclado elaborados e letras focadas em temas espirituais.",
+      en: "Symphonic Black Metal band from Ponta Grossa, Paraná, formed in 1998. Recognized for their dark atmosphere, elaborate keyboard arrangements, and spiritual themes.",
+      es: "Banda de Symphonic Black Metal de Ponta Grossa, Paraná, formada en 1998. Destacada por su atmósfera oscura, arreglos de teclado elaborados y temas espirituales."
+    },
+    members: [
+      { name: "Lord Sarcofagus", role: "Guitars", status: "active" },
+      { name: "Meliscent", role: "Vocals", status: "active" }
+    ],
+    discography: [
+      { title: "Our Runes of Our Death", year: 2005, type: "Album" },
+      { title: "ChristuSect", year: 2015, type: "Album" },
+      { title: "Eternity", year: 2021, type: "Album" }
+    ],
+    socials: {
+      instagram: "@cerimonialsacred"
     },
     contacts: {},
     approved: true,

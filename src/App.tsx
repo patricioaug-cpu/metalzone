@@ -57,8 +57,48 @@ export default function App() {
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshNotify, setRefreshNotify] = useState(false);
+  const [visitorCount, setVisitorCount] = useState<number>(0);
 
   const t = translations[lang];
+
+  // Increment and load visitor/access counter
+  useEffect(() => {
+    const fetchAndIncrementCounter = async () => {
+      // 1. Read and update local storage count for immediate view and local preservation
+      let localVal = parseInt(localStorage.getItem("metal_catalog_visits") || "0", 10);
+      localVal += 1;
+      localStorage.setItem("metal_catalog_visits", localVal.toString());
+      setVisitorCount(localVal);
+
+      // 2. Try to synchronize globally with Firebase Firestore
+      try {
+        const statsRef = collection(db, "stats");
+        const statsSnap = await getDocs(statsRef);
+        let globalVal = 0;
+        let docId = "";
+
+        if (statsSnap && !statsSnap.empty) {
+          const firstDoc = statsSnap.docs[0];
+          docId = firstDoc.id;
+          globalVal = firstDoc.data().visits || 0;
+        }
+
+        globalVal += 1;
+
+        if (docId) {
+          await updateDoc(doc(db, "stats", docId), { visits: globalVal });
+        } else {
+          await addDoc(collection(db, "stats"), { visits: globalVal });
+        }
+
+        setVisitorCount(globalVal);
+      } catch (err) {
+        console.warn("Could not sync with firestore stats collection, using local storage counter:", err);
+      }
+    };
+
+    fetchAndIncrementCounter();
+  }, []);
 
   // Monitor user login state
   useEffect(() => {
@@ -721,6 +761,10 @@ export default function App() {
                 {Array.from(new Set(bands.map(b => b.country).filter(Boolean))).length}
               </span>
             </div>
+            <div className="flex justify-between border-t border-neutral-850/50 pt-1.5 mt-1.5">
+              <span>{lang === "pt" ? "Acessos do Portal:" : lang === "es" ? "Visitas del Portal:" : "Portal Visits:"}</span>
+              <span className="text-emerald-400 font-bold">{visitorCount}</span>
+            </div>
           </div>
 
         </div>
@@ -795,21 +839,30 @@ export default function App() {
               </span>
             </div>
             
-            {activeTab !== "bands" && (
-              <button
-                id="global-btn-back-to-main"
-                onClick={() => {
-                  setActiveTabTab("bands");
-                  setHeaderSearch("");
-                }}
-                className="px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all border bg-red-950 hover:bg-red-900 border-red-900/40 hover:border-red-600 text-white hover:scale-[1.02] shadow-md shadow-red-950/30"
-              >
-                <Skull size={13} className="animate-pulse text-red-500" />
-                <span>
-                  {lang === "pt" ? "Voltar ao Menu Principal" : lang === "es" ? "Volver al Menú Principal" : "Back to Main Menu"}
-                </span>
-              </button>
-            )}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Glowing Access Counter Badge */}
+              <div className="flex items-center gap-1.5 bg-neutral-950/60 border border-neutral-850 px-3 py-1.5 rounded-lg text-[10px] font-mono text-neutral-400 shadow-inner">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>{lang === "pt" ? "CONTADOR DE ACESSOS:" : lang === "es" ? "VISITAS:" : "VISITS:"}</span>
+                <span className="text-emerald-400 font-bold tracking-wider">{visitorCount}</span>
+              </div>
+
+              {activeTab !== "bands" && (
+                <button
+                  id="global-btn-back-to-main"
+                  onClick={() => {
+                    setActiveTabTab("bands");
+                    setHeaderSearch("");
+                  }}
+                  className="px-4 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all border bg-red-950 hover:bg-red-900 border-red-900/40 hover:border-red-600 text-white hover:scale-[1.02] shadow-md shadow-red-950/30"
+                >
+                  <Skull size={13} className="animate-pulse text-red-500" />
+                  <span>
+                    {lang === "pt" ? "Voltar ao Menu" : lang === "es" ? "Volver al Menú" : "Back to Menu"}
+                  </span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* ACTIVE CONTENT WORKSPACE SWAPPER */}

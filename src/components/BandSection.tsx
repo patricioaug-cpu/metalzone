@@ -190,7 +190,27 @@ export const BandSection: React.FC<BandSectionProps> = ({
       const data = await response.json();
       setDetailData(data);
     } catch (err: any) {
-      setDetailError(err.message || "Failed to load info");
+      console.warn("Details fetch failed. Falling back to empty model for static Vercel deployment.", err);
+      if (type === "member") {
+        setDetailData({
+          name: targetName,
+          birthInfo: "",
+          instruments: [],
+          contributions: "",
+          otherBands: [],
+          trivia: "",
+          summary: ""
+        });
+      } else {
+        setDetailData({
+          title: targetName,
+          releaseInfo: "",
+          genre: "",
+          tracklist: [],
+          anecdote: "",
+          reception: ""
+        });
+      }
     } finally {
       setDetailLoading(false);
     }
