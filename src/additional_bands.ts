@@ -1,6 +1,128 @@
 import { Band } from "./firebase";
 
 export const ADDITIONAL_SEED_BANDS: Band[] = [
+  // --- NOVAS BANDAS REGISTRADAS (FROZEN CROWN, NARNIA, NAPALM DEATH) ---
+  {
+    name: "Frozen Crown",
+    logoUrl: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80",
+    logoPlaceholderText: "Power Metal Stage Lights Logo",
+    country: "Italy",
+    formationYear: 2017,
+    genre: "Power Metal",
+    bio: {
+      pt: "Banda italiana de power metal fundada em Milão em 2017 pelo guitarrista e tecladista Federico Mondelli e pela vocalista Giada 'Jade' Etro. Conhecida por guitarras extremamente rápidas, solos melódicos inspirados no heavy metal clássico, refrões majestosos e pelos vocais poderosos de Giada Etro. A banda destaca-se pela sua formação atual inovadora com três guitarristas.",
+      en: "Italian power metal band formed in Milan in 2017 by guitarist/keyboardist Federico Mondelli and lead vocalist Giada 'Jade' Etro. Renowned for their ultra-fast guitar work, majestic choruses, classic metal-inspired solos, and Etro's strong, soaring vocals. The band stands out for its unique modern six-piece lineup featuring three guitarists.",
+      es: "Banda italiana de power metal fundada en Milán en 2017 por el guitarrista Federico Mondelli y la vocalista Giada Etro. Reconocida por sus guitarras veloces, estribillos majestuosos y una formación innovadora de tres guitarristas."
+    },
+    members: [
+      { name: "Giada \"Jade\" Etro", role: "Vocals", status: "active" },
+      { name: "Federico Mondelli", role: "Guitars, Keyboards, Vocals", status: "active" },
+      { name: "Fabiola \"Sheena\" Bellomo", role: "Guitars", status: "active" },
+      { name: "Francesco Zof", role: "Bass", status: "active" },
+      { name: "Niso Tomasini", role: "Drums", status: "active" },
+      { name: "Alessia Lanzone", role: "Guitars", status: "active" }
+    ],
+    discography: [
+      { title: "The Fallen King", year: 2018, type: "Album" },
+      { title: "Crowned in Frost", year: 2019, type: "Album" },
+      { title: "Winterbane", year: 2021, type: "Album" },
+      { title: "Call of the North", year: 2023, type: "Album" },
+      { title: "Warring Heaven", year: 2024, type: "Album" }
+    ],
+    socials: {
+      instagram: "@frozencrownofficial",
+      website: "https://label.napalmrecords.com/frozen-crown"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system",
+    sourceUrl: "https://en.wikipedia.org/wiki/Frozen_Crown"
+  },
+  {
+    name: "Narnia (Narina)",
+    logoUrl: "https://images.unsplash.com/photo-1521410824441-3b657e224e7a?w=400&q=80",
+    logoPlaceholderText: "Neoclassical Lion Cross Sword Logo",
+    country: "Sweden",
+    formationYear: 1996,
+    genre: "Neoclassical Power Metal",
+    bio: {
+      pt: "Banda sueca de power metal neoclássico formada em 1996 pelo vocalista Christian Liljegren e pelo guitarrista CJ Grimmark. O grupo é aclamado por sua sonoridade virtuosa fortemente inspirada por Yngwie Malmsteen, misturando peso técnico, solos de guitarra clássicos complexos e temáticas líricas baseadas em convicções cristãs e fantasia. Frequentemente grafada como 'Narina' por fãs devido a erros de digitação comuns.",
+      en: "Swedish neoclassical power metal band formed in 1996 by vocalist Christian Liljegren and guitarist CJ Grimmark. Highly acclaimed for their virtuoso, Yngwie Malmsteen-influenced sonic style, mixing heavy riffs, complex classical solos, and Christian/fantasy lyrical themes. Frequently searched or misspelled as 'Narina'.",
+      es: "Banda sueca de power metal neoclásico fundada en 1996 por Christian Liljegren y CJ Grimmark. Reconocida por su estilo virtuoso influenciado por Yngwie Malmsteen y letras con temáticas cristianas y de fantasía."
+    },
+    members: [
+      { name: "Christian Liljegren", role: "Vocals", status: "active" },
+      { name: "CJ Grimmark", role: "Guitars, Vocals", status: "active" },
+      { name: "Andreas \"Habo\" Johansson", role: "Drums", status: "active" },
+      { name: "Martin Härenstam", role: "Keyboards", status: "active" },
+      { name: "Jonatan Samuelsson", role: "Bass, Vocals", status: "active" }
+    ],
+    discography: [
+      { title: "Awakening", year: 1998, type: "Album" },
+      { title: "Long Live the King", year: 1999, type: "Album" },
+      { title: "Desert Land", year: 2001, type: "Album" },
+      { title: "The Great Fall", year: 2003, type: "Album" },
+      { title: "Enter the Gate", year: 2006, type: "Album" },
+      { title: "Course of a Generation", year: 2009, type: "Album" },
+      { title: "Narnia", year: 2016, type: "Album" },
+      { title: "From Darkness to Light", year: 2019, type: "Album" },
+      { title: "Ghost Town", year: 2023, type: "Album" }
+    ],
+    socials: {
+      instagram: "@narniatheband",
+      website: "https://narniatheband.com"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system",
+    sourceUrl: "https://en.wikipedia.org/wiki/Narnia_(band)"
+  },
+  {
+    name: "Napalm Death",
+    logoUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&q=80",
+    logoPlaceholderText: "Grindcore Green Logo Stamp",
+    country: "United Kingdom",
+    formationYear: 1981,
+    genre: "Grindcore / Death Metal",
+    bio: {
+      pt: "Pioneiros absolutos do grindcore, formados em Meriden, West Midlands, Inglaterra, em 1981. Unindo a extrema fúria do death metal com a velocidade extrema e postura política anarquista/social do punk rock e crust punk. São famosos pelos seus históricos álbuns de curta duração e pelas performances ao vivo catárticas do vocalista Mark 'Barney' Greenway.",
+      en: "Pioneers of the grindcore genre, formed in Meriden, West Midlands, England, in 1981. Fusing the crushing weight of death metal with the extreme speed and anarcho-political ethos of crust punk. Acclaimed for their highly influential short-format songs and Mark 'Barney' Greenway's energetic live show style.",
+      es: "Pioneros absolutos del grindcore, fundados en Inglaterra en 1981. Conocidos por su innovadora fusión de la brutalidad del death metal con la velocidad extrema y posturas políticas de izquierda y anarquistas del crust punk."
+    },
+    members: [
+      { name: "Mark \"Barney\" Greenway", role: "Vocals", status: "active" },
+      { name: "Shane Embury", role: "Bass", status: "active" },
+      { name: "Danny Herrera", role: "Drums", status: "active" },
+      { name: "Mitch Harris", role: "Guitars", status: "active" },
+      { name: "John Cooke", role: "Guitars", status: "active" }
+    ],
+    discography: [
+      { title: "Scum", year: 1987, type: "Album" },
+      { title: "From Enslavement to Obliteration", year: 1988, type: "Album" },
+      { title: "Harmony Corruption", year: 1990, type: "Album" },
+      { title: "Utopia Banished", year: 1992, type: "Album" },
+      { title: "Fear, Emptiness, Despair", year: 1994, type: "Album" },
+      { title: "Diatribes", year: 1996, type: "Album" },
+      { title: "Inside the Torn Apart", year: 1997, type: "Album" },
+      { title: "Words from the Exit Wound", year: 1998, type: "Album" },
+      { title: "Enemy of the Music Business", year: 2000, type: "Album" },
+      { title: "Order of the Leech", year: 2002, type: "Album" },
+      { title: "The Code Is Red... Long Live the Code", year: 2005, type: "Album" },
+      { title: "Smear Campaign", year: 2006, type: "Album" },
+      { title: "Time Waits for No Slave", year: 2009, type: "Album" },
+      { title: "Utilitarian", year: 2012, type: "Album" },
+      { title: "Apex Predator – Easy Meat", year: 2015, type: "Album" },
+      { title: "Throes of Joy in the Jaws of Defeatism", year: 2020, type: "Album" }
+    ],
+    socials: {
+      instagram: "@theofficialnapalmdeath",
+      website: "https://napalmdeath.org"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system",
+    sourceUrl: "https://en.wikipedia.org/wiki/Napalm_Death"
+  },
   // --- GRANDES NOMES ---
   {
     name: "Megadeth",
@@ -96,13 +218,51 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
   // --- DEATH / EXTREME ---
   {
     name: "Cannibal Corpse",
+    logoUrl: "https://images.unsplash.com/photo-1557134829-1819da72153e?w=400&q=80",
+    logoPlaceholderText: "Brutal Death Metal Gore Red Logo",
     country: "United States",
     formationYear: 1988,
-    genre: "Death Metal",
-    bio: "Pioneiros brutais do Death Metal, influenciaram gerações com andamentos rápidos e temas inspirados em horror sangrento.",
-    members: [{ name: "George Corpsegrinder", role: "Vocals", status: "active" }],
-    discography: [{ title: "Tomb of the Mutilated", year: 1992, type: "Album" }],
-    socials: { instagram: "@cannibalcorpseofficial" }, contacts: {}, approved: true, submittedBy: "system"
+    genre: "Brutal Death Metal",
+    bio: {
+      pt: "Uma das maiores, mais bem-sucedidas e influentes bandas de death metal de todos os tempos, formada em Buffalo, Nova York, em 1988. Consagrada por suas artes de capa e letras inspiradas em filmes de terror sangrento (gore), andamentos extremamente rápidos, riffs de guitarra técnicos complexos e pelos vocais guturais esmagadores de George 'Corpsegrinder' Fisher.",
+      en: "One of the most commercially successful and globally influential death metal bands of all time, formed in Buffalo, New York, in 1988. Highly distinguished by their gore/horror-themed cover art and lyrics, fast technical riffs, and the deep, powerful guttural vocal delivery of frontman George 'Corpsegrinder' Fisher.",
+      es: "Una de las bandas de death metal más vendidas e influyentes de la historia, formada en Búfalo, Nueva York, en 1988. Famosa por sus portadas y letras de horror extremo y sangriento."
+    },
+    members: [
+      { name: "George \"Corpsegrinder\" Fisher", role: "Vocals", status: "active" },
+      { name: "Rob Barrett", role: "Rhythm Guitar", status: "active" },
+      { name: "Alex Webster", role: "Bass", status: "active" },
+      { name: "Paul Mazurkiewicz", role: "Drums", status: "active" },
+      { name: "Erik Rutan", role: "Lead Guitar", status: "active" },
+      { name: "Chris Barnes", role: "Former Vocals", status: "former" },
+      { name: "Jack Owen", role: "Former Guitar", status: "former" }
+    ],
+    discography: [
+      { title: "Eaten Back to Life", year: 1990, type: "Album" },
+      { title: "Butchered at Birth", year: 1991, type: "Album" },
+      { title: "Tomb of the Mutilated", year: 1992, type: "Album" },
+      { title: "The Bleeding", year: 1994, type: "Album" },
+      { title: "Vile", year: 1996, type: "Album" },
+      { title: "Gallery of Suicide", year: 1998, type: "Album" },
+      { title: "Bloodthirst", year: 1999, type: "Album" },
+      { title: "Gore Obsessed", year: 2002, type: "Album" },
+      { title: "The Wretched Spawn", year: 2004, type: "Album" },
+      { title: "Kill", year: 2006, type: "Album" },
+      { title: "Evisceration Plague", year: 2009, type: "Album" },
+      { title: "Torture", year: 2012, type: "Album" },
+      { title: "A Skeletal Domain", year: 2014, type: "Album" },
+      { title: "Red Before Black", year: 2017, type: "Album" },
+      { title: "Violence Unimagined", year: 2021, type: "Album" },
+      { title: "Chaos Horrific", year: 2023, type: "Album" }
+    ],
+    socials: {
+      instagram: "@cannibalcorpseofficial",
+      website: "https://cannibalcorpse.net"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system",
+    sourceUrl: "https://en.wikipedia.org/wiki/Cannibal_Corpse"
   },
   {
     name: "Morbid Angel",

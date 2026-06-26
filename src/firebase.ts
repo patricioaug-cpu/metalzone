@@ -93,6 +93,7 @@ export interface Band {
   };
   approved: boolean;
   submittedBy: string;
+  sourceUrl?: string;
   createdAt?: any;
 }
 
@@ -374,7 +375,7 @@ export const SEED_BANDS: Band[] = [
   {
     id: "seed-band-7",
     name: "Sarcófago",
-    logoUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=300&q=80",
+    logoUrl: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=300&q=80",
     logoPlaceholderText: "Raw black spike horror crypt logo",
     country: "Brazil",
     formationYear: 1985,
@@ -647,7 +648,7 @@ export const SEED_EVENTS: EventItem[] = [
     location: "Oslo, Norway",
     lineup: ["Dimmu Borgir", "Taake", "Kampfar", "Gorgoroth", "Borknagar"],
     ticketLink: "https://www.infernofestival.net/",
-    imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=600&q=80",
     isFestival: true,
     countdownDate: "2026-04-02T16:00:00Z",
     approved: true,
@@ -742,7 +743,7 @@ export const SEED_EVENTS: EventItem[] = [
     location: "Eindhoven, Netherlands (Legacy Tribute)",
     lineup: ["Pantera", "Slayer", "Fear Factory", "Machine Head", "Sepultura"],
     ticketLink: "https://www.dynamo-open-air.com",
-    imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80",
     isFestival: true,
     countdownDate: "2026-05-30T12:00:00Z",
     approved: true,
@@ -980,10 +981,10 @@ export const SEED_NEWS: NewsItem[] = [
     },
     content: {
       pt: "O Metallica segue com a turnê mundial M72 em 2026. O Megadeth iniciou sua turnê de despedida, com vários anos planejados pela frente. O Rush voltou surpreendentemente aos palcos após mais de uma década, e o My Chemical Romance continua com sua aclamada turnê comemorativa de The Black Parade. 2026 consolidou-se como um ano de retornos históricos e despedidas marcantes.",
-      en: "Metallica continues with the M72 world tour in 2026. Megadeth has kicked off their farewell tour, with multiple years planned ahead. Rush has surprisingly returned to the stage after more than a decade, and My Chemical Romance continues their highly celebrated 'The Black Parade' tour. 2026 has solidified as a historic year of reunions and farewells.",
+      en: "Metallica continues with the M72 world tour in 2026. Megadeth has kicked off their farewell tour, with multiple years planned ahead. Rush has surprisingly returned to the stage after more than a decade, and My Chemical Romance continues their highly celebrated 'The Black Parade' tour. 2026 has solidified as a historic year of reunions and reunions.",
       es: "Metallica continúa con la gira mundial M72 en 2026. Megadeth inició su gira de despedida, con varios años planificados. Rush regresó sorpresivamente a los escenarios tras más de una década, y My Chemical Romance continúa su gira conmemorativa de The Black Parade. 2026 se ha consolidado como un año de regresos históricos y despedidas."
     },
-    imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=600&q=80",
     approved: true,
     submittedBy: "system"
   },

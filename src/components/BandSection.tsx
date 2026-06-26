@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Band, BandMember, DiscographyItem } from "../firebase";
 import { translations } from "../translations";
+import { getStaticFallbackDetails } from "../utils/staticDetails";
 import { User } from "firebase/auth";
 import { 
   Sparkles, Globe, Calendar, Music, UserCheck, Disc, Mail, Phone, 
@@ -190,27 +191,12 @@ export const BandSection: React.FC<BandSectionProps> = ({
       const data = await response.json();
       setDetailData(data);
     } catch (err: any) {
-      console.warn("Details fetch failed. Falling back to empty model for static Vercel deployment.", err);
-      if (type === "member") {
-        setDetailData({
-          name: targetName,
-          birthInfo: "",
-          instruments: [],
-          contributions: "",
-          otherBands: [],
-          trivia: "",
-          summary: ""
-        });
-      } else {
-        setDetailData({
-          title: targetName,
-          releaseInfo: "",
-          genre: "",
-          tracklist: [],
-          anecdote: "",
-          reception: ""
-        });
-      }
+      console.warn("Details fetch failed. Falling back to high-quality static facts database for Vercel deployment.", err);
+      // Fallback seamlessly to static historical details
+      const fallbackData = getStaticFallbackDetails(type, bandName, targetName, lang);
+      setDetailData(fallbackData);
+      // Ensure error state is completely empty so no error modal pops up
+      setDetailError("");
     } finally {
       setDetailLoading(false);
     }
@@ -329,7 +315,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
           "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=300&q=80",
           "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&q=80",
           "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=300&q=80",
-          "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=300&q=80"
+          "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=300&q=80"
         ];
         const randomImg = DEFAULT_METAL_IMAGES[Math.floor(Math.random() * DEFAULT_METAL_IMAGES.length)];
         setFormLogoUrl(randomImg);
@@ -1256,7 +1242,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       </div>
                     )}
 
-                    {/* Official Website & YouTube Links */}
+                    {/* Official Website, Verified Source & YouTube Links */}
                     <div className="flex flex-wrap gap-2">
                       {band.socials?.website && (
                         <a
@@ -1266,6 +1252,16 @@ export const BandSection: React.FC<BandSectionProps> = ({
                           className="bg-neutral-950 hover:bg-neutral-850 px-2.5 py-1.5 rounded text-[10px] font-mono text-blue-400 hover:text-blue-300 flex items-center gap-1 border border-neutral-850 hover:border-blue-900/40 transition duration-200"
                         >
                           <ExternalLink size={11} /> {lang === "pt" ? "Site Oficial" : "Official Website"}
+                        </a>
+                      )}
+                      {band.sourceUrl && (
+                        <a
+                          href={band.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-neutral-950 hover:bg-neutral-850 px-2.5 py-1.5 rounded text-[10px] font-mono text-amber-500 hover:text-amber-400 flex items-center gap-1.5 border border-neutral-850 hover:border-amber-900/40 transition duration-200"
+                        >
+                          <Globe size={11} className="text-amber-500" /> {lang === "pt" ? "Fonte de Informações" : "Verified Source"}
                         </a>
                       )}
                       {band.socials?.instagram && (
