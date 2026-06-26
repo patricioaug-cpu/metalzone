@@ -31,7 +31,7 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
       return [
         {
           q: "Como proponho uma nova banda para o catálogo?",
-          a: "Faça seu cadastro ou faça login no topo da página. Em seguida, acesse a aba 'Bandas' e clique em 'Cadastrar Nova Banda'. Digite o nome da banda e clique no botão de faísca (IA Gemini) para preencher tudo automaticamente!"
+          a: "Acesse a aba 'Bandas' e clique em 'Cadastrar Nova Banda'. Digite o nome da banda e clique no botão de faísca (IA Gemini) para preencher tudo automaticamente! Não é necessário realizar login."
         },
         {
           q: "Quem aprova as bandas e novidades adicionadas?",
@@ -46,7 +46,7 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
       return [
         {
           q: "¿Cómo propongo una nueva banda al catálogo?",
-          a: "Inicie sesión o regístrese. En la sección 'Bands' haga clic en 'Registrar Nueva Banda'. ¡Escriba el nombre y use la varita inteligente de IA Gemini para completar la bio, integrantes y álbumes de forma instantánea!"
+          a: "En la sección 'Bands' haga clic en 'Registrar Nueva Banda'. ¡Escriba el nombre y use la varita inteligente de IA Gemini para completar la bio, integrantes y álbumes de forma instantánea! No es necesario iniciar sesión."
         },
         {
           q: "¿Quién administra o aprueba las peticiones en el portal?",
@@ -61,7 +61,7 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
       return [
         {
           q: "How do I submit a new metal band to the catalog?",
-          a: "Register and log in. In the 'Bands' catalog section, click 'Register New Band'. Type your favorite band name and tap the Sparkles (Gemini AI helper) to fetch authentic details, specific genre, and full discography instantly!"
+          a: "In the 'Bands' catalog section, click 'Register New Band'. Type your favorite band name and tap the Sparkles (Gemini AI helper) to fetch authentic details, specific genre, and full discography instantly! No login is required."
         },
         {
           q: "Who moderates and approves submitted bands/artists?",

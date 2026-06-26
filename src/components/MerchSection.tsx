@@ -99,7 +99,7 @@ export const MerchSection: React.FC<MerchSectionProps> = ({
               <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">Título do Item *</label>
               <input
                 type="text"
-                placeholder="Ex: Camiseta MetalZone Vintage"
+                placeholder="Ex: Camiseta Metal Catalog Vintage"
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
                 required

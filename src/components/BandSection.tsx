@@ -85,7 +85,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
 }) => {
   const t = translations[lang];
   const isAdmin = user?.email === "patricioaug@gmail.com";
-  const isLogged = !!user;
+  const isLogged = true;
 
   const [search, setSearch] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
@@ -225,22 +225,43 @@ export const BandSection: React.FC<BandSectionProps> = ({
     const bName = (band.name || "").toLowerCase();
     const bGenre = (band.genre || "").toLowerCase();
     let bBio = "";
+    let bBioAll = "";
     if (band.bio) {
       if (typeof band.bio === "string") {
         bBio = band.bio.toLowerCase();
+        bBioAll = bBio;
       } else if (typeof band.bio === "object") {
         bBio = ((band.bio[lang] || band.bio["en"] || band.bio["es"] || "") as string).toLowerCase();
+        bBioAll = Object.values(band.bio).join(" ").toLowerCase();
       }
     }
 
     // When the Gemini smart advanced filter is active (matchedIds is not null),
     // we bypass other manual search inputs to prevent conflict.
-    const matchesSearch = matchedIds !== null || !activeSearch ||
-      bName.includes(activeSearch) || 
-      bGenre.includes(activeSearch) || 
-      bBio.includes(activeSearch);
+    let matchesSearch = matchedIds !== null || !activeSearch;
+    if (!matchesSearch) {
+      const standardMatch = 
+        bName.includes(activeSearch) || 
+        bGenre.includes(activeSearch) || 
+        bBio.includes(activeSearch);
+
+      // Semantic synonyms fallback for Christian rock / metal
+      const isChristianMetalSearch = activeSearch.includes("metal crist") || activeSearch.includes("christian metal");
+      const isChristianRockSearch = activeSearch.includes("rock crist") || activeSearch.includes("christian rock");
+
+      const isChristianBand = bGenre.includes("christian") || bGenre.includes("crist") || bBioAll.includes("crist") || bBioAll.includes("christian");
+      const isMetalGenre = bGenre.includes("metal") || bGenre.includes("thrash") || bGenre.includes("death") || bGenre.includes("black") || bGenre.includes("unblack") || bGenre.includes("grindcore") || bGenre.includes("core");
+      const isRockGenre = bGenre.includes("rock") || bGenre.includes("hardcore") || bGenre.includes("punk");
+
+      const matchChristianMetal = isChristianMetalSearch && isChristianBand && (isMetalGenre || bBioAll.includes("metal"));
+      const matchChristianRock = isChristianRockSearch && isChristianBand && (isRockGenre || bBioAll.includes("rock"));
+
+      matchesSearch = standardMatch || matchChristianMetal || matchChristianRock;
+    }
     
-    const matchesGenre = matchedIds !== null || !appliedGenre || bGenre === appliedGenre.toLowerCase();
+    const matchesGenre = matchedIds !== null || !appliedGenre || 
+      bGenre.includes(appliedGenre.toLowerCase()) || 
+      appliedGenre.toLowerCase().includes(bGenre);
     const matchesCountry = matchedIds !== null || !appliedCountry || (band.country || "").toLowerCase() === appliedCountry.toLowerCase();
     
     // Gemini Natural Language matched IDs validation
@@ -486,40 +507,19 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
   return (
     <div id="band-section-wrapper" className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2 font-mono">
-            <Music className="text-red-600" />
-            {t.navBands}
-          </h2>
-          <p className="text-xs text-neutral-400">
-            {lang === "pt" 
-              ? "Catálogo mundial com classificação ultra específica e detalhada." 
-              : "Global metal archive categorized by extreme specific subgenres."}
-          </p>
-        </div>
-
-        {isLogged && (
+      {isLogged && (
+        <div className="flex justify-end">
           <button
             id="btn-trigger-add-band"
             onClick={() => {
               setShowSubmitForm(!showSubmitForm);
               setFormError("");
             }}
-            className="px-4 py-2 bg-red-950 border border-red-800/40 hover:bg-red-900 text-white rounded-lg text-xs font-bold font-mono tracking-widest uppercase transition-all flex items-center gap-2"
+            className="px-4 py-2 bg-red-950 border border-red-800/40 hover:bg-red-900 text-white rounded-lg text-xs font-bold font-mono tracking-widest uppercase transition-all flex items-center gap-2 cursor-pointer"
           >
             <Plus size={14} />
             {t.submitBandBtn}
           </button>
-        )}
-      </div>
-
-      {/* Suggestion Notification if guest */}
-      {!isLogged && (
-        <div className="p-3 bg-neutral-900 border border-neutral-800 rounded-lg text-xs text-neutral-400 font-mono">
-          🤘 {lang === "pt" 
-            ? "Quer propor uma nova banda para o catálogo? Faça login acima para cadastrar!" 
-            : "Want to submit a metal band to this database? Log in above to unlock submissions!"}
         </div>
       )}
 
@@ -719,6 +719,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-neutral-950 border border-neutral-805 text-xs text-neutral-200 px-3 py-2 rounded-lg font-mono focus:outline-none focus:border-red-600"
             />
+
           </div>
 
           <div>
@@ -1059,158 +1060,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
         )}
       </div>
 
-      {/* GEMINI CHAT/NATURAL LANGUAGE ADVANCED SEARCH BAR */}
-      <div className="bg-gradient-to-r from-neutral-900 via-neutral-950 to-neutral-900 border border-neutral-800/80 rounded-xl p-4 space-y-3.5 relative overflow-hidden shadow-2xl">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/5 rounded-full filter blur-2xl pointer-events-none"></div>
-        <div className="flex items-center justify-between gap-2 border-b border-neutral-850 pb-2">
-          <div className="flex items-center gap-2">
-            <Sparkles className="text-red-500 animate-pulse" size={16} />
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-200">
-              {lang === "pt" ? "Filtro Avançado Inteligente" : lang === "es" ? "Filtro Avanzado Inteligente" : "Advanced Smart Filter"}
-            </span>
-          </div>
-        </div>
 
-        <form onSubmit={handleGeminiSearch} className="flex flex-col sm:flex-row gap-2">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              value={geminiQuery}
-              onChange={(e) => setGeminiQuery(e.target.value)}
-              placeholder={
-                lang === "pt"
-                  ? "Ex: 'bandas de death metal formadas na Suécia nos anos 90'"
-                  : lang === "es"
-                  ? "Ej: 'bandas de thrash metal formadas en Brasil en los 80'"
-                  : "e.g., 'death metal bands formed in Sweden in the 90s' or 'brazilian acts'"
-              }
-              className="w-full bg-neutral-950 border border-neutral-850 text-xs text-neutral-200 pl-3 pr-10 py-2.5 rounded-lg font-mono focus:outline-none focus:border-red-600 transition duration-200"
-            />
-            {geminiQuery && (
-              <button
-                type="button"
-                onClick={handleClearGeminiSearch}
-                className="absolute right-2.5 top-2 py-0.5 text-xs text-zinc-500 hover:text-zinc-300 font-mono font-extrabold"
-                title="Limpar filtros"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-          <button
-            type="submit"
-            disabled={geminiSearching || !geminiQuery.trim()}
-            className="px-5 py-2.5 bg-red-950 hover:bg-red-900 text-white border border-red-900/40 hover:border-red-600 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 flex items-center justify-center gap-1.5 shadow-xl cursor-pointer"
-          >
-            {geminiSearching ? (
-              <>
-                <span className="w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></span>
-                <span>{lang === "pt" ? "Analisando..." : "Analyzing..."}</span>
-              </>
-            ) : (
-              <>
-                <Sparkles size={13} />
-                <span>{lang === "pt" ? "Consultar" : "Query"}</span>
-              </>
-            )}
-          </button>
-        </form>
-
-        {geminiError && (
-          <p className="text-[10px] text-red-500 font-mono bg-red-950/20 p-2 rounded border border-red-950/60 mt-1">
-            ⚠️ {geminiError}
-          </p>
-        )}
-
-        {/* Suggestion tags for easy clicks */}
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="text-[9px] text-neutral-500 font-mono uppercase tracking-wider font-semibold">
-            {lang === "pt" ? "Sugestões de busca:" : "Query ideas:"}
-          </span>
-          {[
-            lang === "pt" ? "bandas suecas anos 90" : "swedish bands 90s",
-            lang === "pt" ? "bandas brasileiras thrash metal" : "brazilian thrash bands",
-            lang === "pt" ? "formadas nos anos 80" : "formed in the 80s"
-          ].map((suggestion) => (
-            <button
-              key={suggestion}
-              type="button"
-              onClick={() => {
-                setGeminiQuery(suggestion);
-              }}
-              className="text-[9px] bg-neutral-900 hover:bg-neutral-850 text-neutral-400 hover:text-white font-mono px-2 py-1 rounded border border-neutral-850/80 transition cursor-pointer"
-            >
-              "{suggestion}"
-            </button>
-          ))}
-        </div>
-
-        {/* Filters Active Badge */}
-        {/* Filters Active Badge and Results list */}
-        {matchedIds !== null && (() => {
-          const matchedBandsList = bands.filter(b => b.id && matchedIds.includes(b.id));
-          return (
-            <div className="space-y-3 mt-2">
-              <div className="flex items-center justify-between gap-2 bg-emerald-950/20 border border-emerald-900/40 p-2.5 rounded-lg select-none">
-                <div className="flex items-center gap-2 text-[10.5px] text-emerald-400 font-mono">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>
-                    {lang === "pt" 
-                      ? `Filtro IA Ativo: Encontradas ${matchedBandsList.length} bandas correspondentes.` 
-                      : lang === "es"
-                      ? `Filtro IA Activo: Encontradas ${matchedBandsList.length} bandas correspondientes.`
-                      : `AI Filter Active: ${matchedBandsList.length} matching bands found.`
-                    }
-                  </span>
-                </div>
-                <button
-                  onClick={handleClearGeminiSearch}
-                  className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 hover:text-emerald-300 font-mono bg-emerald-950 px-2.5 py-1 rounded border border-emerald-900/60 transition cursor-pointer"
-                >
-                  {lang === "pt" ? "Resetar Filtro" : "Reset Filter"}
-                </button>
-              </div>
-
-              {matchedBandsList.length > 0 && (
-                <div className="bg-neutral-950/70 border border-neutral-850 p-3 rounded-lg space-y-2">
-                  <p className="text-[10px] text-zinc-400 uppercase font-mono tracking-wider font-semibold">
-                    {lang === "pt" ? "Resultados Filtrados:" : lang === "es" ? "Resultados Filtrados:" : "Filtered Results:"}
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {matchedBandsList.map(b => (
-                      <div key={b.id} className="flex items-center justify-between gap-2.5 p-2 bg-neutral-900/55 border border-neutral-800/65 rounded-md hover:border-red-950/40 transition">
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <span className="text-xs text-red-500 shrink-0">⚡</span>
-                          <div className="truncate">
-                            <p className="text-xs font-bold text-white font-mono truncate">{b.name}</p>
-                            <p className="text-[9px] text-zinc-500 font-mono capitalize truncate">{b.genre} • {b.country}</p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => {
-                            if (b.id) {
-                              setExpandedBandId(b.id);
-                              setTimeout(() => {
-                                const el = document.getElementById(`band-card-${b.id}`);
-                                if (el) {
-                                  el.scrollIntoView({ behavior: "smooth", block: "center" });
-                                }
-                              }, 100);
-                            }
-                          }}
-                          className="text-[9px] uppercase font-bold tracking-wider text-red-400 hover:text-red-350 font-mono px-2 py-1 bg-neutral-950 hover:bg-neutral-900 rounded border border-neutral-800 shrink-0 transition cursor-pointer"
-                        >
-                          {lang === "pt" ? "Ver" : "View"}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })()}
-      </div>
 
       {/* BAND CARDS DISPLAY */}
       {filteredBands.length === 0 ? (
@@ -1281,9 +1131,11 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   </div>
 
                   {/* BIO Paragraph */}
-                  <p className="text-xs text-stone-400 leading-relaxed font-sans line-clamp-3 mb-3">
-                    {bioText || "No band biography registered yet in this language."}
-                  </p>
+                  {bioText && bioText.trim() !== "" && (
+                    <p className="text-xs text-stone-400 leading-relaxed font-sans line-clamp-3 mb-3">
+                      {bioText}
+                    </p>
+                  )}
                 </div>
 
                 {/* EXPANDED DETAILED AREA */}
@@ -1417,6 +1269,17 @@ export const BandSection: React.FC<BandSectionProps> = ({
                         <Youtube size={11} className="text-red-500" />
                         <span>YouTube</span>
                       </a>
+
+                      {/* Clickable Spotify search link for ALL bands */}
+                      <a
+                        href={`https://open.spotify.com/search/${encodeURIComponent(band.name)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-neutral-950 hover:bg-neutral-850 px-2.5 py-1.5 rounded text-[10px] font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 border border-neutral-850 hover:border-emerald-900/40 transition duration-150 cursor-pointer"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span>Spotify</span>
+                      </a>
                     </div>
                   </div>
                 )}
@@ -1486,19 +1349,38 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   <p className="text-xs text-red-500 font-mono tracking-wide mt-1 font-semibold uppercase">
                     🎸 {activeDetailBandName}
                   </p>
+                  {activeDetailType === "album" && (
+                    <div className="mt-3">
+                      <a
+                        href={`https://open.spotify.com/search/${encodeURIComponent(activeDetailBandName + " " + detailData.title)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-emerald-950/40 border border-emerald-900/50 hover:bg-emerald-900/40 text-emerald-400 hover:text-emerald-300 px-3 py-1.5 rounded-lg text-[10px] font-mono transition duration-150 cursor-pointer shadow-sm"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>{lang === "pt" ? "🎧 Ouvir Álbum no Spotify" : "🎧 Listen on Spotify"}</span>
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 <div className="border-t border-neutral-800/80 pt-3.5 space-y-4">
                   {activeDetailType === "member" ? (
                     <>
                       {/* Birth Info */}
-                      <div className="grid grid-cols-1 select-text">
-                        <span className="text-[9px] text-zinc-500 font-mono uppercase tracking-wider">{lang === "pt" ? "Origem / Nascimento" : "Birth / Origin"}</span>
-                        <p className="text-xs text-neutral-300 font-mono mt-0.5">{detailData.birthInfo || "Não encontrado"}</p>
-                      </div>
+                      {detailData.birthInfo && 
+                       !detailData.birthInfo.toLowerCase().includes("não encontrado") && 
+                       !detailData.birthInfo.toLowerCase().includes("not found") && 
+                       !detailData.birthInfo.toLowerCase().includes("offline") && (
+                        <div className="grid grid-cols-1 select-text">
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase tracking-wider">{lang === "pt" ? "Origem / Nascimento" : "Birth / Origin"}</span>
+                          <p className="text-xs text-neutral-300 font-mono mt-0.5">{detailData.birthInfo}</p>
+                        </div>
+                      )}
 
                       {/* Instruments tags */}
-                      {detailData.instruments && detailData.instruments.length > 0 && (
+                      {detailData.instruments && 
+                       detailData.instruments.length > 0 && (
                         <div>
                           <span className="text-[9px] text-zinc-500 font-mono uppercase block mb-1 tracking-wider">{lang === "pt" ? "Instrumentos tocados" : "Instruments played"}</span>
                           <div className="flex flex-wrap gap-1">
@@ -1512,15 +1394,21 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       )}
 
                       {/* Contributions */}
-                      <div>
-                        <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Papel & Atuação" : "Historical Role & Style"}</span>
-                        <p className="text-xs text-neutral-300 leading-relaxed mt-1 bg-neutral-950/40 p-3 border border-neutral-850 rounded font-sans whitespace-pre-line select-text">
-                          {detailData.contributions}
-                        </p>
-                      </div>
+                      {detailData.contributions && 
+                       !detailData.contributions.toLowerCase().includes("membro ativo essencial") && 
+                       !detailData.contributions.toLowerCase().includes("miembro activo indispensable") && 
+                       !detailData.contributions.toLowerCase().includes("crucial band member") && (
+                        <div>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Papel & Atuação" : "Historical Role & Style"}</span>
+                          <p className="text-xs text-neutral-300 leading-relaxed mt-1 bg-neutral-950/40 p-3 border border-neutral-850 rounded font-sans whitespace-pre-line select-text">
+                            {detailData.contributions}
+                          </p>
+                        </div>
+                      )}
 
                       {/* Other Bands */}
-                      {detailData.otherBands && detailData.otherBands.length > 0 && (
+                      {detailData.otherBands && 
+                       detailData.otherBands.length > 0 && (
                         <div>
                           <span className="text-[9px] text-zinc-500 font-mono uppercase block mb-1 tracking-wider">{lang === "pt" ? "Outras Bandas Conhecidas" : "Other Notable Band Affiliations"}</span>
                           <div className="flex flex-wrap gap-1">
@@ -1534,7 +1422,10 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       )}
 
                       {/* Equipment / Trivia */}
-                      {detailData.trivia && (
+                      {detailData.trivia && 
+                       !detailData.trivia.toLowerCase().includes("conhecido por suas performances") && 
+                       !detailData.trivia.toLowerCase().includes("famoso por sus") && 
+                       !detailData.trivia.toLowerCase().includes("well-known for") && (
                         <div>
                           <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Fatos Notáveis & Curiosidades" : "Gear & Trivia"}</span>
                           <p className="text-xs text-zinc-400 mt-1 italic font-sans pl-2.5 border-l-2 border-amber-600/50 select-text">
@@ -1544,7 +1435,10 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       )}
 
                       {/* Legacy summary */}
-                      {detailData.summary && (
+                      {detailData.summary && 
+                       !detailData.summary.toLowerCase().includes("composições e presença") && 
+                       !detailData.summary.toLowerCase().includes("composiciones y presencia") && 
+                       !detailData.summary.toLowerCase().includes("stellar and highly influential") && (
                         <div className="bg-amber-950/10 p-3 border border-amber-900/25 rounded font-sans text-xs text-zinc-300 relative overflow-hidden">
                           <span className="text-base absolute right-2 bottom-1 text-amber-950 select-none">★</span>
                           🌟 {detailData.summary}
@@ -1554,19 +1448,29 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   ) : (
                     <>
                       {/* Release Info */}
-                      <div>
-                        <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Lançamento Oficial" : "Official Release Date"}</span>
-                        <p className="text-xs text-neutral-300 font-mono mt-0.5">{detailData.releaseInfo || "Não encontrado"}</p>
-                      </div>
+                      {detailData.releaseInfo && 
+                       !detailData.releaseInfo.toLowerCase().includes("studio release") && 
+                       !detailData.releaseInfo.toLowerCase().includes("independent/major label") && 
+                       !detailData.releaseInfo.toLowerCase().includes("não encontrado") && (
+                        <div>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Lançamento Oficial" : "Official Release Date"}</span>
+                          <p className="text-xs text-neutral-300 font-mono mt-0.5">{detailData.releaseInfo}</p>
+                        </div>
+                      )}
 
                       {/* Subgenres / themes */}
-                      <div>
-                        <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Estilo & Temas Líricos" : "Style & Lyrical Themes"}</span>
-                        <p className="text-xs text-neutral-300 mt-0.5 capitalize">{detailData.genre || "Não encontrado"}</p>
-                      </div>
+                      {detailData.genre && 
+                       !detailData.genre.toLowerCase().includes("heavy metal / hard rock") && 
+                       !detailData.genre.toLowerCase().includes("não encontrado") && (
+                        <div>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Estilo & Temas Líricos" : "Style & Lyrical Themes"}</span>
+                          <p className="text-xs text-neutral-300 mt-0.5 capitalize">{detailData.genre}</p>
+                        </div>
+                      )}
 
                       {/* Tracklist inside list container */}
-                      {detailData.tracklist && detailData.tracklist.length > 0 && (
+                      {detailData.tracklist && 
+                       detailData.tracklist.length > 0 && (
                         <div>
                           <span className="text-[9px] text-zinc-500 font-mono uppercase block mb-1.5 tracking-wider">{lang === "pt" ? "Lista Original de Músicas" : "Original Tracklist"}</span>
                           <div className="bg-neutral-950 border border-neutral-850 rounded-lg overflow-hidden divide-y divide-neutral-850 select-text">
@@ -1581,7 +1485,10 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       )}
 
                       {/* Backstory */}
-                      {detailData.anecdote && (
+                      {detailData.anecdote && 
+                       !detailData.anecdote.toLowerCase().includes("gravado durante sessões") && 
+                       !detailData.anecdote.toLowerCase().includes("grabado en sesiones") && 
+                       !detailData.anecdote.toLowerCase().includes("recorded during a high-activity") && (
                         <div>
                           <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Backstory de Produção & Curiosidades" : "Recording Backstory & Trivia"}</span>
                           <p className="text-xs text-stone-400 leading-relaxed mt-1 bg-neutral-950/40 p-3 border border-neutral-850 rounded font-sans select-text">
@@ -1591,7 +1498,10 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       )}
 
                       {/* Impact / reception */}
-                      {detailData.reception && (
+                      {detailData.reception && 
+                       !detailData.reception.toLowerCase().includes("amplamente reverenciado por") && 
+                       !detailData.reception.toLowerCase().includes("grandemente aclamado") && 
+                       !detailData.reception.toLowerCase().includes("met with solid acclaim") && (
                         <div className="bg-red-950/10 p-3 border border-red-950/35 rounded font-sans text-xs text-zinc-300 relative overflow-hidden">
                           <span className="text-base absolute right-2 bottom-1 text-red-950 select-none">★</span>
                           🏆 {detailData.reception}

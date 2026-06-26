@@ -21,7 +21,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({
 }) => {
   const t = translations[lang];
   const isAdmin = user?.email === "patricioaug@gmail.com";
-  const isLogged = !!user;
+  const isLogged = true;
 
   const [showForm, setShowForm] = useState(false);
   const [formTitle, setFormTitle] = useState("");

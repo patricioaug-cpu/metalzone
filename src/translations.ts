@@ -131,7 +131,7 @@ export interface TranslationDict {
 
 export const translations: { [lang: string]: TranslationDict } = {
   pt: {
-    appName: "MetalZone",
+    appName: "Metal Catalog",
     appSubtitle: "O Epicentro Mundial de Rock & Heavy Metal",
     refreshBtn: "Atualizar",
     refreshing: "Sincronizando...",
@@ -153,7 +153,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     langEN: "English (EN)",
     langES: "Español (ES)",
 
-    statsTitle: "Comunidade MetalZone",
+    statsTitle: "Comunidade Metal Catalog",
     statsOnline: "Metalheads Online",
     statsRegistered: "Membros Cadastrados",
 
@@ -191,12 +191,12 @@ export const translations: { [lang: string]: TranslationDict } = {
     buyMerchBtn: "Garantir com o Desenvolvedor (WhatsApp)",
 
     helpTitle: "Ajuda & Suporte",
-    helpWelcome: "Seja bem-vindo ao MetalZone! Saiba como utilizar a plataforma mundial do Heavy Metal:",
+    helpWelcome: "Seja bem-vindo ao Metal Catalog! Saiba como utilizar a plataforma mundial do Heavy Metal:",
     faqTitle: "Perguntas Frequentes (FAQ)",
     contactDeveloperTitle: "Entrar em Contato com o Desenvolvedor",
     contactDeveloperText: "Problemas, dúvidas, propostas de parcerias e patrocínio? Converse diretamente com Patrício!",
 
-    loginTitle: "Entrar na MetalZone",
+    loginTitle: "Entrar no Metal Catalog",
     registerTitle: "Criar Conta de Usuário",
     emailLabel: "Endereço de E-mail",
     passwordLabel: "Senha Secreta",
@@ -245,11 +245,11 @@ export const translations: { [lang: string]: TranslationDict } = {
     onlyAdminPrompt: "Área exclusiva para o administrador patricioaug@gmail.com",
 
     monetizeTitle: "Estratégias de Negócio & Monetização",
-    monetizeSubtitle: "Como transformar o MetalZone no maior portal B2B do cenário de Heavy Metal e gerar lucros extraordinários",
-    monetizeIntro: "Com uma comunidade altamente engajada e apaixonada por bandas de heavy metal, o MetalZone oferece excelentes janelas de lucro:"
+    monetizeSubtitle: "Como transformar o Metal Catalog no maior portal B2B do cenário de Heavy Metal e gerar lucros extraordinários",
+    monetizeIntro: "Com uma comunidade altamente engajada e apaixonada por bandas de heavy metal, o Metal Catalog oferece excelentes janelas de lucro:"
   },
   en: {
-    appName: "MetalZone",
+    appName: "Metal Catalog",
     appSubtitle: "The Global Epicenter of Heavy Metal & Rock",
     refreshBtn: "Refresh",
     refreshing: "Synchronizing...",
@@ -271,7 +271,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     langEN: "English (EN)",
     langES: "Español (ES)",
 
-    statsTitle: "MetalZone Community",
+    statsTitle: "Metal Catalog Community",
     statsOnline: "Metalheads Online",
     statsRegistered: "Registered Members",
 
@@ -309,12 +309,12 @@ export const translations: { [lang: string]: TranslationDict } = {
     buyMerchBtn: "Order via WhatsApp with Dev",
 
     helpTitle: "Help & Support",
-    helpWelcome: "Welcome to MetalZone! Discover how to easily master the global Heavy Metal portal:",
+    helpWelcome: "Welcome to Metal Catalog! Discover how to easily master the global Heavy Metal portal:",
     faqTitle: "Frequently Asked Questions (FAQ)",
     contactDeveloperTitle: "Contact the Developer Behind the Portal",
     contactDeveloperText: "Any issues, questions, partnership proposals, or sponsorships? Talk directly with Patrício!",
 
-    loginTitle: "Log In to MetalZone",
+    loginTitle: "Log In to Metal Catalog",
     registerTitle: "Create User Account",
     emailLabel: "Email Address",
     passwordLabel: "Secret Password",
@@ -363,11 +363,11 @@ export const translations: { [lang: string]: TranslationDict } = {
     onlyAdminPrompt: "Exclusive area reserved for patricioaug@gmail.com",
 
     monetizeTitle: "Business Strategy & Monetization",
-    monetizeSubtitle: "How to scale MetalZone into the ultimate heavy metal B2B powerhouse and generate passive cashflow",
-    monetizeIntro: "Targeting an incredibly passionate niche community, MetalZone has highly lucrative advertising and sponsorship hooks:"
+    monetizeSubtitle: "How to scale Metal Catalog into the ultimate heavy metal B2B powerhouse and generate passive cashflow",
+    monetizeIntro: "Targeting an incredibly passionate niche community, Metal Catalog has highly lucrative advertising and sponsorship hooks:"
   },
   es: {
-    appName: "MetalZone",
+    appName: "Metal Catalog",
     appSubtitle: "El Epicentro Mundial del Rock y Heavy Metal",
     refreshBtn: "Actualizar",
     refreshing: "Sincronizando...",
@@ -389,7 +389,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     langEN: "English (EN)",
     langES: "Español (ES)",
 
-    statsTitle: "Comunidad MetalZone",
+    statsTitle: "Comunidad Metal Catalog",
     statsOnline: "Metalheads Online",
     statsRegistered: "Miembros Registrados",
 
@@ -427,12 +427,12 @@ export const translations: { [lang: string]: TranslationDict } = {
     buyMerchBtn: "Pedir al Desarrollador por WhatsApp",
 
     helpTitle: "Ayuda y Soporte",
-    helpWelcome: "¡Bienvenido a MetalZone! Sigue estos sencillos pasos para dominar el portal global del Metal:",
+    helpWelcome: "¡Bienvenido a Metal Catalog! Sigue estos sencillos pasos para dominar el portal global del Metal:",
     faqTitle: "Preguntas Frecuentes (FAQ)",
     contactDeveloperTitle: "Contactar con el Creador",
     contactDeveloperText: "¿Problemas, dudas, propuestas comerciales o patrocinio? Hable directamente con Patrício.",
 
-    loginTitle: "Ingresar a MetalZone",
+    loginTitle: "Ingresar a Metal Catalog",
     registerTitle: "Crear Cuenta de Usuario",
     emailLabel: "Correo Electrónico",
     passwordLabel: "Contraseña Secreta",
@@ -481,7 +481,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     onlyAdminPrompt: "Área reservada exclusivamente para patricioaug@gmail.com",
 
     monetizeTitle: "Estrategias de Negocio y Monetización",
-    monetizeSubtitle: "Cómo transformar MetalZone en la mayor red publicitaria B2B de Metal y generar ingresos pasivos",
-    monetizeIntro: "Un nicho tan apasionado presenta impresionantes oportunidades de marketing y patrocinio con marcas premium:"
+    monetizeSubtitle: "Cómo transformar Metal Catalog en la mayor red publicitaria B2B de Metal y generar ingresos pasivos",
+    monetizeIntro: "Un nicho tan apaixonado presenta impresionantes oportunidades de marketing y patrocinio con marcas premium:"
   }
 };

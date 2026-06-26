@@ -4,6 +4,8 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, updateDoc as fsUpdateDoc } from "firebase/firestore";
 import { translations } from "./translations";
 import { motion, AnimatePresence } from "motion/react";
+// @ts-ignore
+import metalCatalogLogo from "./assets/images/metal_catalog_logo_1782380109985.jpg";
 
 // Import modular pages
 import { AuthSection } from "./components/AuthSection";
@@ -17,11 +19,13 @@ import { HelpSection } from "./components/HelpSection";
 
 import { 
   Flame, Music, Newspaper, ShoppingBag, Shield, DollarSign, HelpCircle, 
-  RefreshCw, Globe, Phone, Mail, Star, Radio, Skull, Search, X, MapPin, Menu
+  RefreshCw, Globe, Phone, Mail, Star, Radio, Skull, Search, X, MapPin, Menu, LogOut
 } from "lucide-react";
+import { WelcomeScreen } from "./components/WelcomeScreen";
 
 export default function App() {
   const [lang, setLang] = useState<"pt" | "en" | "es">("pt");
+  const [hasEntered, setHasEntered] = useState(false);
   type TabType = "bands" | "festivals" | "shows" | "news" | "help" | "admin";
   const [activeTab, setActiveTabTab] = useState<TabType>("bands");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -306,11 +310,21 @@ export default function App() {
   const isAdmin = user?.email === "patricioaug@gmail.com";
   const userCheckLoaded = authChecked;
 
-
+  if (!hasEntered) {
+    return (
+      <WelcomeScreen 
+        lang={lang} 
+        setLang={setLang} 
+        onEnter={() => setHasEntered(true)} 
+        logo={metalCatalogLogo} 
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-stone-200 selection:bg-red-900 selection:text-white flex flex-col md:flex-row font-sans relative overflow-x-hidden">
       
+
       {/* GLOBAL BACKGROUND ATMOSPHERE ACCENTS */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-red-950/20 rounded-full filter blur-3xl pointer-events-none z-0"></div>
       <div className="fixed bottom-10 right-1/4 w-96 h-96 bg-stone-900/40 rounded-full filter blur-3xl pointer-events-none z-0"></div>
@@ -324,14 +338,14 @@ export default function App() {
       )}
 
       {/* ----------------- MOBILE TOP BAR ----------------- */}
-      <header className="md:hidden sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-md border-b border-neutral-900 py-3.5 px-4 flex justify-between items-center shadow-md w-full shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-zinc-900 border border-red-900/60 rounded-xl flex items-center justify-center">
-            <Skull className="text-red-500" size={15} />
+      <header className="md:hidden sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-md border-b border-neutral-900 py-2.5 px-4 flex justify-between items-center shadow-md w-full shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-black border border-neutral-800 rounded-xl flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
+            <img src={metalCatalogLogo} className="w-full h-full object-cover" alt="MetalCatalog Logo" />
           </div>
           <div>
             <h1 className="text-md font-black text-white uppercase tracking-widest font-mono select-none leading-none">
-              MetalZone
+              Metal Catalog
             </h1>
             <p className="text-[7.5px] text-zinc-500 tracking-widest uppercase font-mono mt-0.5">
               Portal & Acervo
@@ -384,9 +398,14 @@ export default function App() {
                 
                 {/* Header item with close action */}
                 <div className="flex justify-between items-center pb-4 border-b border-neutral-900">
-                  <div className="flex items-center gap-2.5">
-                    <Skull className="text-red-500" size={18} />
-                    <span className="text-md font-black text-white tracking-widest">METALZONE</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-black border border-neutral-800 rounded-xl flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
+                      <img src={metalCatalogLogo} className="w-full h-full object-cover" alt="MetalCatalog Logo" />
+                    </div>
+                    <div>
+                      <span className="text-md font-black text-white tracking-widest block leading-none">METAL CATALOG</span>
+                      <span className="text-[7.5px] text-zinc-500 tracking-widest uppercase font-mono block mt-1">Portal & Acervo</span>
+                    </div>
                   </div>
                   <button 
                     onClick={() => setIsSidebarOpen(false)}
@@ -495,6 +514,17 @@ export default function App() {
                       </span>
                     </button>
                   )}
+
+                  {/* Mobile Exit Button */}
+                  <button
+                    onClick={() => { setHasEntered(false); setIsSidebarOpen(false); }}
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-red-950/40 bg-neutral-950 hover:bg-red-950/20 text-red-400 hover:text-red-300 transition duration-200 cursor-pointer text-xs font-bold uppercase tracking-wider"
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <LogOut size={15} />
+                      {lang === "pt" ? "Sair do Aplicativo" : lang === "es" ? "Salir de la App" : "Exit App"}
+                    </span>
+                  </button>
                 </div>
 
               </div>
@@ -523,7 +553,7 @@ export default function App() {
                 </div>
                 
                 <div className="text-center text-[9px] text-neutral-500">
-                  🤘 MetalZone | patricioaug@gmail.com
+                  🤘 Metal Catalog | patricioaug@gmail.com
                 </div>
               </div>
 
@@ -537,19 +567,17 @@ export default function App() {
         <div className="flex flex-col flex-1 overflow-y-auto min-h-0">
           
           {/* Sidebar Header Brand Area */}
-          <div className="p-6 border-b border-neutral-900 bg-black/40">
-            <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 bg-gradient-to-b from-neutral-950 to-neutral-900 border border-red-700/60 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-red-950/30">
-                <Skull className="text-red-500 fill-zinc-950" size={18} />
-              </div>
-              <div>
-                <h1 className="text-lg font-black text-white uppercase tracking-widest leading-none pt-0.5 filter drop-shadow-[0_2px_10px_rgba(239,68,68,0.2)]">
-                  MetalZone
-                </h1>
-                <p className="text-[8px] text-zinc-500 uppercase tracking-widest mt-1 font-bold">
-                  {lang === "pt" ? "Enciclopédia & Acervo" : lang === "es" ? "Enciclopedia & Acervo" : "Metal Wiki & Logs"}
-                </p>
-              </div>
+          <div className="p-5 border-b border-neutral-900 bg-black/40 flex flex-col items-center gap-4">
+            <div className="relative w-28 h-28 bg-black border border-neutral-800 rounded-xl flex items-center justify-center overflow-hidden shrink-0 shadow-xl shadow-black/80 animate-pulse-slow">
+              <img src={metalCatalogLogo} className="w-full h-full object-cover" alt="MetalCatalog Logo" />
+            </div>
+            <div className="text-center">
+              <h1 className="text-lg font-black text-white uppercase tracking-widest leading-none filter drop-shadow-[0_2px_10px_rgba(239,68,68,0.2)]">
+                Metal Catalog
+              </h1>
+              <p className="text-[8px] text-zinc-500 uppercase tracking-widest mt-2.5 font-bold">
+                {lang === "pt" ? "Enciclopédia & Acervo" : lang === "es" ? "Enciclopedia & Acervo" : "Metal Wiki & Logs"}
+              </p>
             </div>
           </div>
 
@@ -664,6 +692,18 @@ export default function App() {
                 )}
               </button>
             )}
+
+            {/* Desktop Exit Button */}
+            <button
+              id="sidebar-nav-exit"
+              onClick={() => setHasEntered(false)}
+              className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-red-950/40 bg-neutral-950 hover:bg-red-950/20 text-red-400 hover:text-red-300 transition duration-200 cursor-pointer text-xs font-bold uppercase tracking-wider"
+            >
+              <div className="flex items-center gap-2.5">
+                <LogOut size={15} />
+                <span>{lang === "pt" ? "Sair do Aplicativo" : lang === "es" ? "Salir de la App" : "Exit App"}</span>
+              </div>
+            </button>
           </div>
 
           {/* Database Info Widget inside sidebar */}
@@ -722,7 +762,7 @@ export default function App() {
           </div>
 
           <div className="text-center text-[8px] text-zinc-650 leading-tight">
-            Patrício | {new Date().getFullYear()} MetalZone
+            Patrício | {new Date().getFullYear()} Metal Catalog
           </div>
         </div>
       </nav>
@@ -742,6 +782,35 @@ export default function App() {
             lang={lang} 
             isGuest={isGuest} 
           />
+
+          {/* GLOBAL BACK TO MENU NAVIGATION BAR */}
+          <div id="global-navigation-bar" className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-neutral-900/40 border border-neutral-900 p-4 rounded-xl shadow-xl backdrop-blur-md">
+            <div className="flex items-center gap-2.5">
+              <span className={`w-2 h-2 rounded-full ${activeTab === "bands" ? "bg-red-600 animate-pulse" : "bg-neutral-600"}`}></span>
+              <span className="text-xs font-mono uppercase tracking-widest text-zinc-300 font-bold">
+                {activeTab === "bands" 
+                  ? (lang === "pt" ? "Menu Principal / Catálogo" : lang === "es" ? "Menú Principal / Catálogo" : "Main Menu / Catalog")
+                  : (lang === "pt" ? `Navegando: ${activeTab === "festivals" ? t.navFestivals : activeTab === "shows" ? "Shows" : activeTab === "news" ? t.navNews : activeTab === "help" ? "Ajuda" : t.navAdmin}` : `Navigating: ${activeTab === "festivals" ? t.navFestivals : activeTab === "shows" ? "Shows" : activeTab === "news" ? t.navNews : activeTab === "help" ? "Help" : t.navAdmin}`)
+                }
+              </span>
+            </div>
+            
+            {activeTab !== "bands" && (
+              <button
+                id="global-btn-back-to-main"
+                onClick={() => {
+                  setActiveTabTab("bands");
+                  setHeaderSearch("");
+                }}
+                className="px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all border bg-red-950 hover:bg-red-900 border-red-900/40 hover:border-red-600 text-white hover:scale-[1.02] shadow-md shadow-red-950/30"
+              >
+                <Skull size={13} className="animate-pulse text-red-500" />
+                <span>
+                  {lang === "pt" ? "Voltar ao Menu Principal" : lang === "es" ? "Volver al Menú Principal" : "Back to Main Menu"}
+                </span>
+              </button>
+            )}
+          </div>
 
           {/* ACTIVE CONTENT WORKSPACE SWAPPER */}
           <div className="p-1 min-h-[500px]">
@@ -828,28 +897,13 @@ export default function App() {
             </AnimatePresence>
           </div>
 
-          {/* SPONSOR SPACE FOOTER AD CARD inside Main Workspace */}
-          <div className="max-w-4xl mx-auto bg-gradient-to-r from-neutral-950 via-zinc-900/60 to-neutral-950 border border-neutral-850/60 p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left select-none mt-8">
-            <p className="text-xs text-neutral-300 font-mono">
-              🛒 {lang === "pt" ? "Garanta instrumentos e pedais de distorção na filial parceira MetalZone BH." : "Upgrade your distortion stack with premium pedals at boutique metal outlets today."}
-            </p>
-            <a
-              href="https://wa.me/5531973267529?text=Quero%20anunciar%20no%20MetalZone"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-neutral-900 hover:bg-neutral-850 text-white font-mono px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold border border-neutral-800 transition block shrink-0 cursor-pointer"
-            >
-              {lang === "pt" ? "Anunciar / Patrocinar" : "Sponsor Space"}
-            </a>
-          </div>
-
         </main>
 
         {/* FOOTER GENERAL SECTION */}
         <footer className="mt-12 bg-neutral-950 border-t border-neutral-900 py-8 px-4 md:px-8 text-neutral-500 text-xs font-mono">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="space-y-1 text-center md:text-left">
-              <p className="text-stone-300 font-bold uppercase tracking-wider">🤘 MetalZone Portal Corporation</p>
+              <p className="text-stone-300 font-bold uppercase tracking-wider">🤘 Metal Catalog Portal Corporation</p>
               <p className="text-[11px] text-zinc-500">
                 {lang === "pt" ? "Desenvolvido com maestria pesada sob encomenda." : "Engineered with heavy distortion under sovereign commissions."}
               </p>

@@ -117,22 +117,11 @@ function getSuggestFallback(bandName: string, lang: string) {
     formationYear: 2010,
     country: isPt ? "Internacional" : "International",
     genre: "Heavy Metal / Hard Rock",
-    bio: isPt 
-      ? `Banda de rock pesado e metal conhecida no circuito internacional/local por sua sonoridade eletrizante e performance visceral.`
-      : `Outstanding rock and heavy metal act known globally/locally for their high-voltage live sound and visceral energy.`,
+    bio: "",
     logoUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&q=80",
     logoPlaceholderText: "Gothic/industrial style sharp branding nameplate",
-    members: [
-      { name: "Lead Vocalist", role: "Vocals", status: "active" },
-      { name: "Lead Guitarist", role: "Guitar", status: "active" },
-      { name: "Bassist", role: "Bass", status: "active" },
-      { name: "Drummer", role: "Drums", status: "active" }
-    ],
-    discography: [
-      { title: "Echoes of Rock", year: 2015, type: "Album" },
-      { title: "Underground Symphony", year: 2018, type: "Album" },
-      { title: "Shattered Horizons", year: 2022, type: "Album" }
-    ],
+    members: [],
+    discography: [],
     socials: { instagram: `@${nameClean.toLowerCase().replace(/\s+/g, "")}`, website: `http://www.${nameClean.toLowerCase().replace(/\s+/g, "")}.com` },
     contacts: { email: `contact@${nameClean.toLowerCase().replace(/\s+/g, "")}.com` }
   };
@@ -413,6 +402,8 @@ You MUST expand and search extensively for ALL kinds of rock/metal bands, includ
 All text content (bio, instrument descriptions, headers, etc.) MUST be answered in the language code: "${lang}" (e.g. "pt" for Brazilian Portuguese, "en" for English, "es" for Spanish).
  
 CRITICAL DIRECTIVE: You are STRICTLY FORBIDDEN from using the word "lendário", "lendária", "lenda", "lendas", "legendary", "legendaria" or "legendarios" anywhere in your generated text, bios, or descriptions. Use "influente", "icônico", "pioneiro", "histórico", "relevante", "clássico", or similar synonyms instead.
+
+CRITICAL DIRECTIVE 2: Only provide specific, real, authentic, and historically accurate descriptions/details for this exact band and its members. If you cannot find specific, authentic details/descriptions about the band's biography, its members, their roles/instruments played, or its discography/albums, you MUST leave those fields completely empty or blank (e.g., return "" for bio, and empty arrays [] for members and discography). Do NOT under any circumstances generate generic, filler, or placeholder bios, generic member names (like "Vocalist" or "Guitarist"), generic instruments/roles, or generic album/release titles. If you don't have real specific details, return nothing/empty values for those attributes.
  
 Return STRICTLY a JSON object with EXACTLY the following structure (do NOT wrap in markdown code blocks like \`\`\`json, return only the raw string):
 {
@@ -420,7 +411,7 @@ Return STRICTLY a JSON object with EXACTLY the following structure (do NOT wrap 
   "formationYear": 1980,
   "country": "Origin Country Name",
   "genre": "Very specific subgenre (e.g., Progressive Metal, Melodic Death Metal, Thrash Metal, Atmospheric Black Metal) - DO NOT BE GENERAL",
-  "bio": "A rich paragraph detailing the band's history, influences, and significance in the requested language. Make sure NOT to include any 'legendary'/'lendário' words.",
+  "bio": "A rich paragraph detailing the band's history, influences, and significance in the requested language. Make sure NOT to include any 'legendary'/'lendário' words. If no specific bio exists, leave empty \"\".",
   "logoUrl": "A high-quality Unsplash image URL related to rock/metal music from this pre-approved list (choose the most fitting): https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&q=80 (heavy metal live concert), https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&q=80 (stage dynamic microphone), https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=300&q=80 (vibrant metal festival crowd), https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&q=80 (glowing concert stage), https://images.unsplash.com/photo-1506157786151-b8491531f063?w=300&q=80 (stacked guitar amplifiers), or https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=300&q=80 (crowd in metal show)",
   "logoPlaceholderText": "Suggestions for banner/logo style (e.g. sharp dark runes, gothic font, classic yellow logo)",
   "members": [
@@ -753,7 +744,7 @@ Ensure all keys are populated. The localEvents array MUST have the Ticketmaster 
 
         result = JSON.parse(cleanJson);
       } catch (geminiErr) {
-        console.warn("Gemini translation/augmentation failed under Ticketmaster workflow, using clean localized fallback:", geminiErr);
+        console.warn("Gemini translation/augmentation failed under Ticketmaster workflow, using clean localized fallback:", formatErrorLog(geminiErr));
         // Resilient fallback combining real Ticketmaster events with static legendary regional bands
         const isPt = lang === "pt";
         const isEs = lang === "es";
@@ -850,7 +841,7 @@ Ensure all keys are populated with real or extremely representative fallback inf
     const result = JSON.parse(cleanJson);
     res.json(result);
   } catch (err: any) {
-    console.warn("Local events notice: serving resilient fallback content.", err?.message || String(err));
+    console.warn("Local events notice: serving resilient fallback content.", formatErrorLog(err));
     
     // Create a robust localized fallback response for the user
     const fallbackLocation = city || "Sua Região / Your Region";
@@ -1005,7 +996,7 @@ app.post("/api/details/generate", async (req: Request, res: Response) => {
       ? `Musician: "${targetName}" from the metal band "${bandName}".
 Analyze and fetch real-world historical information about this musician.
 Provide:
-- Birth Information (Date, city and country, or "não encontrado")
+- Birth Information (Date, city and country, or leave empty if not found)
 - Instruments (list of strings representing instruments played on recording and live)
 - Contributions to "${bandName}" (summary of their role, specific traits, classic albums they played on)
 - Other Notable Bands (list of strings with other existing bands they are or were linked to)
@@ -1014,20 +1005,22 @@ Provide:
 
 CRITICAL DIRECTIVE: Do NOT use the words "lendário", "lendária", "lenda", "lendas", "legendary", "legendaria" anywhere in descriptions. Translate all texts into: "${lang}".
 
+CRITICAL DIRECTIVE 2: Only provide specific, real, authentic, and historically accurate descriptions/details for this exact musician. If you cannot find specific, authentic details/descriptions about their birth info, instruments played, contributions/role, other bands, gear/trivia, or legacy, you MUST leave those fields completely empty (e.g., return "" or an empty array []). Do NOT under any circumstances generate generic, filler, or placeholder info (like "Guitars, Bass, Vocals, Drums", "Membro ativo essencial", "Conhecido por suas performances intensas", etc.). If there are no specific descriptions, return nothing.
+
 Return STRICTLY this JSON schema (do NOT wrap in markdown code blocks like \`\`\`json, return only the raw string):
 {
   "name": "${targetName}",
-  "birthInfo": "Birth date or country indicator",
+  "birthInfo": "Specific birth date or country indicator, or empty \"\"",
   "instruments": ["instrument 1", "instrument 2"],
-  "contributions": "Description of their work in ${bandName}",
+  "contributions": "Specific description of their work in ${bandName}, or empty \"\"",
   "otherBands": ["Band A", "Band B"],
-  "trivia": "Gear details or historical facts",
-  "summary": "Legacy message"
+  "trivia": "Specific gear details or historical facts, or empty \"\"",
+  "summary": "Specific legacy message, or empty \"\""
 }`
       : `Album/Release: "${targetName}" by the metal band "${bandName}".
 Analyze and fetch real-world historical information about this album/EP/single release.
 Provide:
-- Official Release Info (date, record label background, or "não encontrado")
+- Official Release Info (date, record label background, or leave empty if not found)
 - Genre (specific subgenres and conceptual themes of lyrics)
 - Full Tracklist (realistic sequence of songs with estimated track lengths, at least 4-8 tracks if it is an album/EP)
 - Backstory (facts about where it was recorded, writing or production anecdotes)
@@ -1035,16 +1028,18 @@ Provide:
 
 CRITICAL DIRECTIVE: Do NOT use the words "lendário", "lendária", "lenda", "lendas", "legendary", "legendaria" anywhere in descriptions. Translate all texts into: "${lang}".
 
+CRITICAL DIRECTIVE 2: Only provide specific, real, authentic, and historically accurate descriptions/details for this exact album. If you cannot find specific, authentic details/descriptions about the release info, genre/themes, tracklist, backstory, or critical reception/influence, you MUST leave those fields completely empty (e.g., return "" or an empty array []). Do NOT under any circumstances generate generic, filler, or placeholder info (like "Studio Release, Independent/Major Label", "Heavy Metal / Hard Rock", "Scream of the Damned", "Gravado durante sessões intensas", etc.). If there are no specific descriptions, return nothing.
+
 Return STRICTLY this JSON schema (do NOT wrap in markdown code blocks like \`\`\`json, return only the raw string):
 {
   "title": "${targetName}",
-  "releaseInfo": "Release date and record label info",
-  "genre": "Precise subgenres and themes",
+  "releaseInfo": "Specific release date and record label info, or empty \"\"",
+  "genre": "Specific precise subgenres and themes, or empty \"\"",
   "tracklist": [
     { "track": "Track Title", "length": "Time" }
   ],
-  "anecdote": "Recording trivia, songwriting backstory",
-  "reception": "Summary of critical acclaim or influence"
+  "anecdote": "Specific recording trivia, songwriting backstory, or empty \"\"",
+  "reception": "Specific summary of critical acclaim or influence, or empty \"\""
 }`;
 
     if (!ai) throw new Error("Gemini client is not available");
@@ -1068,47 +1063,21 @@ Return STRICTLY this JSON schema (do NOT wrap in markdown code blocks like \`\`\
     if (type === "member") {
       res.json({
         name: targetName,
-        birthInfo: lang === "pt" ? "Informação offline" : lang === "es" ? "Información offline" : "N/A (Offline mode)",
-        instruments: ["Guitars", "Bass", "Vocals", "Drums"],
-        contributions: lang === "pt" 
-          ? `Membro ativo essencial e compositor na história de ${bandName}, impulsionando o estilo pesado.` 
-          : lang === "es"
-          ? `Miembro activo indispensable y compositor en la trayectoria de ${bandName}, impulsando el estilo pesado.`
-          : `Crucial band member and songwriter in ${bandName}, driving their heavy rhythmic signature.`,
-        otherBands: ["Supergroup", "Side Project"],
-        trivia: lang === "pt" 
-          ? "Conhecido por suas performances intensas ao vivo, preferência por amplificadores customizados vintage e forte conexão com a comunidade rock local." 
-          : lang === "es"
-          ? "Famoso por sus intensas actuaciones en vivo, preferencia por amplificadores vintage de boutique y su estrecho lazo con la escena de rock local."
-          : "Well-known for high-energy live performance setups, vintage custom tube amplifiers, and persistent local community support.",
-        summary: lang === "pt"
-          ? `Composições e presença de palco marcante que ajudaram a moldar o estilo de ${bandName}.`
-          : lang === "es"
-          ? `Composiciones y presencia en el escenario que ayudaron a forjar el sonido característico de ${bandName}.`
-          : `Stellar and highly influential individual presence in the evolution of ${bandName}.`
+        birthInfo: "",
+        instruments: [],
+        contributions: "",
+        otherBands: [],
+        trivia: "",
+        summary: ""
       });
     } else {
       res.json({
         title: targetName,
-        releaseInfo: "Studio Release, Independent/Major Label",
-        genre: "Heavy Metal / Hard Rock",
-        tracklist: [
-          { "track": "Scream of the Damned", "length": "4:42" },
-          { "track": "Iron Core Bullet", "length": "5:12" },
-          { "track": "Shattered Horizons", "length": "3:58" },
-          { "track": "Nightmare Anthem", "length": "6:05" },
-          { "track": "Legacy of Rock (Bonus Track)", "length": "4:15" }
-        ],
-        anecdote: lang === "pt"
-          ? `Gravado durante sessões intensas. O processo criativo deu origem a riffs marcantes que se tornaram grandes clássicos do catálogo da banda ${bandName}.`
-          : lang === "es"
-          ? `Grabado en sesiones intensivas junto al productor. El proceso impulsó riffs que se tornaron indispensables e influyentes en el repertorio de ${bandName}.`
-          : `Recorded during a high-activity studio session. The album birthed highly signature song concepts that became cornerstone mainstays for ${bandName}.`,
-        reception: lang === "pt"
-          ? "Amplamente reverenciado por fãs locais e críticos ao redor do mundo por seu som autêntico e energia crua das gravações."
-          : lang === "es"
-          ? "Grandemente aclamado por seguidores locales y críticos internacionales debido a su potencia pura y sonido auténtico."
-          : "Met with solid acclaim by both local underground fans and worldwide publications for its pristine, high-octane performance."
+        releaseInfo: "",
+        genre: "",
+        tracklist: [],
+        anecdote: "",
+        reception: ""
       });
     }
   }
@@ -1133,11 +1102,17 @@ const startServer = async () => {
     console.log("Production static files serving loaded from /dist.");
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Rock & Metal server listening at http://0.0.0.0:${PORT}`);
-  });
+  if (!process.env.VERCEL) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Rock & Metal server listening at http://0.0.0.0:${PORT}`);
+    });
+  }
 };
 
-startServer().catch((err) => {
-  console.error("Failed to start server:", err);
-});
+if (!process.env.VERCEL) {
+  startServer().catch((err) => {
+    console.error("Failed to start server:", err);
+  });
+}
+
+export default app;
