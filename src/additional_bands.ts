@@ -2557,5 +2557,24 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     ],
     socials: {},
     contacts: {}, approved: true, submittedBy: "system"
+  },
+  {
+    name: "Give It Uai",
+    country: "Brazil",
+    formationYear: 2024,
+    genre: "Rock / Metal",
+    bio: {
+      pt: "Banda de Belo Horizonte (MG) com conta oficial no Instagram @give_it_uai.",
+      en: "Band from Belo Horizonte (MG) with official Instagram account @give_it_uai.",
+      es: "Banda de Belo Horizonte (MG) con cuenta oficial de Instagram @give_it_uai."
+    },
+    members: [],
+    discography: [],
+    socials: {
+      instagram: "@give_it_uai"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
   }
 ];
