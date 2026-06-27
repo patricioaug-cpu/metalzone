@@ -2865,5 +2865,148 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     contacts: {},
     approved: true,
     submittedBy: "system"
+  },
+  {
+    name: "Carmesim",
+    logoUrl: "",
+    country: "Brazil",
+    formationYear: 2021,
+    genre: "Hard Rock",
+    bio: {
+      pt: "Banda brasileira de Hard Rock formada em Belo Horizonte, Minas Gerais. Com uma sonoridade poderosa de inspiração clássica, riffs marcantes, vocais enérgicos e excelente presença de palco, a Carmesim é uma força em ascensão na vibrante cena de rock mineira.",
+      en: "Brazilian Hard Rock band formed in Belo Horizonte, Minas Gerais. Fusing classic-inspired power, striking guitar riffs, and energetic vocals, Carmesim is a rising force in the vibrant Brazilian rock scene.",
+      es: "Banda brasileña de Hard Rock formada en Belo Horizonte, Minas Gerais. Combinando un potente sonido de inspiración clásica, riffs memorables y voces enérgicas, Carmesim es una fuerza en ascenso en la escena del rock brasileño."
+    },
+    members: [
+      { name: "Vocalista / Cantora", role: "Vocals", status: "active" },
+      { name: "Guitarrista", role: "Guitars", status: "active" },
+      { name: "Baixista", role: "Bass", status: "active" },
+      { name: "Baterista", role: "Drums", status: "active" }
+    ],
+    discography: [
+      { title: "I Wanna Rock", year: 2023, type: "Single" },
+      { title: "Hard Rock BH", year: 2024, type: "Single" }
+    ],
+    socials: {
+      instagram: "@carmesim_band",
+      website: "https://lets.events/e/i-wanna-rock-bh-original-pub/"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "STRIFER",
+    logoUrl: "",
+    country: "Brazil",
+    formationYear: 2022,
+    genre: "Deathgrind / Extreme Metal",
+    bio: {
+      pt: "Banda brasileira de Deathgrind e Metal Extremo formada em Vitória, Espírito Santo. Com vocais guturais brutais, andamentos extremamente rápidos, guitarras ultra-pesadas e uma cozinha devastadora, a STRIFER representa a agressividade e a força do metal extremo capixaba.",
+      en: "Brazilian Deathgrind and Extreme Metal band formed in Vitória, Espírito Santo. Featuring brutal guttural vocals, blazing tempos, ultra-heavy guitars, and a devastating rhythm section, STRIFER represents the raw aggression of the Capixaba underground metal scene.",
+      es: "Banda brasileña de Deathgrind y Metal Extremo formada en Vitória, de Espírito Santo. Con voces guturales brutales, tempos veloces, guitarras pesadas y una base rítmica demoledora, STRIFER representa la agresión pura del metal extremo capixaba."
+    },
+    members: [
+      { name: "Elder Strifer", role: "Guitars / Vocals", status: "active" },
+      { name: "Baixista", role: "Bass", status: "active" },
+      { name: "Baterista", role: "Drums", status: "active" }
+    ],
+    discography: [
+      { title: "Hate", year: 2024, type: "Single" }
+    ],
+    socials: {
+      instagram: "@bandastrifer"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Rodox Originals",
+    logoUrl: "",
+    country: "Brazil",
+    formationYear: 2026,
+    genre: "Nu Metal / Alternative Metal / Post-Hardcore",
+    bio: {
+      pt: "Rodox Originals é um projeto especial liderado por Rodolfo Abrantes (ex-Raimundos) e Fernando Schaefer (Worst, Korzus) celebrando a influente sonoridade do Rodox, banda clássica dos anos 2000 que uniu o peso do metal/post-hardcore a letras introspectivas.",
+      en: "Rodox Originals is a special project fronted by Rodolfo Abrantes (ex-Raimundos) and Fernando Schaefer (Worst, Korzus) celebrating the legacy of Rodox, a classic 2000s Brazilian band that fused heavy metal and post-hardcore with introspective lyrics.",
+      es: "Rodox Originals es un proyecto especial liderado por Rodolfo Abrantes (ex-Raimundos) y Fernando Schaefer (Worst, Korzus) que celebra el legado de Rodox, una clásica banda brasileña de los 2000 que fusionó metal pesado y post-hardcore con letras introspectivas."
+    },
+    members: [
+      { name: "Rodolfo Abrantes", role: "Vocals", status: "active" },
+      { name: "Fernando Schaefer", role: "Drums", status: "active" },
+      { name: "Jean Patton", role: "Guitar", status: "active" },
+      { name: "Marcus D'Angelo", role: "Guitar", status: "active" },
+      { name: "Caio MacBeserra", role: "Bass", status: "active" }
+    ],
+    discography: [
+      { title: "Estreito", year: 2002, type: "Album" },
+      { title: "Rodox", year: 2003, type: "Album" }
+    ],
+    socials: {
+      instagram: "@rodoxoriginals",
+      website: "https://bio.site/rodox_originals"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Slot Machine",
+    logoUrl: "",
+    country: "Brazil",
+    formationYear: 2018,
+    genre: "Rock Brasil 80 / Classic Rock / Pop Rock",
+    bio: {
+      pt: "Banda mineira focada no melhor do Rock Nacional dos anos 80, Hard Rock e clássicos do rock internacional. Com shows enérgicos nas principais cervejarias e pubs de Belo Horizonte e região, trazem releituras fiéis e cheias de peso de hinos atemporais.",
+      en: "Hailing from Minas Gerais, Slot Machine specializes in the best of 1980s Brazilian Rock, Hard Rock, and international classic rock hits, delivering highly energetic live performances across major pubs and venues.",
+      es: "Originaria de Minas Gerais, Slot Machine se especializa en lo mejor del Rock Brasileño de los 80, Hard Rock y clásicos del rock internacional, ofreciendo shows enérgicos en las principales cervecerías y pubs."
+    },
+    members: [
+      { name: "Vocalista", role: "Vocals", status: "active" },
+      { name: "Guitarrista", role: "Guitars", status: "active" },
+      { name: "Baixista", role: "Bass", status: "active" },
+      { name: "Baterista", role: "Drums", status: "active" }
+    ],
+    discography: [
+      { title: "Rock em ARA", year: 2023, type: "Album" },
+      { title: "Beerstock Sessions", year: 2024, type: "Album" }
+    ],
+    socials: {
+      instagram: "@bandaslotmachine"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Glasgow9",
+    logoUrl: "",
+    country: "Brazil",
+    formationYear: 2018,
+    genre: "Alternative Rock / Indie Rock / Indie Pop",
+    bio: {
+      pt: "Banda de rock alternativo e indie pop vinda de Belo Horizonte, Minas Gerais. Combinando batidas marcantes, melodias cativantes e uma forte identidade visual, a Glasgow9 é conhecida por singles refinados como 'Connection' e apresentações envolventes na cena independente.",
+      en: "Alternative rock and indie pop band from Belo Horizonte, Minas Gerais, Brazil. Blending punchy beats, infectious melodies, and a solid visual identity, Glasgow9 is known for refined singles like 'Connection' and immersive indie-scene performances.",
+      es: "Banda de rock alternativo e indie pop de Belo Horizonte, Gerais, Brasil. Combinando ritmos potentes, melodías contagiosas y una sólida identidad visual, Glasgow9 es conocida por refinados sencillos como 'Connection' e inmersivas actuaciones independientes."
+    },
+    members: [
+      { name: "Vocalista", role: "Vocals", status: "active" },
+      { name: "Guitarrista", role: "Guitars", status: "active" },
+      { name: "Baixista", role: "Bass", status: "active" },
+      { name: "Baterista", role: "Drums", status: "active" }
+    ],
+    discography: [
+      { title: "Connection", year: 2024, type: "Single" },
+      { title: "SIM", year: 2024, type: "Single" },
+      { title: "Cold Hot", year: 2022, type: "EP" }
+    ],
+    socials: {
+      instagram: "@bandaglasgow9",
+      website: "https://onerpm.link/726012231404"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
   }
 ];

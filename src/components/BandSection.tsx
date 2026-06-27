@@ -43,15 +43,13 @@ const BandLogo: React.FC<{
   photoUrl?: string;
   className?: string;
 }> = ({ name, url, logoUrl, photoUrl, className = "w-12 h-12" }) => {
-  const primaryUrl = logoUrl || url;
   const [imgIndex, setImgIndex] = useState(0);
 
   const candidateUrls: string[] = [];
-  if (primaryUrl && primaryUrl.trim() !== "") {
-    candidateUrls.push(primaryUrl.trim());
-  }
-  if (photoUrl && photoUrl.trim() !== "") {
-    candidateUrls.push(photoUrl.trim());
+  const officialLogo = (logoUrl || "").trim();
+
+  if (officialLogo !== "") {
+    candidateUrls.push(officialLogo);
   }
   // Metal Catalog fallback logo is always the final image choice
   candidateUrls.push(metalCatalogLogo);
@@ -62,26 +60,19 @@ const BandLogo: React.FC<{
     if (imgIndex < candidateUrls.length - 1) {
       setImgIndex(prev => prev + 1);
     } else {
-      // Out of options, trigger failure to render textual fallback
       setImgIndex(candidateUrls.length);
     }
   };
 
-  // Render a beautiful stylized fallback if all candidate image URLs failed
+  // If even the fallback fails or we have no images
   if (imgIndex >= candidateUrls.length || !currentUrl) {
-    const initials = name
-      .split(/\s+/)
-      .map(w => w[0])
-      .filter(Boolean)
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-
     return (
-      <div className={`${className} rounded bg-gradient-to-b from-stone-900 to-black border border-red-900/40 flex flex-col items-center justify-center text-center shadow font-mono text-[11px] font-extrabold uppercase tracking-widest text-[#f52a2a] shrink-0 grow-0`}>
-        <span className="text-[14px]">🔥</span>
-        <span className="text-[8px] text-zinc-400 mt-0.5">{initials}</span>
-      </div>
+      <img
+        src={metalCatalogLogo}
+        alt="Metal Catalog Logo Fallback"
+        className={`${className} rounded object-cover border border-neutral-700/60 shadow shrink-0 grow-0`}
+        referrerPolicy="no-referrer"
+      />
     );
   }
 
@@ -130,6 +121,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const [hasSearched, setHasSearched] = useState(false);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
   const [expandedBandId, setExpandedBandId] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
 
   // Gemini Natural Language AI Search States
   const [geminiQuery, setGeminiQuery] = useState("");
@@ -277,6 +269,17 @@ export const BandSection: React.FC<BandSectionProps> = ({
     const canSee = isApproved || isSubmittedByMe || isAdmin;
 
     return matchesSearch && matchesGenre && matchesCountry && matchesGeminiMatched && canSee;
+  });
+
+  const sortedBands = [...filteredBands].sort((a, b) => {
+    if (!sortOrder) return 0;
+    const nameA = (a.name || "").trim().toLowerCase();
+    const nameB = (b.name || "").trim().toLowerCase();
+    if (sortOrder === "asc") {
+      return nameA.localeCompare(nameB, lang === "pt" ? "pt-BR" : "en-US");
+    } else {
+      return nameB.localeCompare(nameA, lang === "pt" ? "pt-BR" : "en-US");
+    }
   });
 
   const [photoSearching, setPhotoSearching] = useState(false);
@@ -936,13 +939,21 @@ export const BandSection: React.FC<BandSectionProps> = ({
                 {lang === "pt" ? "Resultados Encontrados na Tela:" : lang === "es" ? "Resultados Encontrados en Pantalla:" : "Found Results on Screen:"}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {filteredBands.map(b => (
+                {sortedBands.map(b => (
                   <div key={b.id} className="flex items-center justify-between gap-2.5 p-2 bg-neutral-900/55 border border-neutral-800/65 rounded-md hover:border-red-950/40 transition">
-                    <div className="flex items-center gap-2 overflow-hidden">
+                    <div className="flex items-center gap-2 relative">
                       <span className="text-xs text-red-500 shrink-0">🎸</span>
-                      <div className="truncate">
-                        <p className="text-xs font-bold text-white font-mono truncate">{b.name}</p>
-                        <p className="text-[9px] text-zinc-500 font-mono capitalize truncate">{b.genre} • {b.country}</p>
+                      <div className="truncate relative group/tooltip">
+                        <p className="text-xs font-bold text-white font-mono truncate hover:text-red-400 transition cursor-help decoration-dotted decoration-zinc-500 hover:underline underline-offset-2">{b.name}</p>
+                        <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 scale-95 opacity-0 group-hover/tooltip:scale-100 group-hover/tooltip:opacity-100 transition-all duration-200 z-50 bg-neutral-950 border border-red-900/60 text-neutral-200 rounded-md p-2.5 shadow-2xl text-left font-mono normal-case tracking-normal">
+                          <div className="text-red-400 font-extrabold border-b border-neutral-800 pb-1 mb-1 text-[10px] truncate">{b.name}</div>
+                          <div className="space-y-0.5 text-[9px] text-zinc-300">
+                            <div><span className="text-zinc-500 font-bold uppercase text-[8px]">{lang === "pt" ? "Gênero:" : "Genre:"}</span> {b.genre}</div>
+                            <div><span className="text-zinc-500 font-bold uppercase text-[8px]">{lang === "pt" ? "País:" : "Country:"}</span> {b.country}</div>
+                            <div><span className="text-zinc-500 font-bold uppercase text-[8px]">{lang === "pt" ? "Formação:" : "Year Formed:"}</span> {b.formationYear || "N/A"}</div>
+                          </div>
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-950 border-r border-b border-red-900/60 rotate-45 -mt-1"></div>
+                        </span>
                       </div>
                     </div>
                     <button
@@ -980,13 +991,58 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
 
       {/* BAND CARDS DISPLAY */}
+      {filteredBands.length > 0 && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 bg-neutral-950/40 border border-neutral-800/50 p-3 rounded-xl">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-400 font-extrabold">
+              {lang === "pt" ? "⚡ Ordenar lista:" : lang === "es" ? "⚡ Ordenar lista:" : "⚡ Sort list:"}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 font-mono text-[10px]">
+            <button
+              type="button"
+              onClick={() => setSortOrder(null)}
+              className={`px-2.5 py-1 rounded border uppercase font-extrabold transition cursor-pointer ${
+                sortOrder === null
+                  ? "bg-red-950/60 border-red-800 text-red-400"
+                  : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-white"
+              }`}
+            >
+              {lang === "pt" ? "Padrão" : lang === "es" ? "Por defecto" : "Default"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setSortOrder("asc")}
+              className={`px-2.5 py-1 rounded border uppercase font-extrabold transition cursor-pointer flex items-center gap-1 ${
+                sortOrder === "asc"
+                  ? "bg-red-950/60 border-red-800 text-red-400"
+                  : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-white"
+              }`}
+            >
+              <span>A ➔ Z</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSortOrder("desc")}
+              className={`px-2.5 py-1 rounded border uppercase font-extrabold transition cursor-pointer flex items-center gap-1 ${
+                sortOrder === "desc"
+                  ? "bg-red-950/60 border-red-800 text-red-400"
+                  : "bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-white"
+              }`}
+            >
+              <span>Z ➔ A</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {filteredBands.length === 0 ? (
         <div className="text-center py-12 border border-dashed border-neutral-800 rounded-xl bg-neutral-900/10">
           <p className="text-sm text-neutral-500 font-mono">{t.noBandsFound}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {filteredBands.map((band, index) => {
+          {sortedBands.map((band, index) => {
             const isExpanded = expandedBandId === band.id;
             const bioText = typeof band.bio === "string" ? band.bio : (band.bio[lang] || band.bio["en"] || "");
 
@@ -1003,10 +1059,20 @@ export const BandSection: React.FC<BandSectionProps> = ({
                 <div>
                   <div className="flex justify-between items-start gap-3">
                     <div className="flex items-center gap-3">
-                      <BandLogo name={band.name} logoUrl={band.logoUrl} photoUrl={band.photoUrl} className="w-12 h-12" />
                       <div className="flex-1">
                         <h3 className="text-lg font-bold text-white group-hover:text-red-500 transition font-mono flex items-center flex-wrap gap-2">
-                          <span>{band.name}</span>
+                          <span className="relative group/tooltip cursor-help decoration-dotted hover:underline underline-offset-4">
+                            {band.name}
+                            <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 scale-95 opacity-0 group-hover/tooltip:scale-100 group-hover/tooltip:opacity-100 transition-all duration-200 z-50 bg-neutral-950 border border-red-900/60 text-neutral-200 rounded-md p-3 shadow-2xl text-left font-mono normal-case tracking-normal">
+                              <div className="text-red-400 font-extrabold border-b border-neutral-800 pb-1 mb-1 text-[11px] truncate">{band.name}</div>
+                              <div className="space-y-1 text-[10px] text-zinc-300">
+                                <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "Gênero:" : "Genre:"}</span> {band.genre}</div>
+                                <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "País:" : "Country:"}</span> {band.country}</div>
+                                <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "Formação:" : "Year Formed:"}</span> {band.formationYear || "N/A"}</div>
+                              </div>
+                              <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-950 border-r border-b border-red-900/60 rotate-45 -mt-1"></div>
+                            </span>
+                          </span>
                           {!band.approved && (
                             <span className="bg-amber-950 border border-amber-800 text-amber-400 text-[9px] px-1.5 py-0.5 rounded uppercase font-mono">
                               {lang === "pt" ? "Pendente" : "Pending"}
