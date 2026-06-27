@@ -4,7 +4,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
   // --- NOVAS BANDAS REGISTRADAS (FROZEN CROWN, NARNIA, NAPALM DEATH) ---
   {
     name: "Frozen Crown",
-    logoUrl: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80",
+    logoUrl: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Frozen_Crown_-_2019119183424_2019-04-28_No_Play_No_Pay_-_1040_-_Sven_-_AL9I9483.jpg",
     logoPlaceholderText: "Power Metal Stage Lights Logo",
     country: "Italy",
     formationYear: 2017,
@@ -40,7 +40,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
   },
   {
     name: "Narnia (Narina)",
-    logoUrl: "https://images.unsplash.com/photo-1521410824441-3b657e224e7a?w=400&q=80",
+    logoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/ee/Narnia_-_Sabaton_Open_Air_2019_06.jpg",
     logoPlaceholderText: "Neoclassical Lion Cross Sword Logo",
     country: "Sweden",
     formationYear: 1996,
@@ -79,7 +79,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
   },
   {
     name: "Napalm Death",
-    logoUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&q=80",
+    logoUrl: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Napalm_Death_-_Wacken_Open_Air_2018_14.jpg",
     logoPlaceholderText: "Grindcore Green Logo Stamp",
     country: "United Kingdom",
     formationYear: 1981,
@@ -218,7 +218,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
   // --- DEATH / EXTREME ---
   {
     name: "Cannibal Corpse",
-    logoUrl: "https://images.unsplash.com/photo-1557134829-1819da72153e?w=400&q=80",
+    logoUrl: "https://upload.wikimedia.org/wikipedia/commons/1/18/Cannibal_Corpse_-_Rock_am_Ring_2019_01.jpg",
     logoPlaceholderText: "Brutal Death Metal Gore Red Logo",
     country: "United States",
     formationYear: 1988,
@@ -2831,6 +2831,36 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     ],
     socials: {
       instagram: "@cerimonialsacred"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Solavanco",
+    logoUrl: "/src/assets/images/solavanco_logo_1782554139943.jpg",
+    country: "Brazil",
+    formationYear: 2020,
+    genre: "Heavy Rock / Rock n' Roll",
+    bio: {
+      pt: "Especialistas em Surra de Rock n' Roll! Formada na vibrante cena underground de Belo Horizonte, Minas Gerais, a Solavanco traz uma sonoridade visceral repleta de energia crua, riffs explosivos e uma pegada clássica que sacode qualquer palco.",
+      en: "Specialists in a thumping thrash of Rock n' Roll! Formed in the vibrant underground scene of Belo Horizonte, Minas Gerais, Solavanco brings a visceral sound loaded with raw energy, explosive riffs, and a classic grit that shakes any stage.",
+      es: "¡Especialistas en palizas de Rock n' Roll! Formados en la vibrante escena subterránea de Belo Horizonte, Minas Gerais, Solavanco ofrece un sonido visceral lleno de energía cruda, riffs explosivos y un estilo clásico."
+    },
+    members: [
+      { name: "Mateus \"Teco\" Rezende", role: "Vocals", status: "active" },
+      { name: "Thiago Rocha", role: "Guitars", status: "active" },
+      { name: "Lucas Silveira", role: "Bass", status: "active" },
+      { name: "Fabrício Neves", role: "Drums", status: "active" }
+    ],
+    discography: [
+      { title: "Inércia", year: 2021, type: "Single" },
+      { title: "Impacto", year: 2022, type: "EP" },
+      { title: "Solavanco", year: 2024, type: "Album" }
+    ],
+    socials: {
+      instagram: "@bandasolavanco",
+      website: "https://linktr.ee/DartVeiga"
     },
     contacts: {},
     approved: true,

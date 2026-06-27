@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { MerchItem } from "../firebase";
 import { translations } from "../translations";
 import { User } from "firebase/auth";
+import { getProxiedImageUrl } from "../utils/imageProxy";
 import { ShoppingBag, Plus, Trash2, Send, ExternalLink } from "lucide-react";
 
 interface MerchSectionProps {
@@ -198,7 +199,7 @@ export const MerchSection: React.FC<MerchSectionProps> = ({
             <div>
               <div className="w-full h-48 rounded-lg overflow-hidden bg-neutral-950 border border-neutral-850 mb-4 flex items-center justify-center relative">
                 <img
-                  src={item.imageUrl}
+                  src={getProxiedImageUrl(item.imageUrl, 400)}
                   alt={item.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"

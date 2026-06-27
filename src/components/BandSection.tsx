@@ -3,10 +3,14 @@ import { Band, BandMember, DiscographyItem } from "../firebase";
 import { translations } from "../translations";
 import { getStaticFallbackDetails } from "../utils/staticDetails";
 import { User } from "firebase/auth";
+import { getProxiedImageUrl } from "../utils/imageProxy";
 import { 
   Sparkles, Globe, Calendar, Music, UserCheck, Disc, Mail, Phone, 
   MapPin, Plus, Trash2, Edit2, CheckCircle, Clock, ExternalLink, X, Youtube
 } from "lucide-react";
+
+// @ts-ignore
+import metalCatalogLogo from "../assets/images/metal_catalog_logo_1782380109985.jpg";
 
 const WORLD_COUNTRIES = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
@@ -31,19 +35,48 @@ const WORLD_COUNTRIES = [
   "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
 ];
 
-// BandLogo to render official band art/photos with a styled fallback badge
-const BandLogo: React.FC<{ name: string; url: string; className?: string }> = ({ name, url, className = "w-12 h-12" }) => {
-  const [failed, setFailed] = useState(false);
-  
-  const initials = name
-    .split(/\s+/)
-    .map(w => w[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+// BandLogo to render official band logo/photos with a fallback chain
+const BandLogo: React.FC<{
+  name: string;
+  url?: string;
+  logoUrl?: string;
+  photoUrl?: string;
+  className?: string;
+}> = ({ name, url, logoUrl, photoUrl, className = "w-12 h-12" }) => {
+  const primaryUrl = logoUrl || url;
+  const [imgIndex, setImgIndex] = useState(0);
 
-  if (failed || !url) {
+  const candidateUrls: string[] = [];
+  if (primaryUrl && primaryUrl.trim() !== "") {
+    candidateUrls.push(primaryUrl.trim());
+  }
+  if (photoUrl && photoUrl.trim() !== "") {
+    candidateUrls.push(photoUrl.trim());
+  }
+  // Metal Catalog fallback logo is always the final image choice
+  candidateUrls.push(metalCatalogLogo);
+
+  const currentUrl = candidateUrls[imgIndex];
+
+  const handleImgError = () => {
+    if (imgIndex < candidateUrls.length - 1) {
+      setImgIndex(prev => prev + 1);
+    } else {
+      // Out of options, trigger failure to render textual fallback
+      setImgIndex(candidateUrls.length);
+    }
+  };
+
+  // Render a beautiful stylized fallback if all candidate image URLs failed
+  if (imgIndex >= candidateUrls.length || !currentUrl) {
+    const initials = name
+      .split(/\s+/)
+      .map(w => w[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+
     return (
       <div className={`${className} rounded bg-gradient-to-b from-stone-900 to-black border border-red-900/40 flex flex-col items-center justify-center text-center shadow font-mono text-[11px] font-extrabold uppercase tracking-widest text-[#f52a2a] shrink-0 grow-0`}>
         <span className="text-[14px]">🔥</span>
@@ -54,11 +87,11 @@ const BandLogo: React.FC<{ name: string; url: string; className?: string }> = ({
 
   return (
     <img
-      src={url}
+      src={getProxiedImageUrl(currentUrl, 150)}
       alt={name}
       className={`${className} rounded object-cover border border-neutral-700/60 shadow shrink-0 grow-0`}
       referrerPolicy="no-referrer"
-      onError={() => setFailed(true)}
+      onError={handleImgError}
     />
   );
 };
@@ -111,6 +144,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const [formYear, setFormYear] = useState(2000);
   const [formBio, setFormBio] = useState("");
   const [formLogoUrl, setFormLogoUrl] = useState("");
+  const [formPhotoUrl, setFormPhotoUrl] = useState("");
   const [formMembersText, setFormMembersText] = useState("");
   const [formDiscographyText, setFormDiscographyText] = useState("");
   const [formInstagram, setFormInstagram] = useState("");
@@ -121,13 +155,11 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const [aiLoading, setAiLoading] = useState(false);
   const [formError, setFormError] = useState("");
 
-  // Taste-based Discovery States
-  const [showDiscoverPanel, setShowDiscoverPanel] = useState(false);
-  const [discoverGenres, setDiscoverGenres] = useState<string[]>([]);
-  const [discoverInfo, setDiscoverInfo] = useState("");
-  const [discoverResults, setDiscoverResults] = useState<any[]>([]);
-  const [discoverLoading, setDiscoverLoading] = useState(false);
-  const [discoverError, setDiscoverError] = useState("");
+  // Card-level AI Photo Search States
+  const [searchingPhotoBandId, setSearchingPhotoBandId] = useState<string | null>(null);
+  const [photoSearchErrors, setPhotoSearchErrors] = useState<Record<string, string>>({});
+
+
 
   // Detailed Modals for Clickable Members and Albums
   const [activeDetailType, setActiveDetailType] = useState<"member" | "album" | null>(null);
@@ -137,35 +169,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const [detailData, setDetailData] = useState<any>(null);
   const [detailError, setDetailError] = useState("");
 
-  const handleDiscoverSuggest = async () => {
-    setDiscoverLoading(true);
-    setDiscoverError("");
-    setDiscoverResults([]);
-    try {
-      const response = await fetch("/api/bands/ai-discover", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          genres: discoverGenres,
-          info: discoverInfo,
-          lang
-        })
-      });
-      if (!response.ok) {
-        throw new Error(lang === "pt" ? "Erro ao obter recomendações. Verifique a chave de API." : "Failed to obtain recommendations. Verify API key configuration.");
-      }
-      const data = await response.json();
-      if (data && data.recommendations) {
-        setDiscoverResults(data.recommendations);
-      } else {
-        throw new Error("No recommendations returned.");
-      }
-    } catch (err: any) {
-      setDiscoverError(err.message || "Error");
-    } finally {
-      setDiscoverLoading(false);
-    }
-  };
+
 
   const handleFetchDetails = async (type: "member" | "album", bandName: string, targetName: string) => {
     setActiveDetailType(type);
@@ -202,13 +206,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
     }
   };
 
-  const toggleDiscoverGenre = (genreStr: string) => {
-    if (discoverGenres.includes(genreStr)) {
-      setDiscoverGenres(discoverGenres.filter(g => g !== genreStr));
-    } else {
-      setDiscoverGenres([...discoverGenres, genreStr]);
-    }
-  };
+
 
   // Get distinct genres and countries for filters
   const allGenres = Array.from(new Set(bands.map(b => b.genre.toLowerCase()).filter(Boolean)));
@@ -281,6 +279,84 @@ export const BandSection: React.FC<BandSectionProps> = ({
     return matchesSearch && matchesGenre && matchesCountry && matchesGeminiMatched && canSee;
   });
 
+  const [photoSearching, setPhotoSearching] = useState(false);
+
+  const handleSearchPhoto = async () => {
+    if (!formName.trim()) {
+      setFormError(lang === "pt" ? "Digite o nome da banda primeiro para buscar a foto!" : "Type the band name first to search for a photo!");
+      return;
+    }
+    setFormError("");
+    setPhotoSearching(true);
+    try {
+      const res = await fetch("/api/bands/search-photo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bandName: formName })
+      });
+      const data = await res.json();
+      if (data.photoUrl && data.photoUrl.trim() !== "") {
+        setFormPhotoUrl(data.photoUrl);
+      } else {
+        setFormError(lang === "pt" ? "Nenhuma foto oficial encontrada na internet para esta banda. Tente inserir manualmente." : "No official photo found on the internet for this band. Try entering manually.");
+      }
+    } catch (err) {
+      console.error(err);
+      setFormError(lang === "pt" ? "Erro de conexão ao buscar foto da banda." : "Connection error searching for band photo.");
+    } finally {
+      setPhotoSearching(false);
+    }
+  };
+
+  const handleFetchAndSaveBandPhoto = async (band: Band) => {
+    if (!band.id) return;
+    setSearchingPhotoBandId(band.id);
+    setPhotoSearchErrors(prev => {
+      const copy = { ...prev };
+      delete copy[band.id!];
+      return copy;
+    });
+
+    try {
+      const res = await fetch("/api/bands/search-photo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bandName: band.name })
+      });
+      const data = await res.json();
+      if (data.photoUrl && data.photoUrl.trim() !== "") {
+        await onEditBand(band.id, { photoUrl: data.photoUrl });
+      } else {
+        const msg = lang === "pt" 
+          ? "Nenhuma foto oficial encontrada." 
+          : "No official photo found.";
+        setPhotoSearchErrors(prev => ({ ...prev, [band.id!]: msg }));
+        setTimeout(() => {
+          setPhotoSearchErrors(prev => {
+            const copy = { ...prev };
+            delete copy[band.id!];
+            return copy;
+          });
+        }, 5000);
+      }
+    } catch (err) {
+      console.error(err);
+      const msg = lang === "pt" 
+        ? "Erro ao buscar foto." 
+        : "Error searching photo.";
+      setPhotoSearchErrors(prev => ({ ...prev, [band.id!]: msg }));
+      setTimeout(() => {
+        setPhotoSearchErrors(prev => {
+          const copy = { ...prev };
+          delete copy[band.id!];
+          return copy;
+        });
+      }, 5000);
+    } finally {
+      setSearchingPhotoBandId(null);
+    }
+  };
+
   // Handle AI Auto-Suggest via Gemini
   const handleAIFill = async () => {
     if (!formName.trim()) {
@@ -320,6 +396,8 @@ export const BandSection: React.FC<BandSectionProps> = ({
         const randomImg = DEFAULT_METAL_IMAGES[Math.floor(Math.random() * DEFAULT_METAL_IMAGES.length)];
         setFormLogoUrl(randomImg);
       }
+
+      setFormPhotoUrl(data.photoUrl || "");
       
       if (data.members && Array.isArray(data.members)) {
         const memStr = data.members.map((m: any) => `${m.name}; ${m.role}, ${m.status || 'active'}`).join("\n");
@@ -474,6 +552,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
     const bandPayload: Omit<Band, "id"> = {
       name: formName.trim(),
       logoUrl: formLogoUrl.trim() || randomFallbackImg,
+      photoUrl: formPhotoUrl.trim() || undefined,
       country: formCountry.trim() || (lang === "pt" ? "Sem País" : "Unknown"),
       formationYear: Number(formYear) || 2000,
       genre: formGenre.trim(),
@@ -501,6 +580,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
       setFormYear(2000);
       setFormBio("");
       setFormLogoUrl("");
+      setFormPhotoUrl("");
       setFormMembersText("");
       setFormDiscographyText("");
       setFormInstagram("");
@@ -604,7 +684,9 @@ export const BandSection: React.FC<BandSectionProps> = ({
                 className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
               />
             </div>
+          </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">{t.bandLogoField}</label>
               <input
@@ -614,6 +696,53 @@ export const BandSection: React.FC<BandSectionProps> = ({
                 placeholder="https://..."
                 className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
               />
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-[11px] text-neutral-400 font-mono block uppercase">{t.bandPhotoField}</label>
+                <button
+                  type="button"
+                  onClick={handleSearchPhoto}
+                  disabled={photoSearching}
+                  className="text-[9px] font-mono bg-red-950/60 border border-red-900/50 hover:bg-red-900/40 text-red-400 px-2 py-0.5 rounded cursor-pointer transition flex items-center gap-1 hover:border-red-600 disabled:opacity-50"
+                  title={lang === "pt" ? "Buscar foto da banda automaticamente na internet usando a Inteligência Artificial" : "Search for band photo automatically on the internet using AI"}
+                >
+                  {photoSearching ? (
+                    <>
+                      <span className="w-2 h-2 border border-t-transparent border-red-400 rounded-full animate-spin"></span>
+                      {lang === "pt" ? "Buscando..." : "Searching..."}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={10} className="animate-pulse" />
+                      {lang === "pt" ? "Buscar Foto com IA" : "Search Photo with AI"}
+                    </>
+                  )}
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  value={formPhotoUrl}
+                  onChange={(e) => setFormPhotoUrl(e.target.value)}
+                  placeholder="https://..."
+                  className="flex-1 bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
+                />
+                {formPhotoUrl && formPhotoUrl.trim() !== "" && (
+                  <div className="w-8 h-8 rounded overflow-hidden border border-neutral-800 shrink-0 bg-neutral-950">
+                    <img
+                      src={getProxiedImageUrl(formPhotoUrl, 80)}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -846,225 +975,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
         </div>
       )}
 
-      {/* TASTE-BASED INTERACTIVE DISCOVERY PANEL */}
-      <div id="ai-discovery-container" className="bg-gradient-to-br from-neutral-900 via-zinc-950 to-neutral-950 border border-red-950/45 rounded-xl overflow-hidden shadow-2xl relative">
-        <div className="absolute top-0 right-0 w-44 h-44 bg-red-800/5 rounded-full filter blur-3xl pointer-events-none"></div>
-        
-        {/* Banner Button */}
-        <button
-          onClick={() => {
-            setShowDiscoverPanel(!showDiscoverPanel);
-            setDiscoverError("");
-          }}
-          className="w-full flex items-center justify-between p-4 bg-zinc-900/40 hover:bg-zinc-900/80 transition duration-200 text-left group cursor-pointer border-b border-neutral-900"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-xl">👉</span>
-            <div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest font-mono group-hover:text-red-500 transition flex items-center gap-2">
-                {lang === "pt" ? "Descobrir Novas Bandas de Metal" : "Discover New Metal Bands"}
-              </h3>
-              <p className="text-[11px] text-zinc-400 font-sans mt-0.5">
-                {lang === "pt" 
-                  ? "Análise de gosto musical e sugestões automáticas personalizadas usando IA." 
-                  : "Music flavor profiling and automated custom suggestions guided by AI."}
-              </p>
-            </div>
-          </div>
-          <span className="text-sm text-neutral-500 group-hover:text-red-500 transition font-mono pr-2">
-            {showDiscoverPanel ? "▲" : "▼"}
-          </span>
-        </button>
 
-        {showDiscoverPanel && (
-          <div className="p-5 space-y-4">
-            {/* Step 1: Subgenres preference list */}
-            <div className="space-y-2">
-              <label className="text-[10px] uppercase font-mono tracking-wider text-zinc-400 block">
-                1. {lang === "pt" ? "Selecione subgêneros de preferência" : "Select preferred subgenres"}:
-              </label>
-              <div className="flex flex-wrap gap-1.5">
-                {["death metal", "black metal", "doom metal", "thrash metal", "progressive metal", "gothic metal", "groove metal"].map(gen => {
-                  const active = discoverGenres.includes(gen);
-                  return (
-                    <button
-                      key={gen}
-                      onClick={() => toggleDiscoverGenre(gen)}
-                      className={`text-[10px] font-mono capitalize px-3 py-1.5 rounded-lg border transition cursor-pointer select-none ${
-                        active 
-                          ? "bg-red-950/80 border-red-500/70 text-white font-bold" 
-                          : "bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-neutral-800"
-                      }`}
-                    >
-                      {gen}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Step 2: Custom contextual details prompt input */}
-            <div className="space-y-2">
-              <label className="text-[10px] uppercase font-mono tracking-wider text-zinc-400 block">
-                2. {lang === "pt" ? "Escreva sobre o seu gosto musical ou bandas favoritas" : "Write about your music tastes or favorite bands"}:
-              </label>
-              <textarea
-                value={discoverInfo}
-                onChange={(e) => setDiscoverInfo(e.target.value)}
-                rows={2}
-                placeholder={
-                  lang === "pt" 
-                    ? "Ex: 'Eu adoro os vocais limpos de Opeth, guitarras arrastadas de Candlemass e riffs clássicos de Iron Maiden. Sem vocais excessivos.'" 
-                    : "e.g. 'I love atmospheric synths of Emperor, acoustic blends of Agalloch, and energetic drums. Preferred clean clean vocal variations.'"
-                }
-                className="w-full bg-neutral-950 border border-neutral-850 p-3 rounded-lg text-xs font-mono text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-red-600 transition"
-              />
-            </div>
-
-            {/* Discover Trigger Button */}
-            <div className="flex justify-end">
-              <button
-                onClick={handleDiscoverSuggest}
-                disabled={discoverLoading}
-                className="px-5 py-2.5 bg-red-950 border border-red-800/60 hover:bg-red-900 disabled:bg-neutral-900 disabled:border-neutral-850 disabled:text-neutral-600 text-white rounded-xl text-xs font-bold font-mono tracking-widest uppercase transition-all flex items-center gap-2 shadow-lg shadow-red-950/10 cursor-pointer"
-              >
-                {discoverLoading ? (
-                  <>
-                    <span className="w-3 h-3 rounded-full border border-zinc-500 border-t-white animate-spin"></span>
-                    {lang === "pt" ? "Analisando Gosto..." : "Profiling Music Flavor..."}
-                  </>
-                ) : (
-                  <>
-                    <span>🤘</span>
-                    {lang === "pt" ? "Disparar Sugestões Automáticas" : "Trigger Automatic Suggestions"}
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Error notifications */}
-            {discoverError && (
-              <div className="p-3 bg-red-950/20 border border-red-900/40 text-red-400 text-xs font-mono rounded">
-                ⚠️ {discoverError}
-              </div>
-            )}
-
-            {/* Recommendations Output Grid */}
-            {discoverResults.length > 0 && (
-              <div className="space-y-3 pt-4 border-t border-neutral-900">
-                <span className="text-[10px] uppercase font-mono tracking-wider text-amber-500 block">
-                  🔥 {lang === "pt" ? "Recomendações Geradas Pela Análise" : "Recommendations Generated By Analysis"}:
-                </span>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {discoverResults.map((rec, idx) => {
-                    return (
-                      <div key={idx} className="bg-neutral-950 border border-neutral-850 rounded-xl p-4 space-y-3 shadow-inner flex flex-col justify-between">
-                        <div>
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="text-sm font-black text-white uppercase tracking-wider font-mono">
-                                ⚡ {rec.name}
-                              </h4>
-                              <p className="text-[10px] text-red-500 font-mono tracking-wide uppercase mt-0.5 font-bold">
-                                {rec.genre}
-                              </p>
-                            </div>
-                            <span className="text-[9px] font-mono text-zinc-500 bg-neutral-900 border border-neutral-850 px-2 py-0.5 rounded">
-                              {rec.country} ({rec.formationYear})
-                            </span>
-                          </div>
-
-                          <p className="text-[11px] text-zinc-400 font-sans mt-2.5 leading-relaxed">
-                            {rec.bio}
-                          </p>
-
-                          {rec.subgenres && rec.subgenres.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-2.5">
-                              {rec.subgenres.map((sg: string, i: number) => (
-                                <span key={i} className="text-[8px] font-mono text-zinc-500 border border-neutral-900 px-1.5 py-0.5 rounded bg-zinc-950">
-                                  #{sg}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Actions for recommendations */}
-                        <div className="pt-3 border-t border-neutral-900/50 flex items-center justify-between gap-2 mt-2">
-                          <button
-                            onClick={() => handleFetchDetails("member", rec.name, rec.members?.[0]?.name || "Vocalist")}
-                            className="text-[10px] text-zinc-400 hover:text-white font-mono underline cursor-pointer"
-                          >
-                            {lang === "pt" ? "Ver Integrante" : "Inspect Member"}
-                          </button>
-                          
-                          {isLogged ? (
-                            <button
-                              onClick={() => {
-                                // transform recommendation schema to scheme for onAddBand
-                                const membersArray: BandMember[] = (rec.members || []).map((m: any) => ({
-                                  name: m.name,
-                                  role: m.role || "Musician",
-                                  status: m.status || "active"
-                                }));
-                                
-                                const discographyArray: DiscographyItem[] = (rec.discography || []).map((d: any) => ({
-                                  title: d.title,
-                                  year: parseInt(d.year) || 2020,
-                                  type: d.type || "Album"
-                                }));
-
-                                const newBand: Omit<Band, "id"> = {
-                                  name: rec.name,
-                                  genre: rec.genre || "heavy metal",
-                                  country: rec.country || "Unknown",
-                                  formationYear: parseInt(rec.formationYear) || 2000,
-                                  bio: {
-                                    pt: rec.bio,
-                                    en: rec.bio,
-                                    es: rec.bio
-                                  },
-                                  logoUrl: rec.logoUrl || "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&q=80",
-                                  members: membersArray,
-                                  discography: discographyArray,
-                                  approved: isAdmin, // admins approve automatically, guests submit for review
-                                  submittedBy: user?.uid || "guest",
-                                  socials: {
-                                    website: rec.social_links?.website || "não encontrado",
-                                    instagram: rec.social_links?.instagram || "não encontrado",
-                                    spotify: rec.social_links?.spotify || "não encontrado",
-                                    youtube: rec.social_links?.youtube || "não encontrado"
-                                  },
-                                  contacts: {
-                                    email: rec.contacts?.email || "não encontrado",
-                                    phone: rec.contacts?.phone || "não encontrado"
-                                  }
-                                };
-
-                                onAddBand(newBand);
-                                // remove from suggested panel state
-                                setDiscoverResults(prev => prev.filter(p => p.name !== rec.name));
-                              }}
-                              className="px-2.5 py-1 bg-neutral-900 border border-red-950 hover:bg-red-950/15 text-[10px] font-mono font-bold text-red-400 hover:text-red-300 rounded cursor-pointer leading-tight"
-                            >
-                              ➕ {lang === "pt" ? "Trazer ao Catálogo" : "Import to Catalog"}
-                            </button>
-                          ) : (
-                            <span className="text-[9px] text-zinc-650 font-mono italic">
-                              {lang === "pt" ? "(Login p/ importar)" : "(Login to import)"}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
 
 
 
@@ -1075,7 +986,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {filteredBands.map(band => {
+          {filteredBands.map((band, index) => {
             const isExpanded = expandedBandId === band.id;
             const bioText = typeof band.bio === "string" ? band.bio : (band.bio[lang] || band.bio["en"] || "");
 
@@ -1083,15 +994,19 @@ export const BandSection: React.FC<BandSectionProps> = ({
               <div
                 key={band.id}
                 id={`band-card-${band.id}`}
-                className="bg-neutral-900/90 hover:bg-neutral-900 text-neutral-200 p-5 rounded-xl border border-neutral-800/80 hover:border-red-950/50 transition-all duration-300 shadow-xl flex flex-col justify-between group"
+                className={`${
+                  index % 2 === 0 
+                    ? "bg-black hover:bg-neutral-950 border border-neutral-900" 
+                    : "bg-neutral-900/90 hover:bg-neutral-900 border border-neutral-800"
+                } text-neutral-200 p-5 rounded-xl hover:border-red-950/50 transition-all duration-300 shadow-xl flex flex-col justify-between group`}
               >
                 <div>
                   <div className="flex justify-between items-start gap-3">
                     <div className="flex items-center gap-3">
-                      <BandLogo name={band.name} url={band.logoUrl || ""} className="w-12 h-12" />
-                      <div>
-                        <h3 className="text-lg font-bold text-white group-hover:text-red-500 transition font-mono flex items-center gap-2">
-                          {band.name}
+                      <BandLogo name={band.name} logoUrl={band.logoUrl} photoUrl={band.photoUrl} className="w-12 h-12" />
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-white group-hover:text-red-500 transition font-mono flex items-center flex-wrap gap-2">
+                          <span>{band.name}</span>
                           {!band.approved && (
                             <span className="bg-amber-950 border border-amber-800 text-amber-400 text-[9px] px-1.5 py-0.5 rounded uppercase font-mono">
                               {lang === "pt" ? "Pendente" : "Pending"}
@@ -1149,7 +1064,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   <div className="mt-4 pt-4 border-t border-neutral-800/80 space-y-4">
                     {/* Expanded Cover Band Banner */}
                     <div className="w-full h-36 rounded-lg overflow-hidden relative border border-neutral-800/60 bg-neutral-950 flex shadow-inner transition group-hover:border-red-900/40">
-                      <BandLogo name={band.name} url={band.logoUrl || ""} className="w-full h-full brightness-[0.35]" />
+                      <BandLogo name={band.name} logoUrl={band.logoUrl} photoUrl={band.photoUrl} className="w-full h-full brightness-[0.35]" />
                       <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-black/30 flex flex-col justify-between p-4">
                         <div className="flex justify-between items-start">
                           <span className="text-[9px] uppercase tracking-widest font-mono text-zinc-400 bg-neutral-950/80 px-2.5 py-1 rounded border border-neutral-800">
@@ -1169,6 +1084,26 @@ export const BandSection: React.FC<BandSectionProps> = ({
                         </div>
                       </div>
                     </div>
+
+                    {/* Band Photo Section if photoUrl exists */}
+                    {band.photoUrl && band.photoUrl.trim() !== "" && (
+                      <div className="bg-neutral-950/50 p-3.5 rounded-lg border border-neutral-850/70 shadow-inner">
+                        <span className="text-[9px] text-zinc-400 font-mono block uppercase mb-2 flex items-center gap-1.5 font-bold tracking-wider">
+                          📸 {lang === "pt" ? "FOTO OFICIAL DA BANDA" : "OFFICIAL BAND PHOTO"}
+                        </span>
+                        <div className="w-full max-h-72 overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900/40 flex items-center justify-center">
+                          <img
+                            src={getProxiedImageUrl(band.photoUrl, 600)}
+                            alt={band.name}
+                            className="w-full h-auto max-h-72 object-contain hover:scale-[1.01] transition-transform duration-300"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
 
 
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { EventItem } from "../firebase";
 import { translations } from "../translations";
 import { User } from "firebase/auth";
+import { getProxiedImageUrl } from "../utils/imageProxy";
 import { 
   Calendar, MapPin, Tag, Plus, CheckCircle, ExternalLink, Flame, 
   Hourglass, Ticket, Star, ThumbsUp, Filter, Heart 
@@ -17,6 +18,96 @@ interface FestivalSectionProps {
   onToggleFavorite: (id: string) => void;
   initialFilterTab?: "festivals" | "shows";
 }
+
+// Robust image renderer with error boundaries and customized styled fallbacks
+const FestivalImage: React.FC<{ url?: string; name: string; isFestival: boolean }> = ({ url, name, isFestival }) => {
+  const [failed, setFailed] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    if (!url) {
+      setFailed(true);
+      setChecking(false);
+      return;
+    }
+
+    // Validate URL structure before trying to fetch
+    const cleanUrl = url.trim();
+    const isUrlWellFormed = cleanUrl.startsWith("http://") || 
+                            cleanUrl.startsWith("https://") || 
+                            cleanUrl.startsWith("/") || 
+                            cleanUrl.startsWith("data:");
+                            
+    if (!isUrlWellFormed) {
+      setFailed(true);
+      setChecking(false);
+      return;
+    }
+
+    setChecking(true);
+    setFailed(false);
+
+    // Pre-verify image validity before attempting to render
+    const img = new Image();
+    img.src = getProxiedImageUrl(cleanUrl, 600);
+    img.onload = () => {
+      setFailed(false);
+      setChecking(false);
+    };
+    img.onerror = () => {
+      setFailed(true);
+      setChecking(false);
+    };
+
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [url]);
+
+  if (checking) {
+    return (
+      <div className="w-full h-32 bg-neutral-900 rounded-lg mb-3 border border-neutral-800 flex items-center justify-center animate-pulse">
+        <Flame className="w-6 h-6 text-neutral-700 animate-bounce" />
+      </div>
+    );
+  }
+
+  if (failed || !url) {
+    return (
+      <div className="w-full h-32 relative bg-neutral-950 rounded-lg mb-3 border border-red-900/30 overflow-hidden flex flex-col items-center justify-center shadow-lg group-hover:border-rose-800/40 transition-colors duration-300">
+        {/* Decorative background light effect */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.08)_0%,transparent_70%)] pointer-events-none" />
+        
+        {/* Subtle decorative grid/stripes on the background */}
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(45deg,#fff_12.5%,transparent_12.5%,transparent_50%,#fff_50%,#fff_62.5%,transparent_62.5%,transparent_100%)] bg-[length:10px_10px] pointer-events-none" />
+
+        {/* Central festival/show name display */}
+        <div className="flex flex-col items-center justify-center z-10 px-4 text-center max-w-full">
+          <p className="text-xs md:text-sm font-sans font-bold uppercase tracking-wider text-zinc-100 line-clamp-3">
+            {name}
+          </p>
+        </div>
+
+        {/* Ticket-like punch card layout details */}
+        <div className="absolute bottom-2 left-3 right-3 flex justify-between items-center text-[8px] font-mono tracking-widest text-zinc-500 uppercase pointer-events-none">
+          <span>{isFestival ? "🎪 FESTIVAL STAGE" : "🎸 LIVE CONCERT"}</span>
+          <span className="text-rose-500/40">● PASS</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={getProxiedImageUrl(url, 600)}
+      alt={name}
+      referrerPolicy="no-referrer"
+      className="w-full h-32 object-cover rounded-lg mb-3 border border-neutral-800 group-hover:border-neutral-700 transition-all duration-300"
+      onError={() => setFailed(true)}
+    />
+  );
+};
 
 // Separate component for live countdown calculation to prevent global re-renders
 const FestivalCountdown: React.FC<{ targetDate: string; lang: "pt" | "en" | "es" }> = ({ targetDate, lang }) => {
@@ -659,7 +750,7 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredEvents.map(ev => {
+          {filteredEvents.map((ev, index) => {
             const isFav = ev.id ? favorites.includes(ev.id) : false;
             const hasBanner = !!ev.imageUrl;
             
@@ -667,22 +758,15 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
               <div
                 key={ev.id}
                 id={`event-card-${ev.id}`}
-                className="bg-neutral-900 border border-neutral-800 hover:border-rose-950/40 p-4 rounded-xl flex flex-col justify-between hover:shadow-2xl transition duration-300 group"
+                className={`${
+                  index % 2 === 0
+                    ? "bg-black border border-neutral-900 hover:border-rose-950/40"
+                    : "bg-neutral-900 border border-neutral-800 hover:border-rose-950/40"
+                } p-4 rounded-xl flex flex-col justify-between hover:shadow-2xl transition duration-300 group`}
               >
                 <div>
                   {/* Event Thumbnail */}
-                  {hasBanner ? (
-                    <img
-                      src={ev.imageUrl}
-                      alt={ev.name}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-32 object-cover rounded-lg mb-3 border border-neutral-800"
-                    />
-                  ) : (
-                    <div className="w-full h-24 bg-gradient-to-br from-red-950/40 to-neutral-800 rounded-lg mb-3 border border-red-900/10 flex flex-col items-center justify-center font-mono">
-                      {ev.isFestival ? "🎪 FESTIVAL WORLD STAGE" : "🎸 LOCAL ROCK SHOW"}
-                    </div>
-                  )}
+                  <FestivalImage url={ev.imageUrl} name={ev.name} isFestival={ev.isFestival} />
 
                   <div className="flex justify-between items-start gap-1">
                     <h3 className="text-sm font-bold text-white font-mono group-hover:text-amber-500 transition line-clamp-2">

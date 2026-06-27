@@ -104,6 +104,7 @@ export interface TranslationDict {
   bandYearField: string;
   bandBioField: string;
   bandLogoField: string;
+  bandPhotoField: string;
   bandMembersField: string;
   bandDiscographyField: string;
   bandMembersPlaceholder: string;
@@ -226,6 +227,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     bandYearField: "Ano de Fundação",
     bandBioField: "História / Biografia da Banda",
     bandLogoField: "URL do Logotipo (deixe vazio para imagem padrão)",
+    bandPhotoField: "URL da Foto da Banda (opcional)",
     bandMembersField: "Integrantes (Nome; Função, status; ex: Chuck; Guitarra, active)",
     bandDiscographyField: "Discografia (Álbum; Ano, Álbum; ex: Nightfall; 1987, Album)",
     bandMembersPlaceholder: "Ex: Bruce Dickinson; Vocal, active (uma linha por integrante)",
@@ -344,6 +346,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     bandYearField: "Foundation Year",
     bandBioField: "History / Band Biography",
     bandLogoField: "Logotype URL (leave empty for custom backup illustration)",
+    bandPhotoField: "Band Photo URL (optional)",
     bandMembersField: "Members (Name; Instrument, status; e.g. Chuck; Guitar, active)",
     bandDiscographyField: "Discography (Album; Year, Album; e.g. Nightfall; 1987, Album)",
     bandMembersPlaceholder: "E.g. Bruce Dickinson; Vocals, active (one member per line)",
@@ -462,6 +465,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     bandYearField: "Año de Fundación",
     bandBioField: "Historia / Biografía de la Banda",
     bandLogoField: "URL de Logotipo (vacío para imagen predeterminada)",
+    bandPhotoField: "URL de la Foto de la Banda (opcional)",
     bandMembersField: "Integrantes (Nombre; Función, status; ej: Chuck; Guitarra, active)",
     bandDiscographyField: "Discografía (Álbum; Año, Álbum; ej: Nightfall; 1987, Album)",
     bandMembersPlaceholder: "Ej: Bruce Dickinson; Voz, active (un integrante por línea)",

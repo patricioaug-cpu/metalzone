@@ -35,6 +35,79 @@ function formatErrorLog(err: any): string {
   return msg;
 }
 
+function getDeterministicFallbackPhotoUrl(bandName: string): string {
+  const normalized = (bandName || "").toLowerCase().trim();
+  
+  // Specific mappings for famous metal/rock bands (stable Wikimedia direct URLs)
+  const MAP: Record<string, string> = {
+    "iron maiden": "https://upload.wikimedia.org/wikipedia/commons/d/df/Iron_Maiden_at_Donington_Park_2023.jpg",
+    "metallica": "https://upload.wikimedia.org/wikipedia/commons/0/07/Metallica_at_The_O2_Arena_London_2017.jpg",
+    "black sabbath": "https://upload.wikimedia.org/wikipedia/commons/4/42/Black_Sabbath_1970.jpg",
+    "megadeth": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Megadeth_-_2022161215124_2022-06-10_Nova_Rock_-_Sven_-_1D_X_III_-_0522_-_B94I7423.jpg",
+    "slipknot": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Slipknot_2013_Greenfield_Festival_03.jpg",
+    "system of a down": "https://upload.wikimedia.org/wikipedia/commons/4/4f/System_of_a_Down_Rock_im_Park_2017-48.jpg",
+    "slayer": "https://upload.wikimedia.org/wikipedia/commons/7/74/Slayer_Live_2019.jpg",
+    "ac/dc": "https://upload.wikimedia.org/wikipedia/commons/8/82/ACDC_Leipzig_2015.jpg",
+    "acdc": "https://upload.wikimedia.org/wikipedia/commons/8/82/ACDC_Leipzig_2015.jpg",
+    "guns n' roses": "https://upload.wikimedia.org/wikipedia/commons/2/23/Guns_N%27_Roses_-_Tottenham_Hotspur_Stadium_-_Friday_1st_July_2022_-_GNR220701-44_%2852194689255%29_%28cropped%29.jpg",
+    "guns n roses": "https://upload.wikimedia.org/wikipedia/commons/2/23/Guns_N%27_Roses_-_Tottenham_Hotspur_Stadium_-_Friday_1st_July_2022_-_GNR220701-44_%2852194689255%29_%28cropped%29.jpg",
+    "led zeppelin": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Led_Zeppelin_crop.jpg",
+    "nirvana": "https://upload.wikimedia.org/wikipedia/commons/1/19/Nirvana_around_1992.jpg",
+    "judas priest": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Judas_Priest_at_Wacken_Open_Air_2015_21.jpg",
+    "motorhead": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Mot%C3%B6rhead_-_2011.jpg",
+    "motörhead": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Mot%C3%B6rhead_-_2011.jpg",
+    "pantera": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Pantera_-_2023154172421_2023-06-03_Rock_am_Ring_-_Sven_-_1D_X_III_-_0787_-_A75I2722.jpg",
+    "sepultura": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Sepultura_-_Rock_am_Ring_2015-8884.jpg",
+    "gojira": "https://upload.wikimedia.org/wikipedia/commons/3/30/Gojira_-_Vainstream_Rockfest_2015_02.jpg",
+    "nightwish": "https://upload.wikimedia.org/wikipedia/commons/0/07/Nightwish_-Wacken_Open_Air_2013-05.jpg",
+    "dream theater": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Dream_Theater_-_Milano_2011.jpg",
+    "mastodon": "https://upload.wikimedia.org/wikipedia/commons/8/87/Mastodon_-_Rock_am_Ring_2015-7798.jpg",
+    "avenged sevenfold": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Avenged_Sevenfold_-_Rock_am_Ring_2018-7241.jpg",
+    "tool": "https://upload.wikimedia.org/wikipedia/commons/6/62/Tool_in_2006.jpg",
+    "rhapsody of fire": "https://upload.wikimedia.org/wikipedia/commons/f/fe/RhapsodyOfFire04.jpg",
+    "blind guardian": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Blind_Guardian_Wacken_2011_07.jpg",
+    "helloween": "https://upload.wikimedia.org/wikipedia/commons/5/52/Helloween_at_Wacken_Open_Air_2018_07.jpg",
+    "angra": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Angra_2015_p_Luiz_C_Santos_03.jpg",
+    "scorpions": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Scorpions_-_Rock_the_Ring_2019-141.jpg",
+    "rammstein": "https://upload.wikimedia.org/wikipedia/commons/9/90/Rammstein_-_Mascara.jpg",
+    "kreator": "https://upload.wikimedia.org/wikipedia/commons/6/60/Kreator_-_2018153173748_2018-06-02_Rock_am_Ring_-_Sven_-_1D_X_II_-_0253_-_AK8I9248.jpg",
+    "saxon": "https://upload.wikimedia.org/wikipedia/commons/8/87/Saxon_-_Wacken_Open_Air_2014_08.jpg"
+  };
+
+  if (MAP[normalized]) {
+    return MAP[normalized];
+  }
+
+  // Substring checks
+  for (const [key, url] of Object.entries(MAP)) {
+    if (normalized.includes(key) || key.includes(normalized)) {
+      return url;
+    }
+  }
+
+  // General high-quality Unsplash fallbacks (curated metal/rock concert photography)
+  const fallbackUrls = [
+    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80",
+    "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80",
+    "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600&q=80",
+    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&q=80",
+    "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=600&q=80",
+    "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80",
+    "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80",
+    "https://images.unsplash.com/photo-1487180142328-0c4e37023af5?w=600&q=80",
+    "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&q=80",
+    "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=600&q=80"
+  ];
+
+  // Hash code generation
+  let hash = 0;
+  for (let i = 0; i < normalized.length; i++) {
+    hash = normalized.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % fallbackUrls.length;
+  return fallbackUrls[index];
+}
+
 // Lazy loaded Gemini AI client with secure diagnostic logging
 const getAiClient = () => {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -413,6 +486,7 @@ Return STRICTLY a JSON object with EXACTLY the following structure (do NOT wrap 
   "genre": "Very specific subgenre (e.g., Progressive Metal, Melodic Death Metal, Thrash Metal, Atmospheric Black Metal) - DO NOT BE GENERAL",
   "bio": "A rich paragraph detailing the band's history, influences, and significance in the requested language. Make sure NOT to include any 'legendary'/'lendário' words. If no specific bio exists, leave empty \"\".",
   "logoUrl": "A high-quality Unsplash image URL related to rock/metal music from this pre-approved list (choose the most fitting): https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&q=80 (heavy metal live concert), https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&q=80 (stage dynamic microphone), https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=300&q=80 (vibrant metal festival crowd), https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&q=80 (glowing concert stage), https://images.unsplash.com/photo-1506157786151-b8491531f063?w=300&q=80 (stacked guitar amplifiers), or https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=300&q=80 (crowd in metal show)",
+  "photoUrl": "A direct public image/photo URL of the actual band sourced from search results (e.g. from Wikimedia, Spotify, public music blogs, CDNs, or official sites). It must end in .jpg, .jpeg, or .png or be a direct CDN link. If none is found, leave empty \"\".",
   "logoPlaceholderText": "Suggestions for banner/logo style (e.g. sharp dark runes, gothic font, classic yellow logo)",
   "members": [
     { "name": "Member Name", "role": "Vocals / Guitar / Drums / etc.", "status": "active" | "former" }
@@ -452,6 +526,97 @@ If you do not find the exact band, make a best-effort retrieval using a similarl
   } catch (err: any) {
     console.warn("Gemini suggestion fallback triggered:", formatErrorLog(err));
     res.json(getSuggestFallback(bandName, lang));
+  }
+});
+
+// API: Search specifically for a band photo/image using Google Search and Gemini grounding
+app.post("/api/bands/search-photo", async (req: Request, res: Response) => {
+  const { bandName } = req.body;
+
+  if (!bandName) {
+    res.status(400).json({ error: "Band name is required" });
+    return;
+  }
+
+  const ai = getAiClient();
+  if (!ai) {
+    res.json({ photoUrl: getDeterministicFallbackPhotoUrl(bandName) });
+    return;
+  }
+
+  const prompt = `Search the internet for a high-quality, authentic, direct public photo/image URL of the heavy metal or rock band named "${bandName}".
+We need a direct, hot-linkable image/photo URL (ending in .jpg, .jpeg, .png, or from trusted public image/content CDNs such as Wikipedia/Wikimedia, Spotify CDNs, public music blogs, Discogs, official band websites, or Facebook/Instagram public CDNs).
+Do NOT return a webpage, search result page, or social media profile link. It MUST be a direct image source URL that can be successfully rendered inside an <img> tag with referrerPolicy="no-referrer".
+If you cannot find a direct photo URL, return an empty string.
+
+Return STRICTLY a JSON object like this:
+{
+  "photoUrl": "https://..."
+}
+
+Do not wrap response in markdown code blocks like \`\`\`json. Return ONLY the raw JSON string.`;
+
+  try {
+    // First try: Attempt using Gemini with Google Search Grounding tool
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }]
+      }
+    });
+
+    const responseText = response.text || "";
+    const cleanJson = extractJSON(responseText);
+    const result = JSON.parse(cleanJson);
+    if (result.photoUrl && result.photoUrl.trim() !== "") {
+      res.json({ photoUrl: result.photoUrl });
+    } else {
+      res.json({ photoUrl: getDeterministicFallbackPhotoUrl(bandName) });
+    }
+  } catch (err: any) {
+    const errString = String(err?.message || err || "");
+    const isQuotaError = errString.includes("429") || errString.includes("RESOURCE_EXHAUSTED") || errString.includes("quota");
+
+    if (isQuotaError) {
+      console.log(`[Photo Search] Quota limit active for "${bandName}". Returning high-quality local fallback URL.`);
+      res.json({ photoUrl: getDeterministicFallbackPhotoUrl(bandName) });
+      return;
+    }
+
+    // For non-quota errors, try a standard model generation without tools
+    try {
+      console.log(`[Photo Search] Retrying without search tool for "${bandName}"...`);
+      
+      const backupPrompt = `Provide a high-quality, authentic, direct public photo/image URL of the famous heavy metal or rock band named "${bandName}".
+Use a direct, public, hot-linkable image URL from stable repositories like Wikimedia Commons, Spotify CDN, Discogs, or other permanent public music servers.
+The URL MUST end in .jpg, .jpeg, .png, or be a direct image file CDN link.
+If you cannot determine a working public direct URL, please suggest a relevant direct heavy metal concert photography image from Unsplash (e.g. from https://images.unsplash.com/).
+
+Return STRICTLY a JSON object like this:
+{
+  "photoUrl": "https://..."
+}
+
+Do not wrap response in markdown code blocks like \`\`\`json. Return ONLY the raw JSON string.`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: backupPrompt
+      });
+
+      const responseText = response.text || "";
+      const cleanJson = extractJSON(responseText);
+      const result = JSON.parse(cleanJson);
+      if (result.photoUrl && result.photoUrl.trim() !== "") {
+        res.json({ photoUrl: result.photoUrl });
+      } else {
+        res.json({ photoUrl: getDeterministicFallbackPhotoUrl(bandName) });
+      }
+    } catch (fallbackErr) {
+      console.log(`[Photo Search] Fallback also completed with default image for "${bandName}".`);
+      res.json({ photoUrl: getDeterministicFallbackPhotoUrl(bandName) });
+    }
   }
 });
 

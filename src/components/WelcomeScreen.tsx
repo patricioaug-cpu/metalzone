@@ -117,13 +117,6 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
           >
             METAL <span className="text-red-600">CATALOG</span>
           </motion.h1>
-
-          <div className="flex items-center justify-center gap-1.5 pt-1.5">
-            <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-ping"></span>
-            <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-mono font-bold">
-              {text.curation}
-            </span>
-          </div>
         </div>
 
         {/* Enter Templo Button */}

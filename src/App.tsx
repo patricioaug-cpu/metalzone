@@ -140,7 +140,22 @@ export default function App() {
         bandSnap.forEach((docSnap: any) => {
           loadedBands.push({ id: docSnap.id, ...docSnap.data() } as Band);
         });
-        const merged = [...SEED_BANDS.filter(sb => !loadedBands.some(lb => lb.name === sb.name)), ...loadedBands];
+
+        // Auto-heal logo URLs from seed data
+        const updatedLoadedBands = loadedBands.map(lb => {
+          const seedMatch = SEED_BANDS.find(sb => sb.name === lb.name);
+          if (seedMatch && seedMatch.logoUrl && lb.logoUrl !== seedMatch.logoUrl) {
+            if (lb.id) {
+              updateDoc(doc(db, "bands", lb.id), { logoUrl: seedMatch.logoUrl }).catch(e => 
+                console.warn(`Could not update band logoUrl in database for ${lb.name}:`, e)
+              );
+            }
+            return { ...lb, logoUrl: seedMatch.logoUrl };
+          }
+          return lb;
+        });
+
+        const merged = [...SEED_BANDS.filter(sb => !updatedLoadedBands.some(lb => lb.name === sb.name)), ...updatedLoadedBands];
         setBands(merged);
       } else {
         setBands(SEED_BANDS);
@@ -153,7 +168,22 @@ export default function App() {
         eventSnap.forEach((docSnap: any) => {
           loadedEvents.push({ id: docSnap.id, ...docSnap.data() } as EventItem);
         });
-        const merged = [...SEED_EVENTS.filter(se => !loadedEvents.some(le => le.name === se.name)), ...loadedEvents];
+
+        // Auto-heal event image URLs from seed data
+        const updatedLoadedEvents = loadedEvents.map(le => {
+          const seedMatch = SEED_EVENTS.find(se => se.name === le.name);
+          if (seedMatch && seedMatch.imageUrl && le.imageUrl !== seedMatch.imageUrl) {
+            if (le.id) {
+              updateDoc(doc(db, "events", le.id), { imageUrl: seedMatch.imageUrl }).catch(e =>
+                console.warn(`Could not update event imageUrl in database for ${le.name}:`, e)
+              );
+            }
+            return { ...le, imageUrl: seedMatch.imageUrl };
+          }
+          return le;
+        });
+
+        const merged = [...SEED_EVENTS.filter(se => !updatedLoadedEvents.some(le => le.name === se.name)), ...updatedLoadedEvents];
         setEvents(merged);
       } else {
         setEvents(SEED_EVENTS);
@@ -166,7 +196,22 @@ export default function App() {
         newsSnap.forEach((docSnap: any) => {
           loadedNews.push({ id: docSnap.id, ...docSnap.data() } as NewsItem);
         });
-        const merged = [...SEED_NEWS.filter(sn => !loadedNews.some(ln => JSON.stringify(ln.title) === JSON.stringify(sn.title))), ...loadedNews];
+
+        // Auto-heal news image URLs from seed data
+        const updatedLoadedNews = loadedNews.map(ln => {
+          const seedMatch = SEED_NEWS.find(sn => JSON.stringify(sn.title) === JSON.stringify(ln.title));
+          if (seedMatch && seedMatch.imageUrl && ln.imageUrl !== seedMatch.imageUrl) {
+            if (ln.id) {
+              updateDoc(doc(db, "news", ln.id), { imageUrl: seedMatch.imageUrl }).catch(e =>
+                console.warn(`Could not update news imageUrl in database:`, e)
+              );
+            }
+            return { ...ln, imageUrl: seedMatch.imageUrl };
+          }
+          return ln;
+        });
+
+        const merged = [...SEED_NEWS.filter(sn => !updatedLoadedNews.some(ln => JSON.stringify(ln.title) === JSON.stringify(sn.title))), ...updatedLoadedNews];
         setNews(merged);
       } else {
         setNews(SEED_NEWS);
@@ -957,9 +1002,6 @@ export default function App() {
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="space-y-1 text-center md:text-left">
               <p className="text-stone-300 font-bold uppercase tracking-wider">🤘 Metal Catalog Portal Corporation</p>
-              <p className="text-[11px] text-zinc-500">
-                {lang === "pt" ? "Desenvolvido com maestria pesada sob encomenda." : "Engineered with heavy distortion under sovereign commissions."}
-              </p>
             </div>
 
             <div className="text-center md:text-right space-y-1 leading-snug">
@@ -970,7 +1012,6 @@ export default function App() {
         </footer>
 
       </div>
-
     </div>
   );
 }
