@@ -769,7 +769,7 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
                   <FestivalImage url={ev.imageUrl} name={ev.name} isFestival={ev.isFestival} />
 
                   <div className="flex justify-between items-start gap-1">
-                    <h3 className="text-sm font-bold text-white font-mono group-hover:text-amber-500 transition line-clamp-2">
+                    <h3 className="text-sm font-bold text-white font-mono group-hover:text-amber-500 transition">
                       {ev.name}
                     </h3>
                     <div className="flex items-center gap-1">
@@ -805,7 +805,7 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
                     </div>
                     <div className="flex items-center gap-1.5">
                       <MapPin size={13} className="text-neutral-500" />
-                      <span className="truncate">{ev.location}</span>
+                      <span>{ev.location}</span>
                     </div>
                   </div>
 
@@ -840,7 +840,7 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
                       href={ev.ticketLink.startsWith("http") ? ev.ticketLink : `https://${ev.ticketLink}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 text-center bg-rose-950/20 hover:bg-rose-900 border border-rose-900/60 hover:border-rose-900 hover:scale-[1.02] text-white py-2 rounded-lg text-xs font-mono font-bold transition duration-300 flex items-center justify-center gap-1"
+                      className="flex-1 text-center bg-rose-950/20 hover:bg-rose-900 border border-rose-900/60 hover:border-rose-900 hover:scale-[1.02] text-white py-2 rounded-lg text-xs font-mono font-bold transition duration-300 flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Ticket size={12} />
                       {t.buyTickets}

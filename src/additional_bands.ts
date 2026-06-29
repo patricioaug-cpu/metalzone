@@ -1,7 +1,7 @@
 import { Band } from "./firebase";
 
 export const ADDITIONAL_SEED_BANDS: Band[] = [
-  // --- NOVAS BANDAS REGISTRADAS (FROZEN CROWN, NARNIA, NAPALM DEATH) ---
+
   {
     name: "Frozen Crown",
     logoUrl: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Frozen_Crown_-_2019119183424_2019-04-28_No_Play_No_Pay_-_1040_-_Sven_-_AL9I9483.jpg",
@@ -123,7 +123,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     submittedBy: "system",
     sourceUrl: "https://en.wikipedia.org/wiki/Napalm_Death"
   },
-  // --- GRANDES NOMES ---
+
   {
     name: "Megadeth",
     country: "United States",
@@ -215,7 +215,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     contacts: {}, approved: true, submittedBy: "system"
   },
 
-  // --- DEATH / EXTREME ---
+
   {
     name: "Cannibal Corpse",
     logoUrl: "https://upload.wikimedia.org/wikipedia/commons/1/18/Cannibal_Corpse_-_Rock_am_Ring_2019_01.jpg",
@@ -345,7 +345,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: { instagram: "@carcassband" }, contacts: {}, approved: true, submittedBy: "system"
   },
 
-  // --- PROGRESSIVE / TECHNICAL ---
+
   {
     name: "Opeth",
     country: "Sweden",
@@ -437,7 +437,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: { instagram: "@animalsasleaders" }, contacts: {}, approved: true, submittedBy: "system"
   },
 
-  // --- METALCORE / MODERN ---
+
   {
     name: "Lamb of God",
     country: "United States",
@@ -539,7 +539,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: { instagram: "@spiritboxmusic" }, contacts: {}, approved: true, submittedBy: "system"
   },
 
-  // --- BLACK / DOOM / ATMOSPHERIC ---
+
   {
     name: "Mayhem",
     country: "Norway",
@@ -631,7 +631,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: { instagram: "@swallowthesunofficial" }, contacts: {}, approved: true, submittedBy: "system"
   },
 
-  // --- BANDAS BRASILEIRAS ---
+
   {
     name: "Krisiun",
     country: "Brazil",
@@ -731,7 +731,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: { instagram: "@eminenceband" }, contacts: {}, approved: true, submittedBy: "system"
   },
 
-  // --- THRASH MODERNO ---
+
   {
     name: "Kreator",
     country: "Germany",
@@ -833,7 +833,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: { instagram: "@toxicholocaust_official" }, contacts: {}, approved: true, submittedBy: "system"
   },
 
-  // --- OUTRAS RELEVANTES GLOBAIS ---
+
   {
     name: "Sabaton",
     country: "Sweden",
@@ -935,7 +935,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: { instagram: "@cobhc" }, contacts: {}, approved: true, submittedBy: "system"
   },
 
-  // --- NOVA GERAÇÃO / POPULARES ATUAIS ---
+
   {
     name: "Lorna Shore",
     country: "United States",
@@ -1037,7 +1037,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: { instagram: "@turnstilehardcore" }, contacts: {}, approved: true, submittedBy: "system"
   },
 
-  // --- EXTRAS IMPORTANTES ---
+
   {
     name: "Ghost",
     country: "Sweden",
@@ -3004,6 +3004,95 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: {
       instagram: "@bandaglasgow9",
       website: "https://onerpm.link/726012231404"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Sacrificed",
+    logoUrl: "/src/assets/images/sacrificed_logo_1782737969290.jpg",
+    country: "Brazil",
+    formationYear: 2004,
+    genre: "Heavy Metal / Melodic Metal",
+    bio: {
+      pt: "Banda brasileira de heavy metal fundada em Belo Horizonte em 2004, liderada pela marcante vocalista Kell Hell. O grupo se destaca no cenário nacional pelo peso e melodia de suas composições, unindo riffs de guitarra vigorosos, solos técnicos inspirados no metal tradicional e vocais poderosos e expressivos. Seus lançamentos aclamados incluem 'The Great Seducer' e 'Enigmatic'.",
+      en: "Brazilian heavy metal band formed in Belo Horizonte in 2004, fronted by the powerful vocalist Kell Hell. The group stands out in the national scene for the perfect blend of heavy riffs, traditional metal-inspired technical solos, and expressive melodic vocals. Their acclaimed releases include 'The Great Seducer' and 'Enigmatic'.",
+      es: "Banda brasileña de heavy metal fundada en Belo Horizonte en 2004, liderada por la potente vocalista Kell Hell. Destaca por combinar riffs pesados de guitarra con solos melódicos de metal tradicional y voces expresivas."
+    },
+    members: [
+      { name: "Kell Hell", role: "Vocals", status: "active" },
+      { name: "Diego Oliveira", role: "Guitars / Backing Vocals", status: "active" },
+      { name: "Thiago Souza", role: "Guitars", status: "active" },
+      { name: "Maurício \"Alemão\"", role: "Bass", status: "active" },
+      { name: "Tiago Vitek", role: "Drums", status: "active" }
+    ],
+    discography: [
+      { title: "The Great Seducer", year: 2011, type: "Album" },
+      { title: "Enigmatic", year: 2018, type: "Album" }
+    ],
+    socials: {
+      instagram: "@sacrificedofficial",
+      website: "https://www.instagram.com/sacrificedofficial/"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Overdose",
+    logoUrl: "/src/assets/images/overdose_logo_1782748403312.jpg",
+    country: "Brazil",
+    formationYear: 1983,
+    genre: "Heavy Metal / Thrash Metal",
+    bio: {
+      pt: "Fundada em Belo Horizonte em 1983, a Overdose é uma das maiores pioneiras do heavy metal e thrash metal nacional. Ao lado do Sepultura, lançou o lendário split 'Século XX / Bestial Devastation' em 1985, consolidando o cenário mineiro de metal extremo. Com uma discografia de peso, incluindo álbuns históricos como 'Conscience', 'Progress of Decadence' e 'Scars', a banda excursionou com grande sucesso pelos EUA e Europa. Após quase três décadas de silêncio, retornaram de forma triunfal em 2024 com o aclamado single 'Século XXI', reafirmando seu status lendário no heavy metal brasileiro.",
+      en: "Founded in Belo Horizonte in 1983, Overdose is one of the absolute pioneers of Brazilian heavy and thrash metal. Alongside Sepultura, they released the legendary split album 'Século XX / Bestial Devastation' in 1985, establishing the Minas Gerais extreme metal scene. With an influential discography including classics like 'Conscience', 'Progress of Decadence', and 'Scars', the band toured extensively across the US and Europe. After almost three decades of silence, they triumphantly returned in 2024 with the acclaimed single 'Século XXI', cementing their legendary status in Brazilian heavy metal.",
+      es: "Fundada en Belo Horizonte en 1983, Overdose es una de las grandes pioneras del heavy metal y thrash metal brasileño. Lanzaron el legendario split 'Século XX / Bestial Devastation' en 1985 junto a Sepultura. Tras un hiato de casi treinta años, regresaron de manera triunfal en 2024 con el sencillo 'Século XXI'."
+    },
+    members: [
+      { name: "Pedro \"Bozó\" Amorim", role: "Vocals", status: "active" },
+      { name: "Cláudio David", role: "Guitars", status: "active" },
+      { name: "Sérgio C.", role: "Guitars", status: "active" },
+      { name: "Fernando Pazzini", role: "Bass", status: "active" },
+      { name: "André Márcio", role: "Drums", status: "active" }
+    ],
+    discography: [
+      { title: "Século XX (Split with Sepultura)", year: 1985, type: "Album" },
+      { title: "Conscience", year: 1987, type: "Album" },
+      { title: "You're Ruined Too", year: 1990, type: "Album" },
+      { title: "Addicted to Junk", year: 1992, type: "Album" },
+      { title: "Progress of Decadence", year: 1993, type: "Album" },
+      { title: "Scars", year: 1997, type: "Album" },
+      { title: "Século XXI", year: 2024, type: "Single" }
+    ],
+    socials: {
+      instagram: "@overdose_banda",
+      website: "https://linktr.ee/overdosebrazil"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Foxie",
+    logoUrl: "/src/assets/images/foxie_logo_1782749165121.jpg",
+    country: "Brazil",
+    formationYear: 2008,
+    genre: "Hard Rock",
+    bio: {
+      pt: "Formada em Belo Horizonte (MG) em 2008, a Foxie é uma das principais bandas do cenário de Hard Rock mineiro. Com uma trajetória marcada por performances eletrizantes e vocais poderosos, a banda conquistou o público com interpretações enérgicas de grandes clássicos do estilo e composições autorais marcantes.",
+      en: "Formed in Belo Horizonte, Brazil, in 2008, Foxie is a prominent force in the Minas Gerais hard rock scene. With a journey defined by electrifying live performances and powerful vocal deliveries, the band has built a dedicated following through highly energetic covers of hard rock classics and compelling original tracks.",
+      es: "Formada en Belo Horizonte, Brasil, en 2008, Foxie es una destacada banda de hard rock de Minas Gerais. Conocida por sus enérgicos shows en vivo y su potente sonido, rinden homenaje a los grandes clásicos del estilo además de crear sus propias composiciones."
+    },
+    members: [
+      { name: "Adriele Mendes", role: "Keyboards", status: "active" },
+      { name: "Ray Leppard", role: "Guitars", status: "active" }
+    ],
+    discography: [],
+    socials: {
+      instagram: "@bandafoxie",
+      website: "https://bio.site/foxie"
     },
     contacts: {},
     approved: true,

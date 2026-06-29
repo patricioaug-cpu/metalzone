@@ -30,7 +30,6 @@ export default function App() {
   const [activeTab, setActiveTabTab] = useState<TabType>("bands");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // High-performance real-time search state
   const [headerSearch, setHeaderSearch] = useState("");
   const deferredSearch = useDeferredValue(headerSearch);
 
@@ -41,66 +40,21 @@ export default function App() {
     }
   };
   
-  // Auth state
   const [user, setUser] = useState<User | null>(null);
-  const [isGuest, setIsGuest] = useState(true); // default guest is true so simple use is open immediately
+  const [isGuest, setIsGuest] = useState(true);
   const [authChecked, setAuthChecked] = useState(false);
 
-  // Loaded database arrays
   const [bands, setBands] = useState<Band[]>(SEED_BANDS);
   const [events, setEvents] = useState<EventItem[]>(SEED_EVENTS);
   const [news, setNews] = useState<NewsItem[]>(SEED_NEWS);
   const [merch, setMerch] = useState<MerchItem[]>(SEED_MERCH);
 
-  // User list favorites
   const [favoriteEvents, setFavoriteEvents] = useState<string[]>([]);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshNotify, setRefreshNotify] = useState(false);
-  const [visitorCount, setVisitorCount] = useState<number>(0);
-
   const t = translations[lang];
 
-  // Increment and load visitor/access counter
-  useEffect(() => {
-    const fetchAndIncrementCounter = async () => {
-      // 1. Read and update local storage count for immediate view and local preservation
-      let localVal = parseInt(localStorage.getItem("metal_catalog_visits") || "0", 10);
-      localVal += 1;
-      localStorage.setItem("metal_catalog_visits", localVal.toString());
-      setVisitorCount(localVal);
-
-      // 2. Try to synchronize globally with Firebase Firestore
-      try {
-        const statsRef = collection(db, "stats");
-        const statsSnap = await getDocs(statsRef);
-        let globalVal = 0;
-        let docId = "";
-
-        if (statsSnap && !statsSnap.empty) {
-          const firstDoc = statsSnap.docs[0];
-          docId = firstDoc.id;
-          globalVal = firstDoc.data().visits || 0;
-        }
-
-        globalVal += 1;
-
-        if (docId) {
-          await updateDoc(doc(db, "stats", docId), { visits: globalVal });
-        } else {
-          await addDoc(collection(db, "stats"), { visits: globalVal });
-        }
-
-        setVisitorCount(globalVal);
-      } catch (err) {
-        console.warn("Could not sync with firestore stats collection, using local storage counter:", err);
-      }
-    };
-
-    fetchAndIncrementCounter();
-  }, []);
-
-  // Monitor user login state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -114,7 +68,6 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  // Fetch collections from Firestore with high-reliability timeout races
   const fetchAllCollections = async () => {
     const fetchWithTimeout = async <T,>(promise: Promise<T>, ms: number, fallbackVal: T): Promise<T> => {
       let timeoutHandle: NodeJS.Timeout;
@@ -133,7 +86,6 @@ export default function App() {
     };
 
     try {
-      // 1. Bands
       const bandSnap = await fetchWithTimeout(getDocs(collection(db, "bands")), 7000, { empty: true, docs: [] } as any);
       if (bandSnap && !bandSnap.empty) {
         const loadedBands: Band[] = [];
@@ -141,7 +93,6 @@ export default function App() {
           loadedBands.push({ id: docSnap.id, ...docSnap.data() } as Band);
         });
 
-        // Auto-heal logo URLs from seed data
         const updatedLoadedBands = loadedBands.map(lb => {
           const seedMatch = SEED_BANDS.find(sb => sb.name === lb.name);
           if (seedMatch && seedMatch.logoUrl && lb.logoUrl !== seedMatch.logoUrl) {
@@ -161,7 +112,6 @@ export default function App() {
         setBands(SEED_BANDS);
       }
 
-      // 2. Events & Festivals
       const eventSnap = await fetchWithTimeout(getDocs(collection(db, "events")), 7000, { empty: true, docs: [] } as any);
       if (eventSnap && !eventSnap.empty) {
         const loadedEvents: EventItem[] = [];
@@ -169,7 +119,6 @@ export default function App() {
           loadedEvents.push({ id: docSnap.id, ...docSnap.data() } as EventItem);
         });
 
-        // Auto-heal event image URLs from seed data
         const updatedLoadedEvents = loadedEvents.map(le => {
           const seedMatch = SEED_EVENTS.find(se => se.name === le.name);
           if (seedMatch && seedMatch.imageUrl && le.imageUrl !== seedMatch.imageUrl) {
@@ -189,7 +138,6 @@ export default function App() {
         setEvents(SEED_EVENTS);
       }
 
-      // 3. News
       const newsSnap = await fetchWithTimeout(getDocs(collection(db, "news")), 7000, { empty: true, docs: [] } as any);
       if (newsSnap && !newsSnap.empty) {
         const loadedNews: NewsItem[] = [];
@@ -197,7 +145,6 @@ export default function App() {
           loadedNews.push({ id: docSnap.id, ...docSnap.data() } as NewsItem);
         });
 
-        // Auto-heal news image URLs from seed data
         const updatedLoadedNews = loadedNews.map(ln => {
           const seedMatch = SEED_NEWS.find(sn => JSON.stringify(sn.title) === JSON.stringify(ln.title));
           if (seedMatch && seedMatch.imageUrl && ln.imageUrl !== seedMatch.imageUrl) {
@@ -217,14 +164,13 @@ export default function App() {
         setNews(SEED_NEWS);
       }
     } catch (err) {
-      console.warn("Could not query live Firestore directly (uninitialized rules or network), using rock static seed assets:", err);
+      console.warn("Could not query live Firestore directly, using rock static seed assets:", err);
       setBands(SEED_BANDS);
       setEvents(SEED_EVENTS);
       setNews(SEED_NEWS);
     }
   };
 
-  // Initial load
   useEffect(() => {
     fetchAllCollections();
   }, []);
@@ -806,10 +752,6 @@ export default function App() {
                 {Array.from(new Set(bands.map(b => b.country).filter(Boolean))).length}
               </span>
             </div>
-            <div className="flex justify-between border-t border-neutral-850/50 pt-1.5 mt-1.5">
-              <span>{lang === "pt" ? "Acessos do Portal:" : lang === "es" ? "Visitas del Portal:" : "Portal Visits:"}</span>
-              <span className="text-emerald-400 font-bold">{visitorCount}</span>
-            </div>
           </div>
 
         </div>
@@ -885,13 +827,6 @@ export default function App() {
             </div>
             
             <div className="flex flex-wrap items-center gap-3">
-              {/* Glowing Access Counter Badge */}
-              <div className="flex items-center gap-1.5 bg-neutral-950/60 border border-neutral-850 px-3 py-1.5 rounded-lg text-[10px] font-mono text-neutral-400 shadow-inner">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>{lang === "pt" ? "CONTADOR DE ACESSOS:" : lang === "es" ? "VISITAS:" : "VISITS:"}</span>
-                <span className="text-emerald-400 font-bold tracking-wider">{visitorCount}</span>
-              </div>
-
               {activeTab !== "bands" && (
                 <button
                   id="global-btn-back-to-main"

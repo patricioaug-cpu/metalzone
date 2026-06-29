@@ -207,7 +207,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({
                 {isAdmin && (
                   <button
                     onClick={() => item.id && onDeleteNews(item.id)}
-                    className="p-1.5 p-2 bg-neutral-950 text-neutral-500 hover:text-red-400 hover:bg-neutral-900 rounded-lg shrink-0 transition"
+                    className="p-1.5 bg-neutral-950 text-neutral-500 hover:text-red-400 hover:bg-neutral-900 rounded-lg shrink-0 transition cursor-pointer"
                     title={t.deleteBtn}
                   >
                     <Trash2 size={13} />

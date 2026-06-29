@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "motion/react";
 import { Band, BandMember, DiscographyItem } from "../firebase";
 import { translations } from "../translations";
 import { getStaticFallbackDetails } from "../utils/staticDetails";
@@ -122,14 +123,13 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const [showSubmitForm, setShowSubmitForm] = useState(false);
   const [expandedBandId, setExpandedBandId] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
 
-  // Gemini Natural Language AI Search States
   const [geminiQuery, setGeminiQuery] = useState("");
   const [matchedIds, setMatchedIds] = useState<string[] | null>(null);
   const [geminiSearching, setGeminiSearching] = useState(false);
   const [geminiError, setGeminiError] = useState("");
 
-  // Form State
   const [formName, setFormName] = useState("");
   const [formGenre, setFormGenre] = useState("");
   const [formCountry, setFormCountry] = useState("");
@@ -147,13 +147,11 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const [aiLoading, setAiLoading] = useState(false);
   const [formError, setFormError] = useState("");
 
-  // Card-level AI Photo Search States
   const [searchingPhotoBandId, setSearchingPhotoBandId] = useState<string | null>(null);
   const [photoSearchErrors, setPhotoSearchErrors] = useState<Record<string, string>>({});
 
 
 
-  // Detailed Modals for Clickable Members and Albums
   const [activeDetailType, setActiveDetailType] = useState<"member" | "album" | null>(null);
   const [activeDetailBandName, setActiveDetailBandName] = useState("");
   const [activeDetailTargetName, setActiveDetailTargetName] = useState("");
@@ -200,7 +198,6 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
 
 
-  // Get distinct genres and countries for filters
   const allGenres = Array.from(new Set(bands.map(b => b.genre.toLowerCase()).filter(Boolean)));
   
   const allCountries = Array.from(
@@ -214,8 +211,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
     )
   ).sort((a, b) => a.localeCompare(b));
 
-  // Filter bands with deferred global search and local search
-  const filteredBands = bands.filter(band => {
+  const baseFilteredBands = bands.filter(band => {
     const activeSearch = (globalSearch || appliedSearch || "").trim().toLowerCase();
     
     const bName = (band.name || "").toLowerCase();
@@ -232,8 +228,6 @@ export const BandSection: React.FC<BandSectionProps> = ({
       }
     }
 
-    // When the Gemini smart advanced filter is active (matchedIds is not null),
-    // we bypass other manual search inputs to prevent conflict.
     let matchesSearch = matchedIds !== null || !activeSearch;
     if (!matchesSearch) {
       const standardMatch = 
@@ -270,6 +264,45 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
     return matchesSearch && matchesGenre && matchesCountry && matchesGeminiMatched && canSee;
   });
+
+  const filteredBands = baseFilteredBands.filter(band => {
+    if (!selectedLetter) return true;
+    return (band.name || "").trim().toUpperCase().startsWith(selectedLetter);
+  });
+
+  const availableLetters = Array.from(
+    new Set(
+      baseFilteredBands.map(b => (b.name || "").trim().charAt(0).toUpperCase())
+    )
+  );
+
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  const handleLetterClick = (letter: string) => {
+    if (selectedLetter === letter) {
+      setSelectedLetter(null);
+    } else {
+      setSelectedLetter(letter);
+      setTimeout(() => {
+        const firstCardOfLetter = baseFilteredBands.find(b => (b.name || "").trim().toUpperCase().startsWith(letter));
+        if (firstCardOfLetter) {
+          const el = document.getElementById(`band-card-${firstCardOfLetter.id}`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            el.classList.add("ring-2", "ring-red-600/80", "transition-all", "duration-500");
+            setTimeout(() => {
+              el.classList.remove("ring-2", "ring-red-600/80");
+            }, 2000);
+          }
+        } else {
+          const container = document.getElementById("bands-list-section-header");
+          if (container) {
+            container.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+      }, 150);
+    }
+  };
 
   const sortedBands = [...filteredBands].sort((a, b) => {
     if (!sortOrder) return 0;
@@ -991,6 +1024,55 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
 
       {/* BAND CARDS DISPLAY */}
+      <div id="bands-list-section-header"></div>
+      
+      {baseFilteredBands.length > 0 && (
+        <div className="mb-4 bg-neutral-950/60 border border-neutral-850/70 p-3.5 rounded-xl space-y-2.5 shadow-xl">
+          <div className="flex items-center justify-between gap-2 border-b border-neutral-900 pb-2">
+            <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-400 font-extrabold flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
+              {lang === "pt" ? "Navegação Alfabética:" : lang === "es" ? "Navegación Alfabética:" : "Alphabetical Navigation:"}
+            </span>
+            {selectedLetter && (
+              <button
+                onClick={() => setSelectedLetter(null)}
+                className="text-[9.5px] uppercase font-extrabold tracking-widest text-red-500 hover:text-red-400 font-mono transition cursor-pointer flex items-center gap-1 bg-red-950/20 px-2 py-0.5 rounded border border-red-900/30"
+              >
+                ✕ {lang === "pt" ? "Mostrar Todas" : lang === "es" ? "Mostrar Todas" : "Show All"}
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-1.5 py-0.5">
+            {alphabet.map((letter) => {
+              const hasBands = availableLetters.includes(letter);
+              const isSelected = selectedLetter === letter;
+              return (
+                <button
+                  key={letter}
+                  type="button"
+                  disabled={!hasBands}
+                  onClick={() => handleLetterClick(letter)}
+                  className={`w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg text-xs font-bold font-mono transition-all duration-200 cursor-pointer ${
+                    isSelected
+                      ? "bg-red-600 text-white shadow-lg shadow-red-950/50 scale-110 border border-red-500"
+                      : hasBands
+                      ? "bg-neutral-900 border border-neutral-800 text-neutral-200 hover:bg-neutral-800 hover:text-white hover:border-red-900/50"
+                      : "bg-neutral-950/40 border border-neutral-950/15 text-neutral-600 opacity-20 cursor-not-allowed"
+                  }`}
+                  title={
+                    hasBands 
+                      ? (lang === "pt" ? `Ver bandas com ${letter}` : `View bands with ${letter}`) 
+                      : (lang === "pt" ? "Nenhuma banda" : "No bands")
+                  }
+                >
+                  {letter}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {filteredBands.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 bg-neutral-950/40 border border-neutral-800/50 p-3 rounded-xl">
           <div className="flex items-center gap-2">
@@ -1047,9 +1129,17 @@ export const BandSection: React.FC<BandSectionProps> = ({
             const bioText = typeof band.bio === "string" ? band.bio : (band.bio[lang] || band.bio["en"] || "");
 
             return (
-              <div
+              <motion.div
                 key={band.id}
                 id={`band-card-${band.id}`}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+                transition={{ 
+                  opacity: { duration: 0.4 },
+                  y: { duration: 0.4 },
+                  scale: { duration: 0.2, ease: "easeOut" }
+                }}
                 className={`${
                   index % 2 === 0 
                     ? "bg-black hover:bg-neutral-950 border border-neutral-900" 
@@ -1119,7 +1209,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
                   {/* BIO Paragraph */}
                   {bioText && bioText.trim() !== "" && (
-                    <p className="text-xs text-stone-400 leading-relaxed font-sans line-clamp-3 mb-3">
+                    <p className="text-xs text-stone-400 leading-relaxed font-sans mb-3">
                       {bioText}
                     </p>
                   )}
@@ -1304,14 +1394,14 @@ export const BandSection: React.FC<BandSectionProps> = ({
                 <button
                   id={`btn-toggle-expand-band-${band.id}`}
                   onClick={() => setExpandedBandId(isExpanded ? null : (band.id || null))}
-                  className="w-full mt-4 bg-neutral-950 hover:bg-neutral-850 py-2 rounded-lg text-[10px] font-mono tracking-widest uppercase transition text-neutral-300 border border-neutral-800/80 flex items-center justify-center gap-1"
+                  className="w-full mt-4 bg-neutral-950 hover:bg-neutral-850 py-2 rounded-lg text-[10px] font-mono tracking-widest uppercase transition text-neutral-300 border border-neutral-800/80 flex items-center justify-center gap-1 cursor-pointer"
                 >
                   {isExpanded 
                     ? (lang === "pt" ? "▲ Recolher Detalhes" : "▲ Collapse Details")
                     : (lang === "pt" ? "▼ Mostrar Discografia" : "▼ Show Discography")
                   }
                 </button>
-              </div>
+              </motion.div>
             );
           })}
         </div>
