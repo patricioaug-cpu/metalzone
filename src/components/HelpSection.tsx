@@ -30,12 +30,12 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
     if (lang === "pt") {
       return [
         {
-          q: "Como proponho uma nova banda para o catálogo?",
-          a: "Acesse a aba 'Bandas' e clique em 'Cadastrar Nova Banda'. Digite o nome da banda e clique no botão de faísca (IA Gemini) para preencher tudo automaticamente! Não é necessário realizar login."
+          q: "Como cadastro novas bandas, festivais, shows ou notícias?",
+          a: "Como não existem mais botões de cadastro público direto no aplicativo, toda a inserção de novos conteúdos (bandas, festivais, shows e notícias de metal) é realizada entrando em contato direto com o desenvolvedor Patrício por e-mail ou WhatsApp!"
         },
         {
-          q: "Quem aprova as bandas e novidades adicionadas?",
-          a: "Apenas o proprietário e administrador Patrício (patricioaug@gmail.com) possui acesso superior para revisar e aprovar de forma oficial todas as inserções no catálogo."
+          q: "Quem gerencia e aprova as bandas no catálogo?",
+          a: "O desenvolvedor e administrador Patrício (patricioaug@gmail.com) gerencia toda a base de dados de forma oficial, garantindo a qualidade e veracidade das informações inseridas."
         },
         {
           q: "Posso favoritar shows e festivais?",
@@ -45,31 +45,31 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
     } else if (lang === "es") {
       return [
         {
-          q: "¿Cómo propongo una nueva banda al catálogo?",
-          a: "En la sección 'Bands' haga clic en 'Registrar Nueva Banda'. ¡Escriba el nombre y use la varita inteligente de IA Gemini para completar la bio, integrantes y álbumes de forma instantánea! No es necesario iniciar sesión."
+          q: "¿Cómo registro nuevas bandas, festivales, conciertos o noticias?",
+          a: "Dado que ya no existen botones de registro público directo en la aplicación, ¡todo el ingreso de nuevo contenido (bandas, festivales, conciertos y noticias de metal) se realiza contactando directamente al desarrollador Patrício por correo electrónico o WhatsApp!"
         },
         {
           q: "¿Quién administra o aprueba las peticiones en el catálogo?",
-          a: "Exclusivamente el administrador Patrício (patricioaug@gmail.com) cuenta con poderes para moderar o borrar publicaciones."
+          a: "El administrador y desarrollador Patrício (patricioaug@gmail.com) cuenta con poderes para moderar o publicar nuevos elementos, manteniendo el orden de la plataforma."
         },
         {
           q: "¿Puedo añadir espectáculos y álbumes a favoritos?",
-          a: "¡Por supuesto! Simplemente presione o haga clic en el ícone de corazón en cualquier pancarta de show."
+          a: "¡Por supuesto! Simplemente presione o haga clic en el ícono de corazón en cualquier pancarta de show para guardarlo en sus favoritos."
         }
       ];
     } else {
       return [
         {
-          q: "How do I submit a new metal band to the catalog?",
-          a: "In the 'Bands' catalog section, click 'Register New Band'. Type your favorite band name and tap the Sparkles (Gemini AI helper) to fetch authentic details, specific genre, and full discography instantly! No login is required."
+          q: "How do I register new bands, festivals, shows, or news?",
+          a: "Since there are no longer direct public submission buttons in the application, all new entries (bands, festivals, concerts, and metal news) are registered by contacting the developer Patrício directly via email or WhatsApp!"
         },
         {
-          q: "Who moderates and approves submitted bands/artists?",
-          a: "Only our designated supreme administrator Patrício (patricioaug@gmail.com) can curate, revise, approve, or edit the database contents."
+          q: "Who moderates and approves the catalog database?",
+          a: "The supreme developer and administrator Patrício (patricioaug@gmail.com) curates, revises, and updates the entire database content officially."
         },
         {
           q: "Is there a favorites storage system?",
-          a: "Yes! Simply click the heart button next to any local gig or wacken/hellfest countdown to store it securely in your favorites cache!"
+          a: "Yes! Simply click the heart button next to any local gig or festival countdown to store it securely in your local favorites list!"
         }
       ];
     }

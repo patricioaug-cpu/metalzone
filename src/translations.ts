@@ -195,7 +195,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     helpWelcome: "Seja bem-vindo ao Metal Catalog! Saiba como utilizar a plataforma mundial do Heavy Metal:",
     faqTitle: "Perguntas Frequentes (FAQ)",
     contactDeveloperTitle: "Entrar em Contato com o Desenvolvedor",
-    contactDeveloperText: "Problemas, dúvidas, propostas de parcerias e patrocínio? Converse diretamente com Patrício!",
+    contactDeveloperText: "Para cadastrar novas bandas, festivais, shows, notícias ou para qualquer dúvida, entre em contato diretamente com o desenvolvedor Patrício!",
 
     loginTitle: "Entrar no Metal Catalog",
     registerTitle: "Criar Conta de Usuário",
@@ -314,7 +314,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     helpWelcome: "Welcome to Metal Catalog! Discover how to easily master the global Heavy Metal catalog:",
     faqTitle: "Frequently Asked Questions (FAQ)",
     contactDeveloperTitle: "Contact the Developer Behind the App",
-    contactDeveloperText: "Any issues, questions, partnership proposals, or sponsorships? Talk directly with Patrício!",
+    contactDeveloperText: "To register new bands, festivals, shows, news, or for any general inquiry, please contact the developer Patrício directly!",
 
     loginTitle: "Log In to Metal Catalog",
     registerTitle: "Create User Account",
@@ -433,7 +433,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     helpWelcome: "¡Bienvenido a Metal Catalog! Sigue estos sencillos pasos para dominar el catálogo global del Metal:",
     faqTitle: "Preguntas Frecuentes (FAQ)",
     contactDeveloperTitle: "Contactar con el Creador",
-    contactDeveloperText: "¿Problemas, dudas, propuestas comerciales o patrocinio? Hable directamente con Patrício.",
+    contactDeveloperText: "Para registrar nuevas bandas, festivales, conciertos, noticias o para cualquier consulta, ¡comuníquese directamente con el desarrollador Patrício!",
 
     loginTitle: "Ingresar a Metal Catalog",
     registerTitle: "Crear Cuenta de Usuario",

@@ -726,18 +726,18 @@ export const BandSection: React.FC<BandSectionProps> = ({
                     </p>
                   )}
                 </div>
-                <div className="flex justify-between items-center pt-2 border-t border-neutral-900 text-[10px] font-mono">
+                <div className="flex justify-between items-center pt-3 mt-1 border-t border-neutral-800 text-[11px] font-mono">
                   <button
                     type="button"
                     onClick={() => setSelectedGenres([])}
-                    className="text-zinc-500 hover:text-white transition cursor-pointer"
+                    className="text-zinc-400 hover:text-red-400 hover:bg-red-950/20 px-3 py-1.5 rounded-lg border border-transparent hover:border-red-900/30 transition cursor-pointer font-bold"
                   >
                     {lang === "pt" ? "Limpar" : "Clear"}
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsGenreDropdownOpen(false)}
-                    className="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 px-2 py-1 rounded transition cursor-pointer"
+                    className="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-1.5 rounded-lg border border-red-700 hover:border-red-600 shadow-lg shadow-red-950/50 hover:shadow-red-950/70 transition-all duration-150 cursor-pointer active:scale-95"
                   >
                     OK
                   </button>
@@ -810,7 +810,14 @@ export const BandSection: React.FC<BandSectionProps> = ({
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {sortedBands.map(b => (
-                  <div key={b.id} className="flex items-center justify-between gap-2.5 p-2 bg-neutral-900/55 border border-neutral-800/65 rounded-md hover:border-red-950/40 transition">
+                  <motion.div
+                    key={b.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ scale: 1.015 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className="flex items-center justify-between gap-2.5 p-2 bg-neutral-900/55 border border-neutral-800/65 rounded-md hover:border-red-950/40 transition shadow-sm"
+                  >
                     <div className="flex items-center gap-2 relative">
                       <span className="text-xs text-red-500 shrink-0">🎸</span>
                       <div className="truncate relative group/tooltip">
@@ -844,7 +851,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                         {lang === "pt" ? "Ver Detalhes" : "View Details"}
                       </button>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
