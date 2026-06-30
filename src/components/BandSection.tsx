@@ -208,6 +208,8 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
 
 
+
+
   const ROCK_GENRES = [
     "rock", "hard rock", "classic rock", "progressive rock", "heavy rock", 
     "grunge", "indie rock", "pop rock", "punk rock", "gothic rock", "alternative rock"

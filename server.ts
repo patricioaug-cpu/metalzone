@@ -1248,6 +1248,91 @@ Return STRICTLY this JSON schema (do NOT wrap in markdown code blocks like \`\`\
   }
 });
 
+// API: Notify email about new user access
+app.post("/api/notify-access", async (req: Request, res: Response) => {
+  const { country: clientCountry, clientTime } = req.body;
+
+  // Try to extract Vercel country/city headers
+  const countryHeader = req.headers["x-vercel-ip-country"] || req.headers["x-vercel-country"];
+  const cityHeader = req.headers["x-vercel-ip-city"] || req.headers["x-vercel-city"];
+
+  const detectedCountry = countryHeader ? String(countryHeader) : (clientCountry || "Unknown Country");
+  const detectedCity = cityHeader ? String(cityHeader) : "";
+
+  const countryStr = detectedCity ? `${detectedCity}, ${detectedCountry}` : detectedCountry;
+  const timeStr = clientTime || new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
+
+  const subject = `🤘 Metal Catalog: Novo Acesso Detectado!`;
+  const message = `Um novo usuario acessou o sistema Metal Catalog!
+
+Data/Hora: ${timeStr}
+Pais/Local: ${countryStr}
+IP (best-effort): ${req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown"}
+User Agent: ${req.headers["user-agent"] || "unknown"}
+
+Gerado por Metal Catalog Vercel Integration`;
+
+  console.log(`[ACCESS NOTIFICATION] Dispatching access email notification for: ${countryStr}`);
+
+  let sent = false;
+
+  // 1. Optional Resend Service if configured
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.RESEND_API_KEY}`
+        },
+        body: JSON.stringify({
+          from: "Metal Catalog <onboarding@resend.dev>",
+          to: ["patricioaug@gmail.com"],
+          subject: subject,
+          text: message
+        })
+      });
+      if (response.ok) {
+        sent = true;
+        console.log("Notification sent successfully via Resend API.");
+      } else {
+        const errText = await response.text();
+        console.warn("Resend API failed to dispatch:", errText);
+      }
+    } catch (err) {
+      console.warn("Resend API encountered exception:", err);
+    }
+  }
+
+  // 2. High-fidelity Fallback to NTFY.SH public email relay (No setup required!)
+  if (!sent) {
+    try {
+      const randomTopic = `metal_catalog_notify_${Math.random().toString(36).substring(7)}`;
+      const response = await fetch(`https://ntfy.sh/${randomTopic}`, {
+        method: "POST",
+        headers: {
+          "Email": "patricioaug@gmail.com",
+          "Title": subject,
+          "Priority": "high",
+          "Tags": "metal,rock,bell"
+        },
+        body: message
+      });
+      if (response.ok) {
+        sent = true;
+        console.log("Notification sent successfully via ntfy.sh zero-config mailer.");
+      } else {
+        const errText = await response.text();
+        console.warn("ntfy.sh email relay rejected request:", errText);
+      }
+    } catch (err) {
+      console.warn("ntfy.sh email relay error:", err);
+    }
+  }
+
+  res.json({ success: sent, country: countryStr, time: timeStr });
+});
+
 // Vite server connection in dev, static static-serving in prod
 const startServer = async () => {
   if (process.env.NODE_ENV !== "production") {

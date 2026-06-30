@@ -60,6 +60,53 @@ export default function App() {
 
   const t = translations[lang];
 
+  // Send access email notification when a new user enters the system
+  useEffect(() => {
+    const notified = localStorage.getItem("metal_catalog_notified_access");
+    if (!notified) {
+      const sendAccessNotification = async () => {
+        let clientCountry = "Unknown Country";
+        try {
+          const geoRes = await fetch("https://ipapi.co/json/");
+          if (geoRes.ok) {
+            const geoData = await geoRes.json();
+            clientCountry = geoData.country_name || geoData.country || "Unknown Country";
+          }
+        } catch (e) {
+          console.warn("Client-side IP geolocation lookup bypassed:", e);
+        }
+
+        const clientTime = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
+
+        try {
+          const res = await fetch("/api/notify-access", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              country: clientCountry,
+              clientTime: clientTime
+            })
+          });
+          if (res.ok) {
+            localStorage.setItem("metal_catalog_notified_access", "true");
+            console.log("Access reported successfully to patricioaug@gmail.com.");
+          }
+        } catch (err) {
+          console.error("Access notification report failed:", err);
+        }
+      };
+
+      // Delay slightly to keep initial load swift
+      const timer = setTimeout(() => {
+        sendAccessNotification();
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
