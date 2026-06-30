@@ -16,6 +16,7 @@ import { MerchSection } from "./components/MerchSection";
 import { AdminSection } from "./components/AdminSection";
 import { MonetizeSection } from "./components/MonetizeSection";
 import { HelpSection } from "./components/HelpSection";
+import { OnlineUsersTracker } from "./components/OnlineUsersTracker";
 
 import { 
   Flame, Music, Newspaper, ShoppingBag, Shield, DollarSign, HelpCircle, 
@@ -42,6 +43,8 @@ export default function App() {
   
   const [user, setUser] = useState<User | null>(null);
   const [isGuest, setIsGuest] = useState(true);
+  const [onlineCount, setOnlineCount] = useState<number>(1);
+  const [onlineUsers, setOnlineUsers] = useState<Array<{ id: string; email: string | null; isGuest: boolean; isMe: boolean }>>([]);
   const [authChecked, setAuthChecked] = useState(false);
 
   const [bands, setBands] = useState<Band[]>(SEED_BANDS);
@@ -360,6 +363,16 @@ export default function App() {
   return (
     <div className="min-h-screen bg-black text-stone-200 selection:bg-red-900 selection:text-white flex flex-col md:flex-row font-sans relative overflow-x-hidden">
       
+      {/* REAL-TIME ONLINE USERS PRESENCE SYSTEM */}
+      <OnlineUsersTracker 
+        user={user} 
+        isGuest={isGuest} 
+        onCountChange={(count, users) => {
+          setOnlineCount(count);
+          setOnlineUsers(users);
+        }} 
+      />
+      
 
       {/* GLOBAL BACKGROUND ATMOSPHERE ACCENTS */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-red-950/20 rounded-full filter blur-3xl pointer-events-none z-0"></div>
@@ -383,6 +396,15 @@ export default function App() {
             <h1 className="text-md font-black text-white uppercase tracking-widest font-mono select-none leading-none">
               Metal Catalog
             </h1>
+            <div className="flex items-center gap-1 mt-1 select-none">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+              </span>
+              <span className="text-[8.5px] text-emerald-500 font-bold uppercase tracking-wider font-mono">
+                {onlineCount} {lang === "pt" ? "ONLINE" : lang === "es" ? "EN LÍNEA" : "ONLINE"}
+              </span>
+            </div>
           </div>
         </div>
         
@@ -739,18 +761,58 @@ export default function App() {
           </div>
 
           {/* Database Info Widget inside sidebar */}
-          <div className="px-6 py-4 mx-4 mb-4 bg-neutral-900/50 border border-neutral-900 rounded-xl space-y-2 select-none text-[10px] text-neutral-500 leading-snug mt-auto">
-            <span className="text-[8px] text-red-500 font-bold uppercase tracking-widest block border-b border-neutral-850 pb-1">
+          <div className="px-6 py-4 mx-4 mb-4 bg-neutral-900/50 border border-neutral-900 rounded-xl space-y-2 text-[10px] text-neutral-500 leading-snug mt-auto relative group">
+            <span className="text-[8px] text-red-500 font-bold uppercase tracking-widest block border-b border-neutral-850 pb-1 select-none">
               {lang === "pt" ? "Estatísticas" : lang === "es" ? "Estadísticas" : "Database Stats"}
             </span>
-            <div className="flex justify-between">
+            <div className="flex justify-between select-none">
               <span>Bands Ativas:</span>
               <span className="text-stone-300 font-bold">{bands.filter(b => b.approved).length}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between select-none">
               <span>Países:</span>
               <span className="text-stone-300 font-bold">
                 {Array.from(new Set(bands.map(b => b.country).filter(Boolean))).length}
+              </span>
+            </div>
+
+            {/* ONLINE USERS INDICATOR WITH INTERACTIVE ACTIVE LIST */}
+            <div className="flex justify-between items-center pt-1.5 border-t border-neutral-900 mt-1.5">
+              <span className="flex items-center gap-1.5 select-none">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
+                <span>{lang === "pt" ? "Online agora:" : lang === "es" ? "En línea:" : "Online now:"}</span>
+              </span>
+              <span className="text-emerald-400 font-mono font-bold cursor-help relative group/tooltip">
+                {onlineCount}
+                
+                {/* TOOLTIP SHOWING ACTIVE USERS DETAIL */}
+                <span className="pointer-events-none absolute right-0 bottom-6 w-48 bg-neutral-950 border border-neutral-850 p-2.5 rounded-xl shadow-2xl opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 z-50 text-[9px] font-mono text-zinc-400 space-y-1 block">
+                  <span className="text-[8px] font-bold uppercase tracking-wider text-emerald-400 block border-b border-neutral-900 pb-1">
+                    {lang === "pt" ? "Usuários Ativos" : lang === "es" ? "Usuarios Activos" : "Active Users"}
+                  </span>
+                  <span className="block max-h-24 overflow-y-auto space-y-1">
+                    {onlineUsers.map((u, i) => (
+                      <span key={u.id || i} className="flex justify-between items-center gap-1">
+                        <span className="truncate max-w-[120px] text-[8.5px]">
+                          {u.isMe 
+                            ? (lang === "pt" ? "Você" : lang === "es" ? "Tú" : "You")
+                            : (u.email ? u.email.split("@")[0] : `Guest_${u.id.substring(5, 9)}`)}
+                        </span>
+                        <span className="text-[7.5px] bg-neutral-900 px-1 rounded text-zinc-500 shrink-0">
+                          {u.isGuest ? "guest" : "member"}
+                        </span>
+                      </span>
+                    ))}
+                    {onlineUsers.length === 0 && (
+                      <span className="text-zinc-600 block text-center py-1">
+                        {lang === "pt" ? "Calculando..." : "Calculating..."}
+                      </span>
+                    )}
+                  </span>
+                </span>
               </span>
             </div>
           </div>
