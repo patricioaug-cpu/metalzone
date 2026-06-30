@@ -7,8 +7,11 @@ import { User } from "firebase/auth";
 import { getProxiedImageUrl } from "../utils/imageProxy";
 import { 
   Sparkles, Globe, Calendar, Music, UserCheck, Disc, Mail, Phone, 
-  MapPin, Plus, Trash2, Edit2, CheckCircle, Clock, ExternalLink, X, Youtube
+  MapPin, Plus, Trash2, Edit2, CheckCircle, Clock, ExternalLink, X, Youtube,
+  Share2, QrCode, Play
 } from "lucide-react";
+import { BandSkeletonList } from "./SkeletonLoader";
+import { QRCodeSVG } from "qrcode.react";
 
 // @ts-ignore
 import metalCatalogLogo from "../assets/images/metal_catalog_logo_1782380109985.jpg";
@@ -97,6 +100,7 @@ interface BandSectionProps {
   onEditBand: (id: string, updated: Partial<Band>) => Promise<void>;
   isRefreshing: boolean;
   globalSearch?: string;
+  isLoading?: boolean;
 }
 
 export const BandSection: React.FC<BandSectionProps> = ({
@@ -107,17 +111,23 @@ export const BandSection: React.FC<BandSectionProps> = ({
   onDeleteBand,
   onEditBand,
   isRefreshing,
-  globalSearch
+  globalSearch,
+  isLoading
 }) => {
   const t = translations[lang];
   const isAdmin = user?.email === "patricioaug@gmail.com";
   const isLogged = true;
 
   const [search, setSearch] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("");
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
+  const [genreSearch, setGenreSearch] = useState("");
+  const [sharingBand, setSharingBand] = useState<Band | null>(null);
+  const [copiedText, setCopiedText] = useState(false);
+  const [qrBand, setQrBand] = useState<Band | null>(null);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
-  const [appliedGenre, setAppliedGenre] = useState("");
+  const [appliedGenres, setAppliedGenres] = useState<string[]>([]);
   const [appliedCountry, setAppliedCountry] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
@@ -198,7 +208,17 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
 
 
-  const allGenres = Array.from(new Set(bands.map(b => b.genre.toLowerCase()).filter(Boolean)));
+  const ROCK_GENRES = [
+    "rock", "hard rock", "classic rock", "progressive rock", "heavy rock", 
+    "grunge", "indie rock", "pop rock", "punk rock", "gothic rock", "alternative rock"
+  ];
+
+  const allGenres = Array.from(
+    new Set([
+      ...bands.map(b => b.genre.toLowerCase().trim()),
+      ...ROCK_GENRES
+    ].filter(Boolean))
+  ).sort((a, b) => a.localeCompare(b));
   
   const allCountries = Array.from(
     new Set(
@@ -249,9 +269,11 @@ export const BandSection: React.FC<BandSectionProps> = ({
       matchesSearch = standardMatch || matchChristianMetal || matchChristianRock;
     }
     
-    const matchesGenre = matchedIds !== null || !appliedGenre || 
-      bGenre.includes(appliedGenre.toLowerCase()) || 
-      appliedGenre.toLowerCase().includes(bGenre);
+    const matchesGenre = matchedIds !== null || appliedGenres.length === 0 || 
+      appliedGenres.some(g => {
+        const target = g.toLowerCase().trim();
+        return bGenre.includes(target) || target.includes(bGenre);
+      });
     const matchesCountry = matchedIds !== null || !appliedCountry || (band.country || "").toLowerCase() === appliedCountry.toLowerCase();
     
     // Gemini Natural Language matched IDs validation
@@ -517,7 +539,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const handleManualSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setAppliedSearch(search);
-    setAppliedGenre(selectedGenre);
+    setAppliedGenres(selectedGenres);
     setAppliedCountry(selectedCountry);
     setHasSearched(true);
     // Clear Gemini search to avoid conflicting active states
@@ -526,10 +548,10 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
   const handleClearManualSearch = () => {
     setSearch("");
-    setSelectedGenre("");
+    setSelectedGenres([]);
     setSelectedCountry("");
     setAppliedSearch("");
-    setAppliedGenre("");
+    setAppliedGenres([]);
     setAppliedCountry("");
     setHasSearched(false);
   };
@@ -540,7 +562,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
     setFormError("");
 
     if (!formName || !formGenre) {
-      setFormError(lang === "pt" ? "Nome e subgêneros são obrigatórios!" : "Name and subgenre are required!");
+      setFormError(lang === "pt" ? "Nome e gênero são obrigatórios!" : "Name and genre are required!");
       return;
     }
 
@@ -629,253 +651,6 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
   return (
     <div id="band-section-wrapper" className="space-y-6">
-      {isLogged && (
-        <div className="flex justify-end">
-          <button
-            id="btn-trigger-add-band"
-            onClick={() => {
-              setShowSubmitForm(!showSubmitForm);
-              setFormError("");
-            }}
-            className="px-4 py-2 bg-red-950 border border-red-800/40 hover:bg-red-900 text-white rounded-lg text-xs font-bold font-mono tracking-widest uppercase transition-all flex items-center gap-2 cursor-pointer"
-          >
-            <Plus size={14} />
-            {t.submitBandBtn}
-          </button>
-        </div>
-      )}
-
-      {/* ADD/SUBMIT BAND FORM CONTAINER */}
-      {showSubmitForm && isLogged && (
-        <form onSubmit={handleSubmitBand} className="bg-neutral-900 border border-red-950 p-6 rounded-xl space-y-4 relative">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-red-900/10 rounded-full filter blur-xl"></div>
-          
-          <div className="flex justify-between items-center border-b border-neutral-800 pb-2">
-            <h3 className="text-sm font-mono font-bold text-red-500 uppercase tracking-widest flex items-center gap-1.5">
-              <Sparkles size={14} />
-              {t.submitBandTitle}
-            </h3>
-            <span className="text-[10px] text-neutral-500 font-mono">
-              {isAdmin 
-                ? (lang === "pt" ? "Aprovação Automática (Admin)" : "Auto Approve (Admin)")
-                : t.pendingText}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">{t.bandNameField} *</label>
-              <div className="flex gap-1">
-                <input
-                  type="text"
-                  value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
-                  placeholder="Ex: Sepultura"
-                  className="flex-1 bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={handleAIFill}
-                  disabled={aiLoading}
-                  title={t.aiCompleteBtn}
-                  className="px-2.5 bg-red-900 hover:bg-red-800 text-white rounded text-xs transition duration-200 flex items-center justify-center"
-                >
-                  {aiLoading ? "⌛" : <Sparkles size={14} className="animate-pulse" />}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">{t.bandGenreField} *</label>
-              <input
-                type="text"
-                value={formGenre}
-                onChange={(e) => setFormGenre(e.target.value)}
-                placeholder="Ex: Melodic Death Metal"
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">{t.bandCountryField}</label>
-              <input
-                type="text"
-                value={formCountry}
-                onChange={(e) => setFormCountry(e.target.value)}
-                placeholder="Ex: Brazil"
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">{t.formationYear}</label>
-              <input
-                type="number"
-                value={formYear}
-                onChange={(e) => setFormYear(Number(e.target.value))}
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">{t.bandLogoField}</label>
-              <input
-                type="url"
-                value={formLogoUrl}
-                onChange={(e) => setFormLogoUrl(e.target.value)}
-                placeholder="https://..."
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-              />
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-1">
-                <label className="text-[11px] text-neutral-400 font-mono block uppercase">{t.bandPhotoField}</label>
-                <button
-                  type="button"
-                  onClick={handleSearchPhoto}
-                  disabled={photoSearching}
-                  className="text-[9px] font-mono bg-red-950/60 border border-red-900/50 hover:bg-red-900/40 text-red-400 px-2 py-0.5 rounded cursor-pointer transition flex items-center gap-1 hover:border-red-600 disabled:opacity-50"
-                  title={lang === "pt" ? "Buscar foto da banda automaticamente na internet usando a Inteligência Artificial" : "Search for band photo automatically on the internet using AI"}
-                >
-                  {photoSearching ? (
-                    <>
-                      <span className="w-2 h-2 border border-t-transparent border-red-400 rounded-full animate-spin"></span>
-                      {lang === "pt" ? "Buscando..." : "Searching..."}
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles size={10} className="animate-pulse" />
-                      {lang === "pt" ? "Buscar Foto com IA" : "Search Photo with AI"}
-                    </>
-                  )}
-                </button>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="url"
-                  value={formPhotoUrl}
-                  onChange={(e) => setFormPhotoUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="flex-1 bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-                />
-                {formPhotoUrl && formPhotoUrl.trim() !== "" && (
-                  <div className="w-8 h-8 rounded overflow-hidden border border-neutral-800 shrink-0 bg-neutral-950">
-                    <img
-                      src={getProxiedImageUrl(formPhotoUrl, 80)}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">{t.bandBioField}</label>
-            <textarea
-              rows={3}
-              value={formBio}
-              onChange={(e) => setFormBio(e.target.value)}
-              placeholder="A brief history of their legacy..."
-              className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">{t.members}</label>
-              <textarea
-                rows={3}
-                value={formMembersText}
-                onChange={(e) => setFormMembersText(e.target.value)}
-                placeholder={t.bandMembersPlaceholder}
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-400 font-mono leading-relaxed"
-              />
-            </div>
-
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">{t.discography}</label>
-              <textarea
-                rows={3}
-                value={formDiscographyText}
-                onChange={(e) => setFormDiscographyText(e.target.value)}
-                placeholder={t.bandDiscographyPlaceholder}
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-400 font-mono leading-relaxed"
-              />
-            </div>
-          </div>
-
-          <div className="border-t border-neutral-850 pt-3">
-            <h4 className="text-[11px] font-mono font-bold text-amber-500 uppercase mb-2">
-              🔗 Socials & Global Booking Contacts
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <input
-                type="text"
-                placeholder="Instagram: @band_handle"
-                value={formInstagram}
-                onChange={(e) => setFormInstagram(e.target.value)}
-                className="bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-2.5 py-1.5 rounded font-mono"
-              />
-              <input
-                type="url"
-                placeholder="Official Website URL"
-                value={formWebsite}
-                onChange={(e) => setFormWebsite(e.target.value)}
-                className="bg-neutral-950 border border-neutral-850 text-xs text-neutral-200 px-2.5 py-1.5 rounded font-mono"
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-              <input
-                type="email"
-                placeholder="Booking Email: booking@band.com"
-                value={formEmail}
-                onChange={(e) => setFormEmail(e.target.value)}
-                className="bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-2.5 py-1.5 rounded font-mono"
-              />
-              <input
-                type="text"
-                placeholder="Booking Line: +1 555-..."
-                value={formPhone}
-                onChange={(e) => setFormPhone(e.target.value)}
-                className="bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-2.5 py-1.5 rounded font-mono"
-              />
-            </div>
-          </div>
-
-          {formError && <p className="text-xs text-red-500 font-mono">⚠️ {formError}</p>}
-          {aiLoading && <p className="text-xs text-red-400 font-mono animate-pulse">⚡ {t.aiCompleting}</p>}
-
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={() => setShowSubmitForm(false)}
-              className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs font-mono rounded"
-            >
-              {t.cancelBtn}
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-1.5 bg-red-900 hover:bg-red-800 text-white text-xs font-mono font-bold rounded shadow-lg"
-            >
-              🚀 {isAdmin ? (lang === "pt" ? "Publicar Agora" : "Publish Now") : t.saveBtn}
-            </button>
-          </div>
-        </form>
-      )}
-
       {/* FILTER CONTROLS GRID */}
       <form onSubmit={handleManualSearch} className="bg-neutral-900/60 p-4 rounded-xl border border-neutral-800/80 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -893,20 +668,82 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block text-[10px] uppercase font-mono tracking-wider text-zinc-400 mb-1 font-semibold">
-              {lang === "pt" ? "🎸 Gênero de Metal" : "🎸 Metal Genre"}
+              {lang === "pt" ? "🎸 Gênero" : "🎸 Genre"}
             </label>
-            <select
-              value={selectedGenre}
-              onChange={(e) => setSelectedGenre(e.target.value)}
-              className="w-full bg-neutral-950 border border-neutral-805 text-xs text-neutral-400 px-3 py-2 rounded-lg font-mono focus:outline-none focus:border-red-600"
+            <button
+              type="button"
+              onClick={() => setIsGenreDropdownOpen(!isGenreDropdownOpen)}
+              className="w-full bg-neutral-950 border border-neutral-805 text-xs text-neutral-300 px-3 py-2 rounded-lg font-mono text-left flex justify-between items-center focus:outline-none focus:border-red-600 h-[34px]"
             >
-              <option value="">{t.allGenres}</option>
-              {allGenres.map(g => (
-                <option key={g} value={g} className="bg-neutral-950 text-neutral-200 capitalize">{g}</option>
-              ))}
-            </select>
+              <span className="truncate">
+                {selectedGenres.length === 0
+                  ? (lang === "pt" ? "Todos os Gêneros" : t.allGenres)
+                  : selectedGenres.length === 1
+                  ? `1 ${lang === "pt" ? "Gênero" : "Genre"}: ${selectedGenres[0]}`
+                  : `${selectedGenres.length} ${lang === "pt" ? "Gêneros Selecionados" : "Genres Selected"}`}
+              </span>
+              <span className="text-[10px] text-zinc-500">▼</span>
+            </button>
+
+            {isGenreDropdownOpen && (
+              <div className="absolute left-0 right-0 mt-1 bg-neutral-950 border border-neutral-800 rounded-xl p-3 z-50 space-y-2 max-h-64 overflow-y-auto shadow-2xl">
+                <input
+                  type="text"
+                  placeholder={lang === "pt" ? "Filtrar gêneros..." : "Filter genres..."}
+                  value={genreSearch}
+                  onChange={(e) => setGenreSearch(e.target.value)}
+                  className="w-full bg-neutral-900 border border-neutral-800 text-[11px] text-neutral-200 px-2.5 py-1.5 rounded focus:outline-none focus:border-red-600 font-mono"
+                />
+                <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                  {allGenres.filter(g => g.toLowerCase().includes(genreSearch.toLowerCase())).map(g => {
+                    const isChecked = selectedGenres.includes(g);
+                    return (
+                      <label
+                        key={g}
+                        className="flex items-center gap-2 px-2 py-1 rounded hover:bg-neutral-900 text-xs text-neutral-300 capitalize cursor-pointer font-mono"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {
+                            if (isChecked) {
+                              setSelectedGenres(selectedGenres.filter(x => x !== g));
+                            } else {
+                              setSelectedGenres([...selectedGenres, g]);
+                            }
+                          }}
+                          className="rounded border-neutral-800 bg-neutral-950 text-red-600 focus:ring-red-600/30 w-3.5 h-3.5"
+                        />
+                        <span>{g}</span>
+                      </label>
+                    );
+                  })}
+                  {allGenres.filter(g => g.toLowerCase().includes(genreSearch.toLowerCase())).length === 0 && (
+                    <p className="text-[10px] text-zinc-500 text-center font-mono py-1">
+                      {lang === "pt" ? "Nenhum gênero encontrado" : "No genres found"}
+                    </p>
+                  )}
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-neutral-900 text-[10px] font-mono">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedGenres([])}
+                    className="text-zinc-500 hover:text-white transition cursor-pointer"
+                  >
+                    {lang === "pt" ? "Limpar" : "Clear"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsGenreDropdownOpen(false)}
+                    className="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 px-2 py-1 rounded transition cursor-pointer"
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           <div>
@@ -989,22 +826,24 @@ export const BandSection: React.FC<BandSectionProps> = ({
                         </span>
                       </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        if (b.id) {
-                          setExpandedBandId(b.id);
-                          setTimeout(() => {
-                            const el = document.getElementById(`band-card-${b.id}`);
-                            if (el) {
-                              el.scrollIntoView({ behavior: "smooth", block: "center" });
-                            }
-                          }, 100);
-                        }
-                      }}
-                      className="text-[9px] uppercase font-bold tracking-wider text-red-400 hover:text-red-350 font-mono px-2 py-1 bg-neutral-950 hover:bg-neutral-900 rounded border border-neutral-800 shrink-0 transition cursor-pointer"
-                    >
-                      {lang === "pt" ? "Ver Detalhes" : "View Details"}
-                    </button>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        onClick={() => {
+                          if (b.id) {
+                            setExpandedBandId(b.id);
+                            setTimeout(() => {
+                              const el = document.getElementById(`band-card-${b.id}`);
+                              if (el) {
+                                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                              }
+                            }, 100);
+                          }
+                        }}
+                        className="text-[9px] uppercase font-bold tracking-wider text-red-400 hover:text-red-350 font-mono px-2 py-1 bg-neutral-950 hover:bg-neutral-900 rounded border border-neutral-800 transition cursor-pointer"
+                      >
+                        {lang === "pt" ? "Ver Detalhes" : "View Details"}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1118,7 +957,9 @@ export const BandSection: React.FC<BandSectionProps> = ({
         </div>
       )}
 
-      {filteredBands.length === 0 ? (
+      {isLoading ? (
+        <BandSkeletonList />
+      ) : filteredBands.length === 0 ? (
         <div className="text-center py-12 border border-dashed border-neutral-800 rounded-xl bg-neutral-900/10">
           <p className="text-sm text-neutral-500 font-mono">{t.noBandsFound}</p>
         </div>
@@ -1176,6 +1017,20 @@ export const BandSection: React.FC<BandSectionProps> = ({
                     </div>
 
                     <div className="flex gap-1.5 shrink-0">
+                      <button
+                        onClick={() => setSharingBand(band)}
+                        className="p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-amber-500 rounded-lg transition cursor-pointer"
+                        title={lang === "pt" ? "Compartilhar Banda" : lang === "es" ? "Compartir Banda" : "Share Band"}
+                      >
+                        <Share2 size={13} />
+                      </button>
+                      <button
+                        onClick={() => setQrBand(band)}
+                        className="p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-red-500 rounded-lg transition cursor-pointer"
+                        title={lang === "pt" ? "QR Code da Banda" : lang === "es" ? "Código QR de la Banda" : "Band QR Code"}
+                      >
+                        <QrCode size={13} />
+                      </button>
                       {isAdmin && (
                         <button
                           id={`btn-del-band-${band.id}`}
@@ -1635,6 +1490,237 @@ export const BandSection: React.FC<BandSectionProps> = ({
           </div>
         </div>
       )}
+
+      {/* BAND SHARE MODAL OVERLAY */}
+      {sharingBand && (() => {
+        const shareText = (() => {
+          const bioText = typeof sharingBand.bio === "string" 
+            ? sharingBand.bio 
+            : (sharingBand.bio?.[lang] || sharingBand.bio?.pt || sharingBand.bio?.en || sharingBand.bio?.es || "");
+          
+          const membersText = sharingBand.members && sharingBand.members.length > 0
+            ? sharingBand.members.map(m => `• ${m.name} (${m.role})`).join("\n")
+            : "";
+
+          const discographyText = sharingBand.discography && sharingBand.discography.length > 0
+            ? sharingBand.discography.map(d => `• ${d.title} (${d.year} - ${d.type})`).join("\n")
+            : "";
+
+          const instagramValue = sharingBand.socials?.instagram || "";
+          const websiteValue = sharingBand.socials?.website || "";
+          const emailValue = sharingBand.contacts?.email || "";
+          const phoneValue = sharingBand.contacts?.phone || "";
+
+          let text = `🎵 *${sharingBand.name}* 🎵\n`;
+          text += `━━━━━━━━━━━━━━━━━━━━\n`;
+          text += `⚡ ${lang === "pt" ? "Gênero" : lang === "es" ? "Género" : "Genre"}: ${sharingBand.genre}\n`;
+          text += `🌍 ${lang === "pt" ? "País" : lang === "es" ? "País" : "Country"}: ${sharingBand.country}\n`;
+          if (sharingBand.formationYear) {
+            text += `📅 ${lang === "pt" ? "Ano de Formação" : lang === "es" ? "Año de Formación" : "Year Formed"}: ${sharingBand.formationYear}\n`;
+          }
+          text += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+          if (bioText.trim() !== "") {
+            text += `📖 *${lang === "pt" ? "Biografia" : lang === "es" ? "Biografía" : "Biography"}:*\n${bioText}\n\n`;
+          }
+
+          if (membersText) {
+            text += `👥 *${lang === "pt" ? "Integrantes" : lang === "es" ? "Integrantes" : "Members"}:*\n${membersText}\n\n`;
+          }
+
+          if (discographyText) {
+            text += `📀 *${lang === "pt" ? "Discografia" : lang === "es" ? "Discografía" : "Discography"}:*\n${discographyText}\n\n`;
+          }
+
+          if (instagramValue || websiteValue) {
+            text += `🔗 *Redes Sociais:*\n`;
+            if (instagramValue) text += `• Instagram: ${instagramValue}\n`;
+            if (websiteValue) text += `• Website: ${websiteValue}\n`;
+            text += `\n`;
+          }
+
+          if (emailValue || phoneValue) {
+            text += `📞 *${lang === "pt" ? "Contato" : lang === "es" ? "Contacto" : "Contact"}:*\n`;
+            if (emailValue) text += `• E-mail: ${emailValue}\n`;
+            if (phoneValue) text += `• Tel: ${phoneValue}\n`;
+            text += `\n`;
+          }
+
+          text += `🤘 Compartilhado via Metal Catalog 🤘`;
+          return text;
+        })();
+
+        const handleCopy = () => {
+          navigator.clipboard.writeText(shareText);
+          setCopiedText(true);
+          setTimeout(() => setCopiedText(false), 2000);
+        };
+
+        const handleNativeShare = async () => {
+          if (navigator.share) {
+            try {
+              await navigator.share({
+                title: sharingBand.name,
+                text: shareText,
+              });
+            } catch (err) {
+              console.log("Native share error:", err);
+            }
+          }
+        };
+
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+        const emailUrl = `mailto:?subject=${encodeURIComponent(sharingBand.name)}&body=${encodeURIComponent(shareText)}`;
+
+        return (
+          <div id="band-share-overlay" className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="relative bg-neutral-900 border border-neutral-850 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-4 font-sans text-neutral-200">
+              <button
+                onClick={() => setSharingBand(null)}
+                className="absolute top-4 right-4 p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-lg border border-neutral-800 transition cursor-pointer"
+                title="Close"
+              >
+                <X size={14} />
+              </button>
+
+              <div>
+                <h3 className="text-sm font-mono font-bold text-red-500 uppercase tracking-widest">
+                  📢 {lang === "pt" ? "Compartilhar Banda" : lang === "es" ? "Compartir Banda" : "Share Band"}
+                </h3>
+                <p className="text-xs text-neutral-400 font-mono mt-1">
+                  {lang === "pt" 
+                    ? "Veja o texto gerado e escolha como deseja compartilhar:" 
+                    : lang === "es"
+                    ? "Vea el texto generado y elija cómo desea compartir:"
+                    : "Review the generated text and choose how you want to share:"}
+                </p>
+              </div>
+
+              {/* Text Preview Area */}
+              <div className="bg-neutral-950 border border-neutral-850 rounded-lg p-3.5 max-h-[40vh] overflow-y-auto font-mono text-[11px] whitespace-pre-wrap select-text leading-relaxed text-zinc-300">
+                {shareText}
+              </div>
+
+              {/* Action Buttons Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+                <button
+                  onClick={handleCopy}
+                  className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition duration-200 cursor-pointer flex items-center justify-center gap-2 ${
+                    copiedText 
+                      ? "bg-emerald-900 text-emerald-100 border border-emerald-700" 
+                      : "bg-neutral-850 hover:bg-neutral-800 text-neutral-200 border border-neutral-800"
+                  }`}
+                >
+                  📋 {copiedText 
+                    ? (lang === "pt" ? "Copiado!" : lang === "es" ? "¡Copiado!" : "Copied!") 
+                    : (lang === "pt" ? "Copiar Texto" : lang === "es" ? "Copiar Texto" : "Copy Text")}
+                </button>
+
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-900/40 rounded-lg text-xs font-mono font-bold transition duration-200 flex items-center justify-center gap-2 cursor-pointer text-center"
+                >
+                  💬 {lang === "pt" ? "WhatsApp" : "WhatsApp"}
+                </a>
+
+                <a
+                  href={emailUrl}
+                  className="px-4 py-2 bg-blue-950/40 hover:bg-blue-900/40 text-blue-400 border border-blue-900/40 rounded-lg text-xs font-mono font-bold transition duration-200 flex items-center justify-center gap-2 cursor-pointer text-center"
+                >
+                  ✉️ {lang === "pt" ? "Enviar por E-mail" : lang === "es" ? "Enviar por Correo" : "Send Email"}
+                </a>
+
+                {typeof navigator !== 'undefined' && navigator.share && (
+                  <button
+                    onClick={handleNativeShare}
+                    className="px-4 py-2 bg-purple-950/40 hover:bg-purple-900/40 text-purple-400 border border-purple-900/40 rounded-lg text-xs font-mono font-bold transition duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    📱 {lang === "pt" ? "Sistema / Outros" : lang === "es" ? "Sistema / Otros" : "System Share"}
+                  </button>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-2 border-t border-neutral-850">
+                <button
+                  onClick={() => setSharingBand(null)}
+                  className="px-4 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-zinc-300 text-xs font-mono font-bold rounded-lg transition cursor-pointer"
+                >
+                  {lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : "Close"}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* QR CODE GENERATOR MODAL OVERLAY */}
+      {qrBand && (() => {
+        const qrValue = (() => {
+          let text = `🎵 ${qrBand.name} 🎵\n`;
+          text += `⚡ Genre: ${qrBand.genre}\n`;
+          text += `🌍 Country: ${qrBand.country}\n`;
+          if (qrBand.formationYear) {
+            text += `📅 Formed: ${qrBand.formationYear}\n`;
+          }
+          if (qrBand.socials?.website) {
+            text += `🔗 Web: ${qrBand.socials.website}\n`;
+          }
+          if (qrBand.socials?.instagram) {
+            text += `📸 IG: ${qrBand.socials.instagram}\n`;
+          }
+          return text;
+        })();
+
+        return (
+          <div id="band-qr-overlay" className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="relative bg-neutral-900 border border-neutral-850 rounded-2xl w-full max-w-sm p-6 shadow-2xl space-y-4 font-sans text-neutral-200 text-center">
+              <button
+                onClick={() => setQrBand(null)}
+                className="absolute top-4 right-4 p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-lg border border-neutral-800 transition cursor-pointer"
+                title="Close"
+              >
+                <X size={14} />
+              </button>
+
+              <div className="space-y-1">
+                <h3 className="text-sm font-mono font-bold text-red-500 uppercase tracking-widest">
+                  📱 {lang === "pt" ? "Compartilhar via QR Code" : lang === "es" ? "Compartir vía QR Code" : "Scan to Share"}
+                </h3>
+                <p className="text-xs text-neutral-400 font-mono">
+                  {qrBand.name}
+                </p>
+              </div>
+
+              {/* QR Container with pristine high-contrast padding */}
+              <div className="flex justify-center items-center py-4">
+                <div className="p-4 bg-white rounded-xl shadow-inner border border-neutral-200">
+                  <QRCodeSVG 
+                    value={qrValue} 
+                    size={200}
+                    level="M"
+                    includeMargin={true}
+                  />
+                </div>
+              </div>
+
+              <div className="text-[10px] text-zinc-400 font-mono leading-relaxed bg-neutral-950 p-3 rounded-lg border border-neutral-850 text-left whitespace-pre-wrap select-all">
+                {qrValue}
+              </div>
+
+              <div className="flex justify-center pt-2">
+                <button
+                  onClick={() => setQrBand(null)}
+                  className="px-6 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-zinc-300 text-xs font-mono font-bold rounded-lg transition cursor-pointer"
+                >
+                  {lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : "Close"}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

@@ -3097,5 +3097,124 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     contacts: {},
     approved: true,
     submittedBy: "system"
+  },
+  {
+    name: "Edge of Paradise",
+    country: "United States",
+    formationYear: 2011,
+    genre: "Melodic Metal / Hard Rock",
+    bio: {
+      pt: "Formada em Los Angeles, Califórnia, em 2011, a banda Edge of Paradise, liderada pelos vocais dinâmicos e teatrais de Margarita Monet e as guitarras pesadas de Dave Bates, é aclamada por fundir heavy metal clássico, elementos sinfônicos industriais e ganchos melódicos modernos extremamente marcantes.",
+      en: "Formed in Los Angeles, California, in 2011, Edge of Paradise, fronted by the dynamic and theatrical vocals of Margarita Monet alongside Dave Bates' heavy guitar work, is acclaimed for fusing classic heavy metal with symphonic industrial elements and extremely catchy modern melodic hooks.",
+      es: "Formada en Los Ángeles, California, en 2011, Edge of Paradise, liderada por la voz dinámica y teatral de Margarita Monet y las potentes guitarras de Dave Bates, es aclamada por fusionar heavy metal clásico con elementos sinfónicos industriales y ganchos melódicos modernos."
+    },
+    members: [
+      { name: "Margarita Monet", role: "Vocals", status: "active" },
+      { name: "Dave Bates", role: "Guitars", status: "active" },
+      { name: "David Anson", role: "Drums", status: "active" },
+      { name: "Kenny Kanowski", role: "Bass", status: "active" }
+    ],
+    discography: [
+      { title: "Mask", year: 2012, type: "Album" },
+      { title: "Immortal Waltz", year: 2015, type: "Album" },
+      { title: "Universe", year: 2019, type: "Album" },
+      { title: "The Unknown", year: 2021, type: "Album" },
+      { title: "Hologram", year: 2023, type: "Album" }
+    ],
+    socials: {
+      instagram: "@edgeofparadise",
+      website: "https://www.edgeofparadiseband.com"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Starkill",
+    country: "United States",
+    formationYear: 2012,
+    genre: "Melodic Death Metal",
+    bio: {
+      pt: "Vindo de Chicago, Illinois, o Starkill mescla de forma magistral a velocidade implacável e agressividade do melodic death metal com orquestrações sinfônicas grandiosas de power metal e solos de guitarra neoclássicos de altíssima técnica.",
+      en: "Hailing from Chicago, Illinois, Starkill masterfully blends the relentless speed and aggression of melodic death metal with grandiose symphonic power metal orchestrations and highly technical neoclassical guitar solos.",
+      es: "Procedente de Chicago, Illinois, Starkill combina magistralmente la velocidad y agresión del death metal melódico con grandiosas orquestaciones de power metal sinfónico y solos de guitarra neoclásicos de alta técnica."
+    },
+    members: [
+      { name: "Parker Jameson", role: "Vocals, Guitars, Keyboards", status: "active" },
+      { name: "Spencer Weidner", role: "Drums", status: "active" },
+      { name: "Tony Keathley", role: "Guitars, Vocals", status: "active" },
+      { name: "Shaun Andruchuk", role: "Bass", status: "active" }
+    ],
+    discography: [
+      { title: "Fires of Life", year: 2013, type: "Album" },
+      { title: "Virus of the Mind", year: 2014, type: "Album" },
+      { title: "Shadow Sleep", year: 2016, type: "Album" },
+      { title: "Gravity", year: 2019, type: "Album" }
+    ],
+    socials: {
+      instagram: "@starkillofficial",
+      website: "https://www.starkill.net"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Give It Uai",
+    country: "Brazil",
+    formationYear: 2021,
+    genre: "Funk Rock / Alternative Rock",
+    bio: {
+      pt: "Sediada em Belo Horizonte (MG), a Give It Uai é uma renomada banda tributo ao Red Hot Chili Peppers. O grupo reproduz com fidelidade absurda e energia contagiante a presença de palco, a fusão única de funk-rock, as linhas de baixo marcantes e os maiores hits mundiais da icônica banda californiana, sendo um enorme destaque nas casas de rock mineiras.",
+      en: "Based in Belo Horizonte, Brazil, Give It Uai is a highly acclaimed Red Hot Chili Peppers tribute band. The group delivers incredibly faithful and energetic performances of RHCP's unique funk-rock fusion, legendary basslines, and massive global hits, standing out as a premier live act in the Minas Gerais rock scene.",
+      es: "Con sede en Belo Horizonte, Brasil, Give It Uai es una aclamada banda tributo a Red Hot Chili Peppers. El grupo reproduce con gran fidelidad y energía contagiosa la fusión única de funk-rock, las líneas de bajo emblemáticas y los mayores éxitos mundiales de la icónica banda californiana."
+    },
+    members: [
+      { name: "Jeremias", role: "Vocals & Guitars", status: "active" }
+    ],
+    discography: [
+      { title: "Give It Away (Live Tribute)", year: 2022, type: "Single" }
+    ],
+    socials: {
+      instagram: "@give_it_uai",
+      website: "https://wa.me/31982259624"
+    },
+    contacts: {
+      phone: "+55 31 98225-9624"
+    },
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Cavalera Conspiracy",
+    country: "Brazil",
+    formationYear: 2007,
+    genre: "Thrash Metal / Groove Metal",
+    bio: {
+      pt: "Formada em 2007 pelos lendários irmãos fundadores do Sepultura, Max e Iggor Cavalera, após uma reconciliação histórica após mais de uma década sem se falar. O Cavalera Conspiracy entrega um thrash/groove metal devastador, veloz e brutal, mantendo viva a chama do metal extremo e celebrando a parceria musical mais famosa do metal latino-americano.",
+      en: "Formed in 2007 by the legendary founding brothers of Sepultura, Max and Iggor Cavalera, following their historic reconciliation after a decade of silence. Cavalera Conspiracy delivers devastatingly fast and heavy thrash/groove metal, keeping the spirit of extreme metal alive and celebrating the most iconic musical partnership in South American metal history.",
+      es: "Formada en 2007 por los legendarios hermanos fundadores de Sepultura, Max e Iggor Cavalera, tras una histórica reconciliación después de una década de silencio. Cavalera Conspiracy ofrece un thrash/groove metal devastador, manteniendo vivo el espíritu del metal extremo."
+    },
+    members: [
+      { name: "Max Cavalera", role: "Vocals, Rhythm Guitar", status: "active" },
+      { name: "Iggor Cavalera", role: "Drums, Percussion", status: "active" },
+      { name: "Igor Amadeus Cavalera", role: "Bass", status: "active" },
+      { name: "Travis Stone", role: "Lead Guitar", status: "active" }
+    ],
+    discography: [
+      { title: "Inflikted", year: 2008, type: "Album" },
+      { title: "Blunt Force Trauma", year: 2011, type: "Album" },
+      { title: "Pandemonium", year: 2014, type: "Album" },
+      { title: "Psychosis", year: 2017, type: "Album" },
+      { title: "Morbid Visions (Re-recorded)", year: 2023, type: "Album" },
+      { title: "Schizophrenia (Re-recorded)", year: 2024, type: "Album" }
+    ],
+    socials: {
+      instagram: "@cavaleraconspiracy",
+      website: "https://linktr.ee/cavaleraconspiracy"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
   }
 ];

@@ -136,8 +136,8 @@ export const translations: { [lang: string]: TranslationDict } = {
     appSubtitle: "O Epicentro Mundial de Rock & Heavy Metal",
     refreshBtn: "Atualizar",
     refreshing: "Sincronizando...",
-    searchPlaceholder: "Pesquisar bandas, subgêneros (ex: death metal)...",
-    allGenres: "Todos os Subgêneros de Metal",
+    searchPlaceholder: "Pesquisar bandas, gêneros (ex: death metal)...",
+    allGenres: "Todos os Gêneros",
     filterByCountry: "Filtrar por País",
     allCountries: "Todos os Países",
     
@@ -149,7 +149,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     navHelp: "Ajuda & Tutorial",
     navAdmin: "Painel Admin",
     navMonetization: "Dicas de Monetização",
-
+    
     langPT: "Português (BR)",
     langEN: "English (EN)",
     langES: "Español (ES)",
@@ -160,7 +160,7 @@ export const translations: { [lang: string]: TranslationDict } = {
 
     formationYear: "Ano de Formação",
     originCountry: "País de Origem",
-    granularGenre: "Subgênero Específico",
+    granularGenre: "Gênero Específico",
     members: "Integrantes",
     discography: "Discografia (Álbuns & EPs)",
     contactsHeader: "Contatos para Shows",
@@ -247,7 +247,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     onlyAdminPrompt: "Área exclusiva para o administrador patricioaug@gmail.com",
 
     monetizeTitle: "Estratégias de Negócio & Monetização",
-    monetizeSubtitle: "Como transformar o Metal Catalog no maior portal B2B do cenário de Heavy Metal e gerar lucros extraordinários",
+    monetizeSubtitle: "Como transformar o Metal Catalog no maior catálogo B2B do cenário de Heavy Metal e gerar lucros extraordinários",
     monetizeIntro: "Com uma comunidade altamente engajada e apaixonada por bandas de heavy metal, o Metal Catalog oferece excelentes janelas de lucro:"
   },
   en: {
@@ -256,7 +256,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     refreshBtn: "Refresh",
     refreshing: "Synchronizing...",
     searchPlaceholder: "Search bands, specific subgenres (e.g. death metal)...",
-    allGenres: "All Metal Subgenres",
+    allGenres: "All Genres",
     filterByCountry: "Filter by Country",
     allCountries: "All Countries",
     
@@ -311,9 +311,9 @@ export const translations: { [lang: string]: TranslationDict } = {
     buyMerchBtn: "Order via WhatsApp with Dev",
 
     helpTitle: "Help & Support",
-    helpWelcome: "Welcome to Metal Catalog! Discover how to easily master the global Heavy Metal portal:",
+    helpWelcome: "Welcome to Metal Catalog! Discover how to easily master the global Heavy Metal catalog:",
     faqTitle: "Frequently Asked Questions (FAQ)",
-    contactDeveloperTitle: "Contact the Developer Behind the Portal",
+    contactDeveloperTitle: "Contact the Developer Behind the App",
     contactDeveloperText: "Any issues, questions, partnership proposals, or sponsorships? Talk directly with Patrício!",
 
     loginTitle: "Log In to Metal Catalog",
@@ -357,7 +357,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     successSubmitted: "Submitted successfully! Awaiting Patrício's curation review.",
 
     adminDashboard: "Master Administrator Dashboard",
-    adminWelcome: "Welcome back, Patrício! You have full access to approve, revise, or delete all portal database entries.",
+    adminWelcome: "Welcome back, Patrício! You have full access to approve, revise, or delete all catalog database entries.",
     pendingValidation: "Awaiting Your Review",
     approveBtn: "Approve & Publish Live",
     deleteBtn: "Delete Permanently",
@@ -375,7 +375,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     refreshBtn: "Actualizar",
     refreshing: "Sincronizando...",
     searchPlaceholder: "Buscar bandas, subgéneros ultra específicos (ej: doom metal)...",
-    allGenres: "Todos los Subgéneros de Metal",
+    allGenres: "Todos los Géneros",
     filterByCountry: "Filtrar por País",
     allCountries: "Todos los Países",
     
@@ -430,7 +430,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     buyMerchBtn: "Pedir al Desarrollador por WhatsApp",
 
     helpTitle: "Ayuda y Soporte",
-    helpWelcome: "¡Bienvenido a Metal Catalog! Sigue estos sencillos pasos para dominar el portal global del Metal:",
+    helpWelcome: "¡Bienvenido a Metal Catalog! Sigue estos sencillos pasos para dominar el catálogo global del Metal:",
     faqTitle: "Preguntas Frecuentes (FAQ)",
     contactDeveloperTitle: "Contactar con el Creador",
     contactDeveloperText: "¿Problemas, dudas, propuestas comerciales o patrocinio? Hable directamente con Patrício.",

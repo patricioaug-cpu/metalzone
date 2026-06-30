@@ -41,7 +41,7 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
         <h3 className="text-sm font-bold text-red-400 uppercase tracking-widest">{t.onlyAdminPrompt}</h3>
         <p className="text-xs text-neutral-400 max-w-md mx-auto">
           {lang === "pt" 
-            ? "Para gerenciar aprovações de conteúdo enviado e administrar o portal mundial, faça login acima utilizando o e-mail administrador patricioaug@gmail.com." 
+            ? "Para gerenciar aprovações de conteúdo enviado e administrar o catálogo global, faça login acima utilizando o e-mail administrador patricioaug@gmail.com." 
             : "To authorize user submissions and moderate the rock index, authenticate above as the system manager patricioaug@gmail.com."}
         </p>
       </div>

@@ -38,7 +38,7 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
         },
         {
           title: "5. Programa de Afiliados para Ingressos",
-          desc: "Faça parceria com grandes tiqueteiras como Sympla, Eventim ou Ticketmaster para receber comissões automáticas para cada ingresso de show ou festival comprado clicando no botão do portal.",
+          desc: "Faça parceria com grandes tiqueteiras como Sympla, Eventim ou Ticketmaster para receber comissões automáticas para cada ingresso de show ou festival comprado clicando no botão do aplicativo.",
           profit: "3% a 7% de comissão por ticket vendido",
           icon: <Landmark className="text-indigo-400" size={20} />
         }
@@ -47,7 +47,7 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
       return [
         {
           title: "1. Promoción B2B de Bandas",
-          desc: "Las agrupaciones de metal pagan un abono por destacar sus lanzamientos, portadas y fechas de conciertos en la cabecera mundial del portal.",
+          desc: "Las agrupaciones de metal pagan un abono por destacar sus lanzamientos, portadas y fechas de conciertos en la cabecera mundial de la aplicación.",
           profit: "USD 15 - USD 50 mensuales por banda",
           icon: <Award className="text-amber-500" size={20} />
         },
@@ -74,7 +74,7 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
       return [
         {
           title: "1. B2B Band Promotion Spotlights",
-          desc: "Extreme metal artists and labels pay a recurring subscription to promote their latest EPs, singles, and contact portals on top grids.",
+          desc: "Extreme metal artists and labels pay a recurring subscription to promote their latest EPs, singles, and contact channels on top grids.",
           profit: "$15.00 - $60.00 / monthly billing",
           icon: <Award className="text-amber-500" size={20} />
         },
@@ -159,7 +159,7 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
           </h4>
           <p className="text-[11px] text-neutral-400 max-w-xl font-sans font-medium">
             {lang === "pt"
-              ? "Este aplicativo está totalmente estruturado e compatível com as diretrizes do Google Play Console. Use essas estratégias de monetização para transformar sua paixão por heavy metal em um portal lucrativo!"
+              ? "Este aplicativo está totalmente estruturado e compatível com as diretrizes do Google Play Console. Use essas estratégias de monetização para transformar sua paixão por heavy metal em um aplicativo lucrativo!"
               : "This application conforms strictly to standard high-performance guidelines. Deploy seamlessly to play store and customize these direct monetization engines with your partners!"}
           </p>
         </div>

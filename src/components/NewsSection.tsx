@@ -3,6 +3,7 @@ import { NewsItem } from "../firebase";
 import { translations } from "../translations";
 import { User } from "firebase/auth";
 import { Newspaper, Plus, Trash2, Calendar, CheckCircle } from "lucide-react";
+import { NewsSkeletonList } from "./SkeletonLoader";
 
 interface NewsSectionProps {
   news: NewsItem[];
@@ -10,6 +11,7 @@ interface NewsSectionProps {
   lang: "pt" | "en" | "es";
   onAddNews: (item: Omit<NewsItem, "id">) => Promise<boolean>;
   onDeleteNews: (id: string) => Promise<void>;
+  isLoading?: boolean;
 }
 
 export const NewsSection: React.FC<NewsSectionProps> = ({
@@ -17,7 +19,8 @@ export const NewsSection: React.FC<NewsSectionProps> = ({
   user,
   lang,
   onAddNews,
-  onDeleteNews
+  onDeleteNews,
+  isLoading
 }) => {
   const t = translations[lang];
   const isAdmin = user?.email === "patricioaug@gmail.com";
@@ -152,7 +155,9 @@ export const NewsSection: React.FC<NewsSectionProps> = ({
         </form>
       )}
 
-      {filteredNews.length === 0 ? (
+      {isLoading ? (
+        <NewsSkeletonList />
+      ) : filteredNews.length === 0 ? (
         <div className="text-center py-12 border border-dashed border-neutral-800 rounded-xl bg-neutral-900/10">
           <p className="text-sm text-neutral-500 font-mono">{t.noNewsFound}</p>
         </div>

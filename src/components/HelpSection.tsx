@@ -35,7 +35,7 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
         },
         {
           q: "Quem aprova as bandas e novidades adicionadas?",
-          a: "Apenas o proprietário e administrador Patrício (patricioaug@gmail.com) possui acesso superior para revisar e aprovar de forma oficial todas as inserções no portal."
+          a: "Apenas o proprietário e administrador Patrício (patricioaug@gmail.com) possui acesso superior para revisar e aprovar de forma oficial todas as inserções no catálogo."
         },
         {
           q: "Posso favoritar shows e festivais?",
@@ -49,7 +49,7 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
           a: "En la sección 'Bands' haga clic en 'Registrar Nueva Banda'. ¡Escriba el nombre y use la varita inteligente de IA Gemini para completar la bio, integrantes y álbumes de forma instantánea! No es necesario iniciar sesión."
         },
         {
-          q: "¿Quién administra o aprueba las peticiones en el portal?",
+          q: "¿Quién administra o aprueba las peticiones en el catálogo?",
           a: "Exclusivamente el administrador Patrício (patricioaug@gmail.com) cuenta con poderes para moderar o borrar publicaciones."
         },
         {

@@ -5,8 +5,10 @@ import { User } from "firebase/auth";
 import { getProxiedImageUrl } from "../utils/imageProxy";
 import { 
   Calendar, MapPin, Tag, Plus, CheckCircle, ExternalLink, Flame, 
-  Hourglass, Ticket, Star, ThumbsUp, Filter, Heart 
+  Hourglass, Ticket, Star, ThumbsUp, Filter, Heart, Share2, X, QrCode
 } from "lucide-react";
+import { EventSkeletonList } from "./SkeletonLoader";
+import { QRCodeSVG } from "qrcode.react";
 
 interface FestivalSectionProps {
   events: EventItem[];
@@ -17,6 +19,7 @@ interface FestivalSectionProps {
   favorites: string[];
   onToggleFavorite: (id: string) => void;
   initialFilterTab?: "festivals" | "shows";
+  isLoading?: boolean;
 }
 
 // Robust image renderer with error boundaries and customized styled fallbacks
@@ -176,13 +179,17 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
   onDeleteEvent,
   favorites,
   onToggleFavorite,
-  initialFilterTab
+  initialFilterTab,
+  isLoading
 }) => {
   const t = translations[lang];
   const isAdmin = user?.email === "patricioaug@gmail.com";
   const isLogged = true;
 
   const [activeFilterTab, setActiveFilterTab] = useState<"festivals" | "shows">(initialFilterTab || "festivals");
+  const [sharingEvent, setSharingEvent] = useState<EventItem | null>(null);
+  const [copiedText, setCopiedText] = useState(false);
+  const [qrEvent, setQrEvent] = useState<EventItem | null>(null);
   
   useEffect(() => {
     if (initialFilterTab) {
@@ -401,22 +408,7 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
           </p>
         </div>
 
-        {isLogged && (
-          <button
-            id="btn-register-show"
-            onClick={() => {
-              setShowForm(!showForm);
-              setFormError("");
-              if (initialFilterTab) {
-                setIsFestival(initialFilterTab === "festivals");
-              }
-            }}
-            className="px-4 py-2 border border-rose-900/40 bg-neutral-900 hover:bg-neutral-800 text-white font-mono text-xs font-bold rounded-lg uppercase tracking-widest flex items-center gap-2 transition cursor-pointer"
-          >
-            <Plus size={14} />
-            {t.submitEventTitle}
-          </button>
-        )}
+        {/* Event registration button was removed per user request */}
       </div>
 
       {/* GEOLOCATION FINDER FOR SHOWS & BANDS */}
@@ -617,134 +609,12 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
         </div>
       )}
 
-      {/* SHOW INSERTION DIALOG FORM */}
-      {showForm && isLogged && (
-        <form onSubmit={handleSubmit} className="bg-neutral-900 border border-rose-950/30 p-6 rounded-xl space-y-4">
-          <h3 className="text-sm font-bold font-mono uppercase tracking-widest text-rose-500 border-b border-neutral-800 pb-2 flex items-center gap-1.5">
-            <Calendar size={14} />
-            {t.submitEventTitle}
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">Nome do Evento *</label>
-              <input
-                type="text"
-                placeholder="Ex: Wacken Open Air 2026"
-                value={formName}
-                onChange={(e) => setFormName(e.target.value)}
-                required
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">Data do Evento *</label>
-              <input
-                type="date"
-                value={formDate}
-                onChange={(e) => setFormDate(e.target.value)}
-                required
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">Localização (Cidade, País) *</label>
-              <input
-                type="text"
-                placeholder="Ex: Wacken, Germany"
-                value={formLocation}
-                onChange={(e) => setFormLocation(e.target.value)}
-                required
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">URL do Banner/Foto</label>
-              <input
-                type="url"
-                placeholder="https://..."
-                value={formImageUrl}
-                onChange={(e) => setFormImageUrl(e.target.value)}
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">Tipo de Evento</label>
-              <div className="flex gap-4 p-2 bg-neutral-950 border border-neutral-800 rounded">
-                <label className="flex items-center gap-2 text-xs text-neutral-300 font-mono cursor-pointer">
-                  <input
-                    type="radio"
-                    name="isFestivalRadio"
-                    checked={isFestival}
-                    onChange={() => setIsFestival(true)}
-                  />
-                  🎪 Festival Mundial
-                </label>
-                <label className="flex items-center gap-2 text-xs text-neutral-300 font-mono cursor-pointer">
-                  <input
-                    type="radio"
-                    name="isFestivalRadio"
-                    checked={!isFestival}
-                    onChange={() => setIsFestival(false)}
-                  />
-                  🎸 Show Local / Turnê
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">Link de Ingressos</label>
-              <input
-                type="url"
-                placeholder="https://..."
-                value={formTicketLink}
-                onChange={(e) => setFormTicketLink(e.target.value)}
-                className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="text-[11px] text-neutral-400 font-mono block mb-1 uppercase">Line-up (Bandas separadas por vírgulas)</label>
-            <input
-              type="text"
-              placeholder="Ex: Sepultura, Angra, Ratos de Porão"
-              value={formLineupText}
-              onChange={(e) => setFormLineupText(e.target.value)}
-              className="w-full bg-neutral-950 border border-neutral-800 text-xs text-neutral-200 px-3 py-2 rounded focus:outline-none focus:border-red-600 font-mono"
-            />
-          </div>
-
-          {formError && <p className="text-xs text-red-500 font-mono">⚠️ {formError}</p>}
-
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={() => setShowForm(false)}
-              className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs font-mono rounded"
-            >
-              {t.cancelBtn}
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-1.5 bg-rose-900 hover:bg-rose-800 text-white text-xs font-mono font-bold rounded shadow-lg"
-            >
-              🔥 Enviar para Curadoria
-            </button>
-          </div>
-        </form>
-      )}
+      {/* Event registration form removed per user request */}
 
       {/* EVENT CARDS DISPLAY GRID */}
-      {filteredEvents.length === 0 ? (
+      {isLoading ? (
+        <EventSkeletonList />
+      ) : filteredEvents.length === 0 ? (
         <div className="text-center py-12 border border-dashed border-neutral-800 rounded-xl bg-neutral-900/10">
           <p className="text-sm text-neutral-500 font-mono">{t.noEventsFound}</p>
         </div>
@@ -773,6 +643,24 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
                       {ev.name}
                     </h3>
                     <div className="flex items-center gap-1">
+                      {/* Share Button */}
+                      <button
+                        onClick={() => setSharingEvent(ev)}
+                        className="p-1 hover:bg-neutral-950 rounded bg-neutral-950/40 text-neutral-500 hover:text-amber-500 transition cursor-pointer"
+                        title={lang === "pt" ? "Compartilhar Evento" : lang === "es" ? "Compartir Evento" : "Share Event"}
+                      >
+                        <Share2 size={14} />
+                      </button>
+
+                      {/* QR Code Button */}
+                      <button
+                        onClick={() => setQrEvent(ev)}
+                        className="p-1 hover:bg-neutral-950 rounded bg-neutral-950/40 text-neutral-500 hover:text-red-500 transition cursor-pointer"
+                        title={lang === "pt" ? "QR Code do Evento" : lang === "es" ? "Código QR del Evento" : "Event QR Code"}
+                      >
+                        <QrCode size={14} />
+                      </button>
+
                       {/* Heart Button for favorited shows */}
                       <button
                         onClick={() => ev.id && onToggleFavorite(ev.id)}
@@ -852,6 +740,205 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
           })}
         </div>
       )}
+
+      {/* EVENT SHARE MODAL OVERLAY */}
+      {sharingEvent && (() => {
+        const shareText = (() => {
+          const lineupText = sharingEvent.lineup && sharingEvent.lineup.length > 0
+            ? sharingEvent.lineup.map(band => `• ${band}`).join("\n")
+            : "";
+
+          let text = `📅 *${sharingEvent.name}* 📅\n`;
+          text += `━━━━━━━━━━━━━━━━━━━━\n`;
+          text += `📆 ${lang === "pt" ? "Data" : lang === "es" ? "Fecha" : "Date"}: ${sharingEvent.date}\n`;
+          text += `📍 ${lang === "pt" ? "Local" : lang === "es" ? "Lugar" : "Location"}: ${sharingEvent.location}\n`;
+          if (sharingEvent.isFestival) {
+            text += `⭐ ${lang === "pt" ? "Tipo: Festival" : lang === "es" ? "Tipo: Festival" : "Type: Festival"}\n`;
+          }
+          if (sharingEvent.ticketLink) {
+            text += `🎟️ ${lang === "pt" ? "Ingressos" : lang === "es" ? "Entradas" : "Tickets"}: ${sharingEvent.ticketLink}\n`;
+          }
+          text += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+          if (lineupText) {
+            text += `🎸 *Lineup:*\n${lineupText}\n\n`;
+          }
+
+          text += `🤘 Compartilhado via Metal Catalog 🤘`;
+          return text;
+        })();
+
+        const handleCopy = () => {
+          navigator.clipboard.writeText(shareText);
+          setCopiedText(true);
+          setTimeout(() => setCopiedText(false), 2000);
+        };
+
+        const handleNativeShare = async () => {
+          if (navigator.share) {
+            try {
+              await navigator.share({
+                title: sharingEvent.name,
+                text: shareText,
+              });
+            } catch (err) {
+              console.log("Native share error:", err);
+            }
+          }
+        };
+
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+        const emailUrl = `mailto:?subject=${encodeURIComponent(sharingEvent.name)}&body=${encodeURIComponent(shareText)}`;
+
+        return (
+          <div id="event-share-overlay" className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="relative bg-neutral-900 border border-neutral-850 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-4 font-sans text-neutral-200">
+              <button
+                onClick={() => setSharingEvent(null)}
+                className="absolute top-4 right-4 p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-lg border border-neutral-800 transition cursor-pointer"
+                title="Close"
+              >
+                <X size={14} />
+              </button>
+
+              <div>
+                <h3 className="text-sm font-mono font-bold text-red-500 uppercase tracking-widest">
+                  📢 {lang === "pt" ? "Compartilhar Evento" : lang === "es" ? "Compartir Evento" : "Share Event"}
+                </h3>
+                <p className="text-xs text-neutral-400 font-mono mt-1">
+                  {lang === "pt" 
+                    ? "Veja o texto gerado e escolha como deseja compartilhar:" 
+                    : lang === "es"
+                    ? "Vea el texto generado y elija cómo deseja compartir:"
+                    : "Review the generated text and choose how you want to share:"}
+                </p>
+              </div>
+
+              {/* Text Preview Area */}
+              <div className="bg-neutral-950 border border-neutral-850 rounded-lg p-3.5 max-h-[40vh] overflow-y-auto font-mono text-[11px] whitespace-pre-wrap select-text leading-relaxed text-zinc-300">
+                {shareText}
+              </div>
+
+              {/* Action Buttons Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+                <button
+                  onClick={handleCopy}
+                  className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition duration-200 cursor-pointer flex items-center justify-center gap-2 ${
+                    copiedText 
+                      ? "bg-emerald-900 text-emerald-100 border border-emerald-700" 
+                      : "bg-neutral-850 hover:bg-neutral-800 text-neutral-200 border border-neutral-800"
+                  }`}
+                >
+                  📋 {copiedText 
+                    ? (lang === "pt" ? "Copiado!" : lang === "es" ? "¡Copiado!" : "Copied!") 
+                    : (lang === "pt" ? "Copiar Texto" : lang === "es" ? "Copiar Texto" : "Copy Text")}
+                </button>
+
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-900/40 rounded-lg text-xs font-mono font-bold transition duration-200 flex items-center justify-center gap-2 cursor-pointer text-center"
+                >
+                  💬 {lang === "pt" ? "WhatsApp" : "WhatsApp"}
+                </a>
+
+                <a
+                  href={emailUrl}
+                  className="px-4 py-2 bg-blue-950/40 hover:bg-blue-900/40 text-blue-400 border border-blue-900/40 rounded-lg text-xs font-mono font-bold transition duration-200 flex items-center justify-center gap-2 cursor-pointer text-center"
+                >
+                  ✉️ {lang === "pt" ? "Enviar por E-mail" : lang === "es" ? "Enviar por Correo" : "Send Email"}
+                </a>
+
+                {typeof navigator !== 'undefined' && navigator.share && (
+                  <button
+                    onClick={handleNativeShare}
+                    className="px-4 py-2 bg-purple-950/40 hover:bg-purple-900/40 text-purple-400 border border-purple-900/40 rounded-lg text-xs font-mono font-bold transition duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    📱 {lang === "pt" ? "Sistema / Outros" : lang === "es" ? "Sistema / Otros" : "System Share"}
+                  </button>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-2 border-t border-neutral-850">
+                <button
+                  onClick={() => setSharingEvent(null)}
+                  className="px-4 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-zinc-300 text-xs font-mono font-bold rounded-lg transition cursor-pointer"
+                >
+                  {lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : "Close"}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* EVENT QR CODE GENERATOR MODAL OVERLAY */}
+      {qrEvent && (() => {
+        const qrValue = (() => {
+          let text = `📅 ${qrEvent.name} 📅\n`;
+          text += `📆 Date: ${qrEvent.date}\n`;
+          text += `📍 Location: ${qrEvent.location}\n`;
+          if (qrEvent.isFestival) {
+            text += `⭐ Type: Festival\n`;
+          }
+          if (qrEvent.ticketLink) {
+            text += `🎟️ Tickets: ${qrEvent.ticketLink}\n`;
+          }
+          if (qrEvent.lineup && qrEvent.lineup.length > 0) {
+            text += `🎸 Lineup: ${qrEvent.lineup.join(", ")}\n`;
+          }
+          return text;
+        })();
+
+        return (
+          <div id="event-qr-overlay" className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="relative bg-neutral-900 border border-neutral-850 rounded-2xl w-full max-w-sm p-6 shadow-2xl space-y-4 font-sans text-neutral-200 text-center">
+              <button
+                onClick={() => setQrEvent(null)}
+                className="absolute top-4 right-4 p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-lg border border-neutral-800 transition cursor-pointer"
+                title="Close"
+              >
+                <X size={14} />
+              </button>
+
+              <div className="space-y-1">
+                <h3 className="text-sm font-mono font-bold text-red-500 uppercase tracking-widest">
+                  📱 {lang === "pt" ? "Compartilhar via QR Code" : lang === "es" ? "Compartir vía QR Code" : "Scan to Share"}
+                </h3>
+                <p className="text-xs text-neutral-400 font-mono">
+                  {qrEvent.name}
+                </p>
+              </div>
+
+              {/* QR Container with pristine high-contrast padding */}
+              <div className="flex justify-center items-center py-4">
+                <div className="p-4 bg-white rounded-xl shadow-inner border border-neutral-200">
+                  <QRCodeSVG 
+                    value={qrValue} 
+                    size={200}
+                    level="M"
+                    includeMargin={true}
+                  />
+                </div>
+              </div>
+
+              <div className="text-[10px] text-zinc-400 font-mono leading-relaxed bg-neutral-950 p-3 rounded-lg border border-neutral-850 text-left whitespace-pre-wrap select-all">
+                {qrValue}
+              </div>
+
+              <div className="flex justify-center pt-2">
+                <button
+                  onClick={() => setQrEvent(null)}
+                  className="px-6 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-zinc-300 text-xs font-mono font-bold rounded-lg transition cursor-pointer"
+                >
+                  {lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : "Close"}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

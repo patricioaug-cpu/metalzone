@@ -13,13 +13,13 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
   // Translations specifically for the Welcome experience
   const text = {
     pt: {
-      curation: "Acervo de Curadoria Underground & Clássicos",
+      curation: "Curadoria Underground & Clássicos",
     },
     en: {
-      curation: "Curated Underground & Classic Archives",
+      curation: "Curated Underground & Classics",
     },
     es: {
-      curation: "Archivo de Curaduría Underground y Clásicos",
+      curation: "Curaduría Underground y Clásicos",
     }
   }[lang];
 

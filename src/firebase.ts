@@ -535,6 +535,18 @@ export const SEED_BANDS: Band[] = [
 } as Band));
 
 export const SEED_EVENTS: EventItem[] = [
+  {
+    id: "seed-tour-solarsirens",
+    name: "Solar Sirens Tour 2026",
+    date: "2026-07-22",
+    location: "North America Tour (USA & Canada)",
+    lineup: ["Edge of Paradise", "Starkill"],
+    ticketLink: "https://www.edgeofparadiseband.com",
+    imageUrl: "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&q=80&w=1000",
+    isFestival: false,
+    approved: true,
+    submittedBy: "system"
+  },
   // --- GLOBAIS: Gigantes ---
   {
     id: "seed-festival-wacken",

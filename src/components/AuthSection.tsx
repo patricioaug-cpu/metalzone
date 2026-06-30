@@ -109,9 +109,9 @@ export const AuthSection: React.FC<AuthSectionProps> = ({ user, onAuthChange, la
             </h3>
             <p className="text-xs text-neutral-400 mt-1">
               {lang === "pt" 
-                ? "Acesso total aos recursos do portal principal." 
+                ? "Acesso total aos recursos do catálogo principal." 
                 : lang === "es"
-                ? "Acceso total a los recursos del portal principal."
+                ? "Acceso total a los recursos del catálogo principal."
                 : "Full access to global rock catalog resources."}
             </p>
           </div>
@@ -179,7 +179,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({ user, onAuthChange, la
         >
           {loading 
             ? (lang === "pt" ? "Acessando..." : lang === "es" ? "Accediendo..." : "Accessing...") 
-            : (lang === "pt" ? "Acessar Portal" : lang === "es" ? "Acceder al Portal" : "Access Portal")}
+            : (lang === "pt" ? "Acessar Catálogo" : lang === "es" ? "Acceder al Catálogo" : "Access Catalog")}
         </button>
 
         <div className="flex items-center my-4">

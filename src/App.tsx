@@ -48,11 +48,13 @@ export default function App() {
   const [events, setEvents] = useState<EventItem[]>(SEED_EVENTS);
   const [news, setNews] = useState<NewsItem[]>(SEED_NEWS);
   const [merch, setMerch] = useState<MerchItem[]>(SEED_MERCH);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [favoriteEvents, setFavoriteEvents] = useState<string[]>([]);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshNotify, setRefreshNotify] = useState(false);
+
   const t = translations[lang];
 
   useEffect(() => {
@@ -69,6 +71,7 @@ export default function App() {
   }, []);
 
   const fetchAllCollections = async () => {
+    setIsLoading(true);
     const fetchWithTimeout = async <T,>(promise: Promise<T>, ms: number, fallbackVal: T): Promise<T> => {
       let timeoutHandle: NodeJS.Timeout;
       const timeoutPromise = new Promise<T>((resolve) => {
@@ -168,6 +171,8 @@ export default function App() {
       setBands(SEED_BANDS);
       setEvents(SEED_EVENTS);
       setNews(SEED_NEWS);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -378,9 +383,6 @@ export default function App() {
             <h1 className="text-md font-black text-white uppercase tracking-widest font-mono select-none leading-none">
               Metal Catalog
             </h1>
-            <p className="text-[7.5px] text-zinc-500 tracking-widest uppercase font-mono mt-0.5">
-              Portal & Acervo
-            </p>
           </div>
         </div>
         
@@ -435,7 +437,6 @@ export default function App() {
                     </div>
                     <div>
                       <span className="text-md font-black text-white tracking-widest block leading-none">METAL CATALOG</span>
-                      <span className="text-[7.5px] text-zinc-500 tracking-widest uppercase font-mono block mt-1">Portal & Acervo</span>
                     </div>
                   </div>
                   <button 
@@ -607,7 +608,7 @@ export default function App() {
                 Metal Catalog
               </h1>
               <p className="text-[8px] text-zinc-500 uppercase tracking-widest mt-2.5 font-bold">
-                {lang === "pt" ? "Enciclopédia & Acervo" : lang === "es" ? "Enciclopedia & Acervo" : "Metal Wiki & Logs"}
+                {lang === "pt" ? "Enciclopédia" : lang === "es" ? "Enciclopedia" : "Metal Wiki & Logs"}
               </p>
             </div>
           </div>
@@ -740,7 +741,7 @@ export default function App() {
           {/* Database Info Widget inside sidebar */}
           <div className="px-6 py-4 mx-4 mb-4 bg-neutral-900/50 border border-neutral-900 rounded-xl space-y-2 select-none text-[10px] text-neutral-500 leading-snug mt-auto">
             <span className="text-[8px] text-red-500 font-bold uppercase tracking-widest block border-b border-neutral-850 pb-1">
-              Stats Acervo
+              {lang === "pt" ? "Estatísticas" : lang === "es" ? "Estadísticas" : "Database Stats"}
             </span>
             <div className="flex justify-between">
               <span>Bands Ativas:</span>
@@ -866,6 +867,7 @@ export default function App() {
                     onEditBand={handleEditBand}
                     isRefreshing={isRefreshing}
                     globalSearch={deferredSearch}
+                    isLoading={isLoading}
                   />
                 )}
 
@@ -879,6 +881,7 @@ export default function App() {
                     favorites={favoriteEvents}
                     onToggleFavorite={handleToggleFavoriteEvent}
                     initialFilterTab="festivals"
+                    isLoading={isLoading}
                   />
                 )}
 
@@ -892,6 +895,7 @@ export default function App() {
                     favorites={favoriteEvents}
                     onToggleFavorite={handleToggleFavoriteEvent}
                     initialFilterTab="shows"
+                    isLoading={isLoading}
                   />
                 )}
 
@@ -902,6 +906,7 @@ export default function App() {
                     lang={lang}
                     onAddNews={handleAddNews}
                     onDeleteNews={handleDeleteNews}
+                    isLoading={isLoading}
                   />
                 )}
 
@@ -936,7 +941,7 @@ export default function App() {
         <footer className="mt-12 bg-neutral-950 border-t border-neutral-900 py-8 px-4 md:px-8 text-neutral-500 text-xs font-mono">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="space-y-1 text-center md:text-left">
-              <p className="text-stone-300 font-bold uppercase tracking-wider">🤘 Metal Catalog Portal Corporation</p>
+              <p className="text-stone-300 font-bold uppercase tracking-wider">🤘 Metal Catalog Corporation</p>
             </div>
 
             <div className="text-center md:text-right space-y-1 leading-snug">
