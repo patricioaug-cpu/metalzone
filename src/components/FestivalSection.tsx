@@ -764,7 +764,7 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
             text += `🎸 *Lineup:*\n${lineupText}\n\n`;
           }
 
-          text += `🤘 Compartilhado via Metal Catalog 🤘`;
+          text += `🤘 Compartilhado via Stay Metal 🤘`;
           return text;
         })();
 

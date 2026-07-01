@@ -141,7 +141,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({ user, onAuthChange, la
       
       <div className="text-center mb-6">
         <h2 className="text-xl font-bold text-white uppercase tracking-wider font-mono mb-2">
-          {lang === "pt" ? "Acessar o Metal Catalog" : lang === "es" ? "Acceder a Metal Catalog" : "Access Metal Catalog"}
+          {lang === "pt" ? "Acessar o Stay Metal" : lang === "es" ? "Acceder a Stay Metal" : "Access Stay Metal"}
         </h2>
         <p className="text-xs text-neutral-400 max-w-sm mx-auto leading-relaxed">
           {lang === "pt"

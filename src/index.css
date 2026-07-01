@@ -1,1 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=New+Rocker&family=Metal+Mania&display=swap');
+
+@font-face {
+  font-family: 'MetalLord';
+  src: url('https://raw.githubusercontent.com/mizofito/react-heavy-metal-bands/main/src/assets/fonts/MetalLord.woff') format('woff'),
+       url('https://raw.githubusercontent.com/mizofito/react-heavy-metal-bands/master/src/assets/fonts/MetalLord.woff') format('woff'),
+       url('https://raw.githubusercontent.com/mizofito/react-heavy-metal-bands/main/src/assets/fonts/MetalLord.ttf') format('truetype'),
+       url('https://raw.githubusercontent.com/mizofito/react-heavy-metal-bands/master/src/assets/fonts/MetalLord.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @import "tailwindcss";
+
+@theme {
+  --font-metal: "MetalLord", "New Rocker", "Metal Mania", cursive, sans-serif;
+}
+
+@utility iron-maiden-text {
+  font-family: "MetalLord", "New Rocker", "Metal Mania", cursive, sans-serif;
+  color: #ff0505;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 900;
+  text-shadow:
+    -2px -2px 0 #ffffff,  
+     2px -2px 0 #ffffff,
+    -2px  2px 0 #ffffff,
+     2px  2px 0 #ffffff,
+    -2px  0px 0 #ffffff,
+     2px  0px 0 #ffffff,
+     0px -2px 0 #ffffff,
+     0px  2px 0 #ffffff,
+     1px  3px 0 #000000,
+     2px  4px 0 #000000,
+     3px  5px 0 #000000,
+     4px  6px 5px rgba(0, 0, 0, 0.9);
+}
+

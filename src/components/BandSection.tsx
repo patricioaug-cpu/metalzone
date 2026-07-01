@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Band, BandMember, DiscographyItem } from "../firebase";
 import { translations } from "../translations";
@@ -55,7 +55,7 @@ const BandLogo: React.FC<{
   if (officialLogo !== "") {
     candidateUrls.push(officialLogo);
   }
-  // Metal Catalog fallback logo is always the final image choice
+  // Stay Metal fallback logo is always the final image choice
   candidateUrls.push(metalCatalogLogo);
 
   const currentUrl = candidateUrls[imgIndex];
@@ -73,7 +73,7 @@ const BandLogo: React.FC<{
     return (
       <img
         src={metalCatalogLogo}
-        alt="Metal Catalog Logo Fallback"
+        alt="Stay Metal Logo Fallback"
         className={`${className} rounded object-cover border border-neutral-700/60 shadow shrink-0 grow-0`}
         referrerPolicy="no-referrer"
       />
@@ -91,6 +91,8 @@ const BandLogo: React.FC<{
   );
 };
 
+
+
 interface BandSectionProps {
   bands: Band[];
   user: User | null;
@@ -100,6 +102,7 @@ interface BandSectionProps {
   onEditBand: (id: string, updated: Partial<Band>) => Promise<void>;
   isRefreshing: boolean;
   globalSearch?: string;
+  onClearGlobalSearch?: () => void;
   isLoading?: boolean;
 }
 
@@ -112,6 +115,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
   onEditBand,
   isRefreshing,
   globalSearch,
+  onClearGlobalSearch,
   isLoading
 }) => {
   const t = translations[lang];
@@ -125,15 +129,29 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const [sharingBand, setSharingBand] = useState<Band | null>(null);
   const [copiedText, setCopiedText] = useState(false);
   const [qrBand, setQrBand] = useState<Band | null>(null);
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
   const [appliedGenres, setAppliedGenres] = useState<string[]>([]);
-  const [appliedCountry, setAppliedCountry] = useState("");
+  const [appliedCountries, setAppliedCountries] = useState<string[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
   const [expandedBandId, setExpandedBandId] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (globalSearch !== undefined) {
+      setSearch(globalSearch);
+      setAppliedSearch(globalSearch);
+      if (globalSearch) {
+        setHasSearched(true);
+      } else {
+        setHasSearched(false);
+      }
+    }
+  }, [globalSearch]);
 
   const [geminiQuery, setGeminiQuery] = useState("");
   const [matchedIds, setMatchedIds] = useState<string[] | null>(null);
@@ -276,7 +294,8 @@ export const BandSection: React.FC<BandSectionProps> = ({
         const target = g.toLowerCase().trim();
         return bGenre.includes(target) || target.includes(bGenre);
       });
-    const matchesCountry = matchedIds !== null || !appliedCountry || (band.country || "").toLowerCase() === appliedCountry.toLowerCase();
+    const matchesCountry = matchedIds !== null || appliedCountries.length === 0 || 
+      appliedCountries.some(c => (band.country || "").toLowerCase() === c.toLowerCase());
     
     // Gemini Natural Language matched IDs validation
     const matchesGeminiMatched = matchedIds === null || (!!band.id && matchedIds.includes(band.id));
@@ -542,7 +561,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
     e.preventDefault();
     setAppliedSearch(search);
     setAppliedGenres(selectedGenres);
-    setAppliedCountry(selectedCountry);
+    setAppliedCountries(selectedCountries);
     setHasSearched(true);
     // Clear Gemini search to avoid conflicting active states
     setMatchedIds(null);
@@ -551,11 +570,14 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const handleClearManualSearch = () => {
     setSearch("");
     setSelectedGenres([]);
-    setSelectedCountry("");
+    setSelectedCountries([]);
     setAppliedSearch("");
     setAppliedGenres([]);
-    setAppliedCountry("");
+    setAppliedCountries([]);
     setHasSearched(false);
+    if (onClearGlobalSearch) {
+      onClearGlobalSearch();
+    }
   };
 
   // Submit Band Form
@@ -748,20 +770,82 @@ export const BandSection: React.FC<BandSectionProps> = ({
             )}
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block text-[10px] uppercase font-mono tracking-wider text-zinc-400 mb-1 font-semibold">
               {lang === "pt" ? "🌍 País de Origem" : "🌍 Country of Origin"}
             </label>
-            <select
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-              className="w-full bg-neutral-950 border border-neutral-805 text-xs text-neutral-400 px-3 py-2 rounded-lg font-mono focus:outline-none focus:border-red-600"
+            <button
+              type="button"
+              onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+              className="w-full bg-neutral-950 border border-neutral-805 text-xs text-neutral-300 px-3 py-2 rounded-lg font-mono text-left flex justify-between items-center focus:outline-none focus:border-red-600 h-[34px]"
             >
-              <option value="">{lang === "pt" ? "Todos os Países" : t.allCountries}</option>
-              {allCountries.map(c => (
-                <option key={c} value={c} className="bg-neutral-950 text-neutral-200">{c}</option>
-              ))}
-            </select>
+              <span className="truncate">
+                {selectedCountries.length === 0
+                  ? (lang === "pt" ? "Todos os Países" : t.allCountries)
+                  : selectedCountries.length === 1
+                  ? `1 ${lang === "pt" ? "País" : "Country"}: ${selectedCountries[0]}`
+                  : `${selectedCountries.length} ${lang === "pt" ? "Países Selecionados" : "Countries Selected"}`}
+              </span>
+              <span className="text-[10px] text-zinc-500">▼</span>
+            </button>
+
+            {isCountryDropdownOpen && (
+              <div className="absolute left-0 right-0 mt-1 bg-neutral-950 border border-neutral-800 rounded-xl p-3 z-50 space-y-2 max-h-64 overflow-y-auto shadow-2xl">
+                <input
+                  type="text"
+                  placeholder={lang === "pt" ? "Filtrar países..." : "Filter countries..."}
+                  value={countrySearch}
+                  onChange={(e) => setCountrySearch(e.target.value)}
+                  className="w-full bg-neutral-900 border border-neutral-800 text-[11px] text-neutral-200 px-2.5 py-1.5 rounded focus:outline-none focus:border-red-600 font-mono"
+                />
+                <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                  {allCountries.filter(c => c.toLowerCase().includes(countrySearch.toLowerCase())).map(c => {
+                    const isChecked = selectedCountries.includes(c);
+                    return (
+                      <label
+                        key={c}
+                        className="flex items-center gap-2 px-2 py-1 rounded hover:bg-neutral-900 text-xs text-neutral-300 capitalize cursor-pointer font-mono"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {
+                            if (isChecked) {
+                              setSelectedCountries(selectedCountries.filter(x => x !== c));
+                            } else {
+                              setSelectedCountries([...selectedCountries, c]);
+                            }
+                          }}
+                          className="rounded border-neutral-800 bg-neutral-950 text-red-600 focus:ring-red-600/30 w-3.5 h-3.5"
+                        />
+                        <span>{c}</span>
+                      </label>
+                    );
+                  })}
+                  {allCountries.filter(c => c.toLowerCase().includes(countrySearch.toLowerCase())).length === 0 && (
+                    <p className="text-[10px] text-zinc-500 text-center font-mono py-1">
+                      {lang === "pt" ? "Nenhum país encontrado" : "No countries found"}
+                    </p>
+                  )}
+                </div>
+                <div className="flex justify-between items-center pt-3 mt-1 border-t border-neutral-800 text-[11px] font-mono">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCountries([])}
+                    className="text-zinc-400 hover:text-red-400 hover:bg-red-950/20 px-3 py-1.5 rounded-lg border border-transparent hover:border-red-900/30 transition cursor-pointer font-bold"
+                  >
+                    {lang === "pt" ? "Limpar" : "Clear"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsCountryDropdownOpen(false)}
+                    className="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-1.5 rounded-lg border border-red-700 hover:border-red-600 shadow-lg shadow-red-950/50 hover:shadow-red-950/70 transition-all duration-150 cursor-pointer active:scale-95"
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -998,31 +1082,29 @@ export const BandSection: React.FC<BandSectionProps> = ({
               >
                 <div>
                   <div className="flex justify-between items-start gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-white group-hover:text-red-500 transition font-mono flex items-center flex-wrap gap-2">
-                          <span className="relative group/tooltip cursor-help decoration-dotted hover:underline underline-offset-4">
-                            {band.name}
-                            <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 scale-95 opacity-0 group-hover/tooltip:scale-100 group-hover/tooltip:opacity-100 transition-all duration-200 z-50 bg-neutral-950 border border-red-900/60 text-neutral-200 rounded-md p-3 shadow-2xl text-left font-mono normal-case tracking-normal">
-                              <div className="text-red-400 font-extrabold border-b border-neutral-800 pb-1 mb-1 text-[11px] truncate">{band.name}</div>
-                              <div className="space-y-1 text-[10px] text-zinc-300">
-                                <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "Gênero:" : "Genre:"}</span> {band.genre}</div>
-                                <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "País:" : "Country:"}</span> {band.country}</div>
-                                <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "Formação:" : "Year Formed:"}</span> {band.formationYear || "N/A"}</div>
-                              </div>
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-950 border-r border-b border-red-900/60 rotate-45 -mt-1"></div>
-                            </span>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-white group-hover:text-red-500 transition font-mono flex items-center flex-wrap gap-2">
+                        <span className="relative group/tooltip cursor-help decoration-dotted hover:underline underline-offset-4">
+                          {band.name}
+                          <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 scale-95 opacity-0 group-hover/tooltip:scale-100 group-hover/tooltip:opacity-100 transition-all duration-200 z-50 bg-neutral-950 border border-red-900/60 text-neutral-200 rounded-md p-3 shadow-2xl text-left font-mono normal-case tracking-normal">
+                            <div className="text-red-400 font-extrabold border-b border-neutral-800 pb-1 mb-1 text-[11px] truncate">{band.name}</div>
+                            <div className="space-y-1 text-[10px] text-zinc-300">
+                              <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "Gênero:" : "Genre:"}</span> {band.genre}</div>
+                              <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "País:" : "Country:"}</span> {band.country}</div>
+                              <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "Formação:" : "Year Formed:"}</span> {band.formationYear || "N/A"}</div>
+                            </div>
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-950 border-r border-b border-red-900/60 rotate-45 -mt-1"></div>
                           </span>
-                          {!band.approved && (
-                            <span className="bg-amber-950 border border-amber-800 text-amber-400 text-[9px] px-1.5 py-0.5 rounded uppercase font-mono">
-                              {lang === "pt" ? "Pendente" : "Pending"}
-                            </span>
-                          )}
-                        </h3>
-                        <p className="text-[11px] text-red-500 font-mono uppercase tracking-wider font-semibold">
-                          {band.genre}
-                        </p>
-                      </div>
+                        </span>
+                        {!band.approved && (
+                          <span className="bg-amber-950 border border-amber-800 text-amber-400 text-[9px] px-1.5 py-0.5 rounded uppercase font-mono">
+                            {lang === "pt" ? "Pendente" : "Pending"}
+                          </span>
+                        )}
+                      </h3>
+                      <p className="text-[11px] text-red-500 font-mono uppercase tracking-wider font-semibold">
+                        {band.genre}
+                      </p>
                     </div>
 
                     <div className="flex gap-1.5 shrink-0">
@@ -1555,7 +1637,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
             text += `\n`;
           }
 
-          text += `🤘 Compartilhado via Metal Catalog 🤘`;
+          text += `🤘 Compartilhado via Stay Metal 🤘`;
           return text;
         })();
 

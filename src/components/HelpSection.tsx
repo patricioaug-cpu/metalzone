@@ -30,8 +30,8 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
     if (lang === "pt") {
       return [
         {
-          q: "Como cadastro novas bandas, festivais, shows ou notícias?",
-          a: "Como não existem mais botões de cadastro público direto no aplicativo, toda a inserção de novos conteúdos (bandas, festivais, shows e notícias de metal) é realizada entrando em contato direto com o desenvolvedor Patrício por e-mail ou WhatsApp!"
+          q: "Como cadastro novas bandas, festivais ou shows?",
+          a: "Toda a inserção de novos conteúdos (bandas, festivais e shows de metal) é realizada entrando em contato direto com o desenvolvedor Patrício por e-mail ou WhatsApp!"
         },
         {
           q: "Quem gerencia e aprova as bandas no catálogo?",
@@ -45,8 +45,8 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
     } else if (lang === "es") {
       return [
         {
-          q: "¿Cómo registro nuevas bandas, festivales, conciertos o noticias?",
-          a: "Dado que ya no existen botones de registro público directo en la aplicación, ¡todo el ingreso de nuevo contenido (bandas, festivales, conciertos y noticias de metal) se realiza contactando directamente al desarrollador Patrício por correo electrónico o WhatsApp!"
+          q: "¿Cómo registro nuevas bandas, festivales o conciertos?",
+          a: "¡Todo el ingreso de nuevo contenido (bandas, festivales y conciertos de metal) se realiza contactando directamente al desarrollador Patrício por correo electrónico o WhatsApp!"
         },
         {
           q: "¿Quién administra o aprueba las peticiones en el catálogo?",
@@ -60,8 +60,8 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
     } else {
       return [
         {
-          q: "How do I register new bands, festivals, shows, or news?",
-          a: "Since there are no longer direct public submission buttons in the application, all new entries (bands, festivals, concerts, and metal news) are registered by contacting the developer Patrício directly via email or WhatsApp!"
+          q: "How do I register new bands, festivals, or shows?",
+          a: "All new entries (bands, festivals, and concerts) are registered by contacting the developer Patrício directly via email or WhatsApp!"
         },
         {
           q: "Who moderates and approves the catalog database?",

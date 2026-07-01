@@ -1,5 +1,5 @@
 import React from "react";
-import { Band, EventItem, NewsItem } from "../firebase";
+import { Band, EventItem } from "../firebase";
 import { translations } from "../translations";
 import { User } from "firebase/auth";
 import { ShieldCheck, CheckCircle2, Trash2, Milestone, BellRing, Sparkles } from "lucide-react";
@@ -7,29 +7,23 @@ import { ShieldCheck, CheckCircle2, Trash2, Milestone, BellRing, Sparkles } from
 interface AdminSectionProps {
   bands: Band[];
   events: EventItem[];
-  news: NewsItem[];
   user: User | null;
   lang: "pt" | "en" | "es";
   onApproveBand: (id: string) => Promise<void>;
   onDeleteBand: (id: string) => Promise<void>;
   onApproveEvent: (id: string) => Promise<void>;
   onDeleteEvent: (id: string) => Promise<void>;
-  onApproveNews: (id: string) => Promise<void>;
-  onDeleteNews: (id: string) => Promise<void>;
 }
 
 export const AdminSection: React.FC<AdminSectionProps> = ({
   bands,
   events,
-  news,
   user,
   lang,
   onApproveBand,
   onDeleteBand,
   onApproveEvent,
-  onDeleteEvent,
-  onApproveNews,
-  onDeleteNews
+  onDeleteEvent
 }) => {
   const t = translations[lang];
   const isAdmin = user?.email === "patricioaug@gmail.com";
@@ -50,10 +44,9 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
 
   // Pending contents
   const pendingBands = bands.filter(b => !b.approved);
-  const pendingEvents = events.filter(e => !e.approved);
-  const pendingNews = news.filter(n => !n.approved);
+  const pendingEvents = events.filter(e => e.isFestival && !e.approved);
 
-  const totalPending = pendingBands.length + pendingEvents.length + pendingNews.length;
+  const totalPending = pendingBands.length + pendingEvents.length;
 
   return (
     <div id="admin-panel-dashboard" className="space-y-6">
@@ -86,9 +79,9 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
           </span>
         </div>
         <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-850">
-          <span className="text-[10px] text-neutral-500 uppercase">Eventos & Agenda</span>
-          <span className="text-2xl font-black text-blue-500 block mt-1">
-            {events.filter(e => e.approved).length} / {events.length}
+          <span className="text-[10px] text-neutral-500 uppercase">Festivais Ativos</span>
+          <span className="text-2xl font-black text-amber-500 block mt-1">
+            {events.filter(e => e.isFestival && e.approved).length} / {events.filter(e => e.isFestival).length}
           </span>
         </div>
       </div>
@@ -140,18 +133,18 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
             </div>
           )}
 
-          {/* Pending Shows / Festivals */}
+          {/* Pending Festivals */}
           {pendingEvents.length > 0 && (
             <div className="space-y-3">
               <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                📅 Shows e Festivais ({pendingEvents.length})
+                🎪 Festivais pendentes de aprovação ({pendingEvents.length})
               </h4>
               <div className="grid grid-cols-1 gap-3">
                 {pendingEvents.map(e => (
                   <div key={e.id} className="bg-neutral-950 border border-neutral-800 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                     <div>
                       <h5 className="text-sm font-bold text-white font-mono">
-                        {e.isFestival ? "🎪 Festival: " : "🎸 Show: "} {e.name}
+                        🎪 Festival: {e.name}
                       </h5>
                       <p className="text-[10px] text-blue-400 font-mono uppercase">{e.date} • {e.location}</p>
                       {e.lineup && e.lineup.length > 0 && (
@@ -174,44 +167,6 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {/* Pending News */}
-          {pendingNews.length > 0 && (
-            <div className="space-y-3">
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                📰 Matérias de Notícias enviadas ({pendingNews.length})
-              </h4>
-              <div className="grid grid-cols-1 gap-3">
-                {pendingNews.map(n => {
-                  const titleStr = typeof n.title === "string" ? n.title : (n.title[lang] || n.title["en"] || "");
-                  return (
-                    <div key={n.id} className="bg-neutral-950 border border-neutral-800 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                      <div className="space-y-1">
-                        <h5 className="text-sm font-bold text-white font-mono">{titleStr}</h5>
-                        <p className="text-[11px] text-neutral-400 font-sans line-clamp-1 italic max-w-xl">
-                          {typeof n.content === "string" ? n.content : n.content[lang] || n.content["en"]}
-                        </p>
-                      </div>
-                      <div className="flex gap-1.5 font-mono">
-                        <button
-                          onClick={() => n.id && onApproveNews(n.id)}
-                          className="bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-900 px-3 py-1 text-[10px] uppercase font-bold rounded cursor-pointer transition"
-                        >
-                          ✔ Aprovar
-                        </button>
-                        <button
-                          onClick={() => n.id && onDeleteNews(n.id)}
-                          className="bg-red-950 hover:bg-red-900 text-red-300 border border-red-900 px-3 py-1 text-[10px] uppercase font-bold rounded cursor-pointer transition"
-                        >
-                          ✖ Deletar
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
               </div>
             </div>
           )}

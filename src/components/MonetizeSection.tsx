@@ -26,7 +26,7 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
         },
         {
           title: "3. Loja de Merchandising do Canal (B2C)",
-          desc: "Venda direta das camisas, copos e moletons oficiais da marca Metal Catalog ou taxas de intermediação de canecas, patches e broches de metal para parceiros no Brasil.",
+          desc: "Venda direta das camisas, copos e moletons oficiais da marca Stay Metal ou taxas de intermediação de canecas, patches e broches de metal para parceiros no Brasil.",
           profit: "30% a 50% de margem no vestuário de algodão sustentável",
           icon: <Store className="text-emerald-500" size={20} />
         },
@@ -59,7 +59,7 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
         },
         {
           title: "3. Merchandising Exclusivo (WhatsApp)",
-          desc: "Cobro directo de mercancía oficial de Metal Catalog o productos coleccionables de edición limitada con envíos garantizados.",
+          desc: "Cobro directo de mercancía oficial de Stay Metal o productos coleccionables de edición limitada con envíos garantizados.",
           profit: "Altas ganancias con preventas de parches y accesorios",
           icon: <Store className="text-emerald-500" size={20} />
         },
@@ -86,7 +86,7 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
         },
         {
           title: "3. Interactive Merchandise Affiliation",
-          desc: "Direct retail sales of Metal Catalog classic street tees, hoods, and steel wristbands integrated with live checkouts.",
+          desc: "Direct retail sales of Stay Metal classic street tees, hoods, and steel wristbands integrated with live checkouts.",
           profit: "Custom printed high-margin physical goodies",
           icon: <Store className="text-emerald-500" size={20} />
         },
@@ -165,7 +165,7 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
         </div>
         <div className="shrink-0">
           <a
-            href="https://wa.me/5531973267529?text=Patrício, quero patrocinar o Metal Catalog!"
+            href="https://wa.me/5531973267529?text=Patrício, quero patrocinar o Stay Metal!"
             className="px-4 py-2 bg-emerald-900 hover:bg-emerald-800 text-white font-mono text-xs font-black rounded-lg uppercase tracking-wide inline-flex items-center gap-1"
           >
             💬 WhatsApp Patrício

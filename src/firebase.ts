@@ -113,16 +113,6 @@ export interface EventItem {
   createdAt?: any;
 }
 
-export interface NewsItem {
-  id?: string;
-  title: { [lang: string]: string } | string;
-  content: { [lang: string]: string } | string;
-  imageUrl?: string;
-  approved: boolean;
-  submittedBy: string;
-  createdAt?: any;
-}
-
 export interface MerchItem {
   id?: string;
   title: string;
@@ -968,161 +958,14 @@ export const SEED_EVENTS: EventItem[] = [
   }
 ];
 
-export const SEED_NEWS: NewsItem[] = [
-  {
-    id: "news-world-1",
-    title: {
-      pt: "2026 está LOTADO de lançamentos importantes de Rock e Metal",
-      en: "2026 is PACKED with major Rock and Metal album releases",
-      es: "2026 está LLENO de lanzamientos importantes de Rock y Metal"
-    },
-    content: {
-      pt: "Bandas como Megadeth, Kreator, Alter Bridge e Black Stone Cherry confirmaram ou lançaram novos álbuns em 2026. Também há expectativa de discos de Anthrax, Bring Me The Horizon e August Burns Red. O ano está sendo considerado um dos mais fortes da década, com lançamentos em todos os subgêneros (thrash, death, prog, metalcore). Até o Lamb of God entrou na leva com material novo previsto para 2026.",
-      en: "Bands like Megadeth, Kreator, Alter Bridge, and Black Stone Cherry confirmed or released new albums in 2026. Expectation is also high for records by Anthrax, Bring Me The Horizon, and August Burns Red. The year is considered one of the strongest of the decade, with releases across all subgenres (thrash, death, prog, metalcore). Even Lamb of God has joined the pack with brand new material slated for 2026.",
-      es: "Bandas como Megadeth, Kreator, Alter Bridge y Black Stone Cherry confirmaron o lanzaron nuevos álbumes en 2026. También hay expectativas de discos de Anthrax, Bring Me The Horizon y August Burns Red. El año está siendo considerado uno de los más fuertes de la década, con lanzamientos en todos los subgéneros (thrash, death, prog, metalcore). Hasta Lamb of God también entró en la lista con material nuevo previsto para 2026."
-    },
-    imageUrl: "https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=600&q=80",
-    approved: true,
-    submittedBy: "system"
-  },
-  {
-    id: "news-world-2",
-    title: {
-      pt: "Grandes turnês mundiais movimentam as arenas em 2026",
-      en: "Major world tours sweeping through arenas in 2026",
-      es: "Grandes giras mundiales mueven los estadios en 2026"
-    },
-    content: {
-      pt: "O Metallica segue com a turnê mundial M72 em 2026. O Megadeth iniciou sua turnê de despedida, com vários anos planejados pela frente. O Rush voltou surpreendentemente aos palcos após mais de uma década, e o My Chemical Romance continua com sua aclamada turnê comemorativa de The Black Parade. 2026 consolidou-se como um ano de retornos históricos e despedidas marcantes.",
-      en: "Metallica continues with the M72 world tour in 2026. Megadeth has kicked off their farewell tour, with multiple years planned ahead. Rush has surprisingly returned to the stage after more than a decade, and My Chemical Romance continues their highly celebrated 'The Black Parade' tour. 2026 has solidified as a historic year of reunions and reunions.",
-      es: "Metallica continúa con la gira mundial M72 en 2026. Megadeth inició su gira de despedida, con varios años planificados. Rush regresó sorpresivamente a los escenarios tras más de una década, y My Chemical Romance continúa su gira conmemorativa de The Black Parade. 2026 se ha consolidado como un año de regresos históricos y despedidas."
-    },
-    imageUrl: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=600&q=80",
-    approved: true,
-    submittedBy: "system"
-  },
-  {
-    id: "news-world-3",
-    title: {
-      pt: "Reconhecimento histórico e tributos lendários marcam o ano",
-      en: "Historic recognition and legendary tributes mark 2026",
-      es: "Reconocimiento histórico y tributos legendarios marcan el año"
-    },
-    content: {
-      pt: "O Iron Maiden foi oficialmente anunciado no prestigiado Rock and Roll Hall of Fame 2026. Além disso, shows especiais de homenagem e tributo marcaram o ano, como o show tributo do Children of Bodom em memória ao falecido guitarrista e vocalista Alexi Laiho.",
-      en: "Iron Maiden has been officially announced for the prestigious Rock and Roll Hall of Fame 2026. Additionally, special tribute events marked the year, such as the Children of Bodom tribute shows honoring the memory of late guitarist and vocalist Alexi Laiho.",
-      es: "Iron Maiden fue anunciado oficialmente en el prestigioso Rock and Roll Hall of Fame 2026. Además, shows especiales de homenaje marcaron el año, como el tributo de Children of Bodom en memoria del fallecido Alexi Laiho."
-    },
-    imageUrl: "https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=600&q=80",
-    approved: true,
-    submittedBy: "system"
-  },
-  {
-    id: "news-world-4",
-    title: {
-      pt: "Febre de relançamentos, edições especiais e vinis colecionáveis",
-      en: "Boom of reissues, special editions, and collectible vinyls",
-      es: "Fiebre de reediciones, ediciones especiales y vinilos de colección"
-    },
-    content: {
-      pt: "Diversas bandas clássicas estão lançando reedições caprichadas de seus álbuns antigos mais icônicos, como Metallica e Slayer. A grande tendência de mercado observada em 2026 é o foco absoluto em luxuosas edições comemorativas acompanhadas de discos de vinil colecionáveis de alta qualidade.",
-      en: "Several classic bands are releasing highly detailed reissues of their most iconic older albums, including Metallica and Slayer. The strong market trend observed in 2026 is an absolute focus on luxurious commemorative editions accompanied by high-quality collectible vinyl records.",
-      es: "Diversas bandas clásicas están lanzando reediciones muy cuidadas de sus álbumes antiguos más icónicos, como Metallica y Slayer. La gran tendencia del mercado en 2026 es el enfoque absoluto en lujosas ediciones conmemorativas acompañadas de vinilos de colección de alta qualidade."
-    },
-    imageUrl: "https://images.unsplash.com/photo-1487180142328-054b783fc471?w=600&q=80",
-    approved: true,
-    submittedBy: "system"
-  },
-  {
-    id: "news-world-5",
-    title: {
-      pt: "Nova geração e sonoridade híbrida ganham força total",
-      en: "New generation and hybrid sounds gain total momentum",
-      es: "La nueva generación y la sonoridad híbrida ganan fuerza total"
-    },
-    content: {
-      pt: "Novas bandas de metal estão misturando com sucesso o peso tradicional com outros estilos alternativos, como rap e batidas eletrônicas. Um excelente exemplo é a banda Gradience, que funde perfeitamente death metal com trap e rap. Além deles, bandas como Dreamwell exploram temas mais filosóficos, complexos e sociais nas suas letras. O metal está cada vez mais experimental e diverso.",
-      en: "New metal bands are successfully blending traditional heavy sounds with other alternative styles, such as rap and electronic beats. A great example is the band Gradience, perfectly fusing death metal with trap/rap. Meanwhile, bands like Dreamwell explore more philosophical, complex, and social themes in their lyrics. Metal is becoming increasingly experimental and diverse.",
-      es: "Nuevas bandas de metal están mezclando con éxito el peso tradicional con otros estilos alternativos como el rap y la música electrónica. Un excelente ejemplo es la banda Gradience, que fusiona perfectamente death metal con trap y rap. Por su parte, agrupaciones como Dreamwell exploran temas más filosóficos y sociales en sus letras. El metal se vuelve cada vez más experimental y diverso."
-    },
-    imageUrl: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80",
-    approved: true,
-    submittedBy: "system"
-  },
-  {
-    id: "news-brazil-1",
-    title: {
-      pt: "2026 consagra-se como um dos maiores anos para o rock no Brasil",
-      en: "2026 stands as one of the biggest years for rock in Brazil",
-      es: "2026 se consagra como uno de los mayores años para el rock en Brasil"
-    },
-    content: {
-      pt: "Mais de 200 shows internacionais foram oficialmente confirmados no país, consolidando o Brasil como rota obrigatória das turnês de bandas internacionais de todos os calibres pós-pandemia. Cidades como São Paulo, Rio de Janeiro, Belo Horizonte, Curitiba e Porto Alegre concentram a maioria esmagadora dessas apresentações esgotadas.",
-      en: "More than 200 international shows have been officially confirmed in the country, consolidating Brazil as a mandatory route for global tours of all sizes post-pandemic. Major cities like São Paulo, Rio de Janeiro, Belo Horizonte, Curitiba, and Porto Alegre host the vast majority of these sold-out performances.",
-      es: "Más de 200 conciertos internacionales han sido oficialmente confirmados en el país, consolidando a Brasil como ruta obligatoria de giras internacionales post-pandemia. Ciudades como São Paulo, Río de Janeiro, Belo Horizonte, Curitiba y Porto Alegre concentran la gran mayoría de estas presentaciones agotadas."
-    },
-    imageUrl: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&q=80",
-    approved: true,
-    submittedBy: "system"
-  },
-  {
-    id: "news-brazil-2",
-    title: {
-      pt: "Gigantes lendários do metal internacional confirmam passagens pelo Brasil",
-      en: "Legendary international metal giants confirm tours in Brazil",
-      es: "Gigantes legendarios del metal internacional confirman visitas a Brasil"
-    },
-    content: {
-      pt: "O AC/DC retornou triunfante ao Brasil após muitos anos de ausência. Além deles, Guns N' Roses, Megadeth, Korn e Avenged Sevenfold estão com grandes apresentações confirmadas pelo país. Os fãs de metal melódico e tradicional também celebram as datas anunciadas de Helloween, Sonata Arctica, Amorphis e Iron Maiden, evidenciando uma fortíssima presença tanto de vertentes clássicas quanto de metalcore moderno.",
-      en: "AC/DC returned triumphantly to Brazil after many years of absence. In addition, Guns N' Roses, Megadeth, Korn, and Avenged Sevenfold have major shows confirmed across the country. Melodic and traditional metal fans are also celebrating dates announced for Helloween, Sonata Arctica, Amorphis, and Iron Maiden, showing a very strong presence of classic styles as well as modern metalcore.",
-      es: "AC/DC regresó triunfante a Brasil tras muchos años de ausencia. Además, Guns N' Roses, Megadeth, Korn y Avenged Sevenfold tienen grandes shows confirmados en el país. Los fanáticos del metal tradicional y melódico también celebran las fechas anunciadas de Helloween, Sonata Arctica, Amorphis e Iron Maiden, evidenciando una fuerte presencia tanto de clásicos como de metalcore moderno."
-    },
-    imageUrl: "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=600&q=80",
-    approved: true,
-    submittedBy: "system"
-  },
-  {
-    id: "news-brazil-3",
-    title: {
-      pt: "Festivais de proporções gigantescas agitam o calendário nacional",
-      en: "Colossal festivals shake up the Brazilian national calendar",
-      es: "Festivales de proporciones gigantescas agitan el calendario nacional"
-    },
-    content: {
-      pt: "O Rock in Rio 2026 promete agitar setembro com grandes nomes lendários do rock e metal. O prestigiado festival Monsters of Rock retorna trazendo o Guns N' Roses como headliner de peso. Outros gigantes como Lollapalooza Brasil, Knotfest e Bangers Open Air vêm com escalações pesadíssimas repletas de bandas históricas e extremas.",
-      en: "Rock in Rio 2026 promises to shake up September with legendary rock and metal acts. The prestigious Monsters of Rock festival returns bringing Guns N' Roses as headliner. Other major gatherings like Lollapalooza Brasil, Knotfest, and Bangers Open Air come packed with extremely heavy, historic lineups.",
-      es: "Rock in Rio 2026 promete agitar septiembre con grandes nombres legendarios del rock y metal. El prestigioso festival Monsters of Rock regresa con Guns N' Roses como gran headliner. Otros gigantes como Lollapalooza Brasil, Knotfest y Bangers Open Air vienen con carteles pesadísimos llenos de bandas históricas y extremas."
-    },
-    imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&q=80",
-    approved: true,
-    submittedBy: "system"
-  },
-  {
-    id: "news-brazil-4",
-    title: {
-      pt: "Agenda insana de shows eletriza arenas brasileiras em 2026",
-      en: "Insane show schedule electrifies Brazilian arenas in 2026",
-      es: "Agenda insana de shows electriza estadios brasileños en 2026"
-    },
-    content: {
-      pt: "Uma enxurrada de datas históricas promete esgotar ingressos rapidamente. A agenda inclui Avenged Sevenfold já em janeiro de 2026, My Chemical Romance com clássicos, AC/DC com múltiplas apresentações memoráveis em São Paulo, e o Iron Maiden lotando estádios inteiros com sua produção gigantesca. Bandas pesadas do underground como In Flames, Primal Fear e Beyond Creation também marcam presença.",
-      en: "A flood of historic tour dates promises to sell out tickets rapidly. The schedule includes Avenged Sevenfold starting in January 2026, My Chemical Romance performing classic anthems, AC/DC with multiple highly-anticipated dates in São Paulo, and Iron Maiden filling massive stadiums. Underground favorites like In Flames, Primal Fear, and Beyond Creation are also touching down.",
-      es: "Una ola de fechas históricas promete agotar boletos rápidamente. La agenda incluye a Avenged Sevenfold en enero de 2026, My Chemical Romance con clásicos memorables, AC/DC con múltiples presentaciones en São Paulo e Iron Maiden llenando estadios con su enorme producción. Bandas del underground pesado como In Flames, Primal Fear y Beyond Creation también están confirmadas."
-    },
-    imageUrl: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600&q=80",
-    approved: true,
-    submittedBy: "system"
-  }
-];
-
 export const SEED_MERCH: MerchItem[] = [
   {
     id: "merch-1",
-    title: "Metal Catalog Official Vintage Tee",
-    description: "Camiseta oficial Metal Catalog fabricada com algodão 100% orgânico premium, estampa gótica agressiva traseira. Confortável, durável e feita sob medida para os headbangers mais exigentes.",
+    title: "Stay Metal Official Vintage Tee",
+    description: "Camiseta oficial Stay Metal fabricada com algodão 100% orgânico premium, estampa gótica agressiva traseira. Confortável, durável e feita sob medida para os headbangers mais exigentes.",
     price: 99.90,
     imageUrl: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=400&q=80",
-    purchaseLink: "https://wa.me/5531973267529?text=Quero%20comprar%20a%20Camiseta%20Oficial%20Metal%20Catalog"
+    purchaseLink: "https://wa.me/5531973267529?text=Quero%20comprar%20a%20Camiseta%20Oficial%20Stay%20Metal"
   },
   {
     id: "merch-2",

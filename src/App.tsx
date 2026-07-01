@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useDeferredValue } from "react";
-import { auth, db, SEED_BANDS, SEED_EVENTS, SEED_NEWS, SEED_MERCH, Band, EventItem, NewsItem, MerchItem } from "./firebase";
+import { auth, db, SEED_BANDS, SEED_EVENTS, SEED_MERCH, Band, EventItem, MerchItem } from "./firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, updateDoc as fsUpdateDoc } from "firebase/firestore";
 import { translations } from "./translations";
@@ -11,23 +11,24 @@ import metalCatalogLogo from "./assets/images/metal_catalog_logo_1782380109985.j
 import { AuthSection } from "./components/AuthSection";
 import { BandSection } from "./components/BandSection";
 import { FestivalSection } from "./components/FestivalSection";
-import { NewsSection } from "./components/NewsSection";
 import { MerchSection } from "./components/MerchSection";
 import { AdminSection } from "./components/AdminSection";
 import { MonetizeSection } from "./components/MonetizeSection";
 import { HelpSection } from "./components/HelpSection";
 import { OnlineUsersTracker } from "./components/OnlineUsersTracker";
+import { BdaySection, getDeterministicReleaseDate } from "./components/BdaySection";
 
 import { 
   Flame, Music, Newspaper, ShoppingBag, Shield, DollarSign, HelpCircle, 
-  RefreshCw, Globe, Phone, Mail, Star, Radio, Skull, Search, X, MapPin, Menu, LogOut
+  RefreshCw, Globe, Phone, Mail, Star, Radio, Skull, Search, X, MapPin, Menu, LogOut,
+  Calendar
 } from "lucide-react";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 
 export default function App() {
   const [lang, setLang] = useState<"pt" | "en" | "es">("pt");
   const [hasEntered, setHasEntered] = useState(false);
-  type TabType = "bands" | "festivals" | "shows" | "news" | "help" | "admin";
+  type TabType = "bands" | "festivals" | "bday" | "help" | "admin";
   const [activeTab, setActiveTabTab] = useState<TabType>("bands");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
@@ -49,7 +50,6 @@ export default function App() {
 
   const [bands, setBands] = useState<Band[]>(SEED_BANDS);
   const [events, setEvents] = useState<EventItem[]>(SEED_EVENTS);
-  const [news, setNews] = useState<NewsItem[]>(SEED_NEWS);
   const [merch, setMerch] = useState<MerchItem[]>(SEED_MERCH);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -190,37 +190,10 @@ export default function App() {
       } else {
         setEvents(SEED_EVENTS);
       }
-
-      const newsSnap = await fetchWithTimeout(getDocs(collection(db, "news")), 7000, { empty: true, docs: [] } as any);
-      if (newsSnap && !newsSnap.empty) {
-        const loadedNews: NewsItem[] = [];
-        newsSnap.forEach((docSnap: any) => {
-          loadedNews.push({ id: docSnap.id, ...docSnap.data() } as NewsItem);
-        });
-
-        const updatedLoadedNews = loadedNews.map(ln => {
-          const seedMatch = SEED_NEWS.find(sn => JSON.stringify(sn.title) === JSON.stringify(ln.title));
-          if (seedMatch && seedMatch.imageUrl && ln.imageUrl !== seedMatch.imageUrl) {
-            if (ln.id) {
-              updateDoc(doc(db, "news", ln.id), { imageUrl: seedMatch.imageUrl }).catch(e =>
-                console.warn(`Could not update news imageUrl in database:`, e)
-              );
-            }
-            return { ...ln, imageUrl: seedMatch.imageUrl };
-          }
-          return ln;
-        });
-
-        const merged = [...SEED_NEWS.filter(sn => !updatedLoadedNews.some(ln => JSON.stringify(ln.title) === JSON.stringify(sn.title))), ...updatedLoadedNews];
-        setNews(merged);
-      } else {
-        setNews(SEED_NEWS);
-      }
     } catch (err) {
       console.warn("Could not query live Firestore directly, using rock static seed assets:", err);
       setBands(SEED_BANDS);
       setEvents(SEED_EVENTS);
-      setNews(SEED_NEWS);
     } finally {
       setIsLoading(false);
     }
@@ -316,27 +289,6 @@ export default function App() {
     }
   };
 
-  // News Addition
-  const handleAddNews = async (newNews: Omit<NewsItem, "id">) => {
-    try {
-      const docRef = await addDoc(collection(db, "news"), newNews);
-      setNews(prev => [...prev, { id: docRef.id, ...newNews }]);
-      return true;
-    } catch {
-      setNews(prev => [...prev, { id: `local-${Date.now()}`, ...newNews }]);
-      return true;
-    }
-  };
-
-  const handleDeleteNews = async (id: string) => {
-    try {
-      await deleteDoc(doc(db, "news", id));
-      setNews(prev => prev.filter(n => n.id !== id));
-    } catch {
-      setNews(prev => prev.filter(n => n.id !== id));
-    }
-  };
-
   // Merch Addition
   const handleAddMerch = async (newMerch: Omit<MerchItem, "id">) => {
     try {
@@ -377,15 +329,6 @@ export default function App() {
     }
   };
 
-  const handleApproveNews = async (id: string) => {
-    try {
-      await fsUpdateDoc(doc(db, "news", id), { approved: true });
-      setNews(prev => prev.map(n => n.id === id ? { ...n, approved: true } : n));
-    } catch {
-      setNews(prev => prev.map(n => n.id === id ? { ...n, approved: true } : n));
-    }
-  };
-
   // Toggle local favorite event
   const handleToggleFavoriteEvent = (id: string) => {
     setFavoriteEvents(prev => 
@@ -395,6 +338,20 @@ export default function App() {
 
   const isAdmin = user?.email === "patricioaug@gmail.com";
   const userCheckLoaded = authChecked;
+
+  const todayDateObj = new Date();
+  const currentMonthIdx = todayDateObj.getMonth();
+  const currentDayVal = todayDateObj.getDate();
+  const bdayTodayCount = bands.reduce((acc, band) => {
+    if (band.discography && Array.isArray(band.discography)) {
+      const todayCount = band.discography.filter(album => {
+        const { month, day } = getDeterministicReleaseDate(band.name, album.title, album.year);
+        return month === currentMonthIdx && day === currentDayVal;
+      }).length;
+      return acc + todayCount;
+    }
+    return acc;
+  }, 0);
 
   if (!hasEntered) {
     return (
@@ -437,11 +394,11 @@ export default function App() {
       <header className="md:hidden sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-md border-b border-neutral-900 py-2.5 px-4 flex justify-between items-center shadow-md w-full shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-black border border-neutral-800 rounded-xl flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
-            <img src={metalCatalogLogo} className="w-full h-full object-cover" alt="MetalCatalog Logo" />
+            <img src={metalCatalogLogo} className="w-full h-full object-cover" alt="Stay Metal Logo" />
           </div>
           <div>
             <h1 className="text-md font-black text-white uppercase tracking-widest font-mono select-none leading-none">
-              Metal Catalog
+              Stay Metal
             </h1>
             <div className="flex items-center gap-1 mt-1 select-none">
               <span className="relative flex h-1.5 w-1.5">
@@ -502,10 +459,10 @@ export default function App() {
                 <div className="flex justify-between items-center pb-4 border-b border-neutral-900">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-black border border-neutral-800 rounded-xl flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
-                      <img src={metalCatalogLogo} className="w-full h-full object-cover" alt="MetalCatalog Logo" />
+                      <img src={metalCatalogLogo} className="w-full h-full object-cover" alt="Stay Metal Logo" />
                     </div>
                     <div>
-                      <span className="text-md font-black text-white tracking-widest block leading-none">METAL CATALOG</span>
+                      <span className="text-md font-black text-white tracking-widest block leading-none">STAY METAL</span>
                     </div>
                   </div>
                   <button 
@@ -553,37 +510,22 @@ export default function App() {
                   </button>
 
                   <button
-                    onClick={() => { setActiveTabTab("shows"); setIsSidebarOpen(false); }}
+                    onClick={() => { setActiveTabTab("bday"); setIsSidebarOpen(false); }}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition duration-200 cursor-pointer ${
-                      activeTab === "shows" 
-                        ? "bg-red-950/40 text-rose-450 border-red-900/40" 
-                        : "bg-transparent text-neutral-450 border-transparent hover:bg-neutral-900"
-                    }`}
-                  >
-                    <span className="flex items-center gap-2.5">
-                      <MapPin size={15} className="text-red-500" />
-                      {lang === "pt" ? "Shows" : lang === "es" ? "Conciertos" : "Shows"}
-                    </span>
-                    <span className="text-[9px] text-neutral-500 bg-neutral-900 px-2 py-0.5 rounded-full">
-                      {events.filter(e => !e.isFestival).length}
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() => { setActiveTabTab("news"); setIsSidebarOpen(false); }}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition duration-200 cursor-pointer ${
-                      activeTab === "news" 
+                      activeTab === "bday" 
                         ? "bg-red-950/40 text-rose-400 border-red-900/40" 
                         : "bg-transparent text-neutral-450 border-transparent hover:bg-neutral-900"
                     }`}
                   >
                     <span className="flex items-center gap-2.5">
-                      <Newspaper size={15} />
-                      {t.navNews}
+                      <Calendar size={15} className={bdayTodayCount > 0 ? "text-amber-500" : ""} />
+                      {lang === "pt" ? "Aniversários (BDAY)" : lang === "es" ? "Aniversarios (BDAY)" : "Anniversaries (BDAY)"}
                     </span>
-                    <span className="text-[9px] text-neutral-500 bg-neutral-900 px-2 py-0.5 rounded-full">
-                      {news.length}
-                    </span>
+                    {bdayTodayCount > 0 && (
+                      <span className="text-[9px] text-amber-400 font-bold bg-amber-950/30 px-2 py-0.5 rounded-full border border-amber-900/40 shadow-sm">
+                        {bdayTodayCount}
+                      </span>
+                    )}
                   </button>
 
                   <button
@@ -654,7 +596,7 @@ export default function App() {
                 </div>
                 
                 <div className="text-center text-[9px] text-neutral-500">
-                  🤘 Metal Catalog | patricioaug@gmail.com
+                  🤘 Stay Metal | patricioaug@gmail.com
                 </div>
               </div>
 
@@ -670,11 +612,11 @@ export default function App() {
           {/* Sidebar Header Brand Area */}
           <div className="p-5 border-b border-neutral-900 bg-black/40 flex flex-col items-center gap-4">
             <div className="relative w-28 h-28 bg-black border border-neutral-800 rounded-xl flex items-center justify-center overflow-hidden shrink-0 shadow-xl shadow-black/80 animate-pulse-slow">
-              <img src={metalCatalogLogo} className="w-full h-full object-cover" alt="MetalCatalog Logo" />
+              <img src={metalCatalogLogo} className="w-full h-full object-cover" alt="Stay Metal Logo" />
             </div>
             <div className="text-center">
               <h1 className="text-lg font-black text-white uppercase tracking-widest leading-none filter drop-shadow-[0_2px_10px_rgba(239,68,68,0.2)]">
-                Metal Catalog
+                Stay Metal
               </h1>
               <p className="text-[8px] text-zinc-500 uppercase tracking-widest mt-2.5 font-bold">
                 {lang === "pt" ? "Enciclopédia" : lang === "es" ? "Enciclopedia" : "Metal Wiki & Logs"}
@@ -721,39 +663,23 @@ export default function App() {
             </button>
 
             <button
-              id="sidebar-nav-shows"
-              onClick={() => setActiveTabTab("shows")}
+              id="sidebar-nav-bday"
+              onClick={() => setActiveTabTab("bday")}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition duration-200 cursor-pointer ${
-                activeTab === "shows" 
+                activeTab === "bday" 
                   ? "bg-red-950/40 text-rose-400 border-red-900/40 shadow-md shadow-red-950/20" 
                   : "bg-transparent text-neutral-400 border-transparent hover:bg-neutral-900/50 hover:text-white"
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <MapPin size={15} className="text-red-500" />
-                <span>{lang === "pt" ? "Shows" : lang === "es" ? "Conciertos" : "Shows"}</span>
+                <Calendar size={15} className={bdayTodayCount > 0 ? "text-amber-500" : ""} />
+                <span>{lang === "pt" ? "Aniversários (BDAY)" : lang === "es" ? "Aniversarios (BDAY)" : "Anniversaries (BDAY)"}</span>
               </div>
-              <span className="text-[9px] text-neutral-500 bg-neutral-900/60 px-2 py-0.5 rounded-full border border-neutral-850">
-                {events.filter(e => !e.isFestival).length}
-              </span>
-            </button>
-
-            <button
-              id="sidebar-nav-news"
-              onClick={() => setActiveTabTab("news")}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition duration-200 cursor-pointer ${
-                activeTab === "news" 
-                  ? "bg-red-950/40 text-rose-400 border-red-900/40 shadow-md shadow-red-950/20" 
-                  : "bg-transparent text-neutral-400 border-transparent hover:bg-neutral-900/50 hover:text-white"
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <Newspaper size={15} />
-                <span>{t.navNews}</span>
-              </div>
-              <span className="text-[9px] text-neutral-500 bg-neutral-900/60 px-2 py-0.5 rounded-full border border-neutral-850">
-                {news.length}
-              </span>
+              {bdayTodayCount > 0 && (
+                <span className="text-[9px] text-amber-400 font-bold bg-amber-950/30 px-2 py-0.5 rounded-full border border-amber-900/40 shadow-sm animate-pulse">
+                  {bdayTodayCount}
+                </span>
+              )}
             </button>
 
             <button
@@ -903,7 +829,7 @@ export default function App() {
           </div>
 
           <div className="text-center text-[8px] text-zinc-650 leading-tight">
-            Patrício | {new Date().getFullYear()} Metal Catalog
+            Patrício | {new Date().getFullYear()} Stay Metal
           </div>
         </div>
       </nav>
@@ -931,7 +857,7 @@ export default function App() {
               <span className="text-xs font-mono uppercase tracking-widest text-zinc-300 font-bold">
                 {activeTab === "bands" 
                   ? (lang === "pt" ? "Menu Principal / Catálogo" : lang === "es" ? "Menú Principal / Catálogo" : "Main Menu / Catalog")
-                  : (lang === "pt" ? `Navegando: ${activeTab === "festivals" ? t.navFestivals : activeTab === "shows" ? "Shows" : activeTab === "news" ? t.navNews : activeTab === "help" ? "Ajuda" : t.navAdmin}` : `Navigating: ${activeTab === "festivals" ? t.navFestivals : activeTab === "shows" ? "Shows" : activeTab === "news" ? t.navNews : activeTab === "help" ? "Help" : t.navAdmin}`)
+                  : (lang === "pt" ? `Navegando: ${activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Aniversários de Lançamento" : activeTab === "help" ? "Ajuda" : t.navAdmin}` : `Navigating: ${activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Album Anniversaries" : activeTab === "help" ? "Help" : t.navAdmin}`)
                 }
               </span>
             </div>
@@ -976,45 +902,7 @@ export default function App() {
                     onEditBand={handleEditBand}
                     isRefreshing={isRefreshing}
                     globalSearch={deferredSearch}
-                    isLoading={isLoading}
-                  />
-                )}
-
-                {activeTab === "festivals" && (
-                  <FestivalSection
-                    events={events}
-                    user={user}
-                    lang={lang}
-                    onAddEvent={handleAddEvent}
-                    onDeleteEvent={handleDeleteEvent}
-                    favorites={favoriteEvents}
-                    onToggleFavorite={handleToggleFavoriteEvent}
-                    initialFilterTab="festivals"
-                    isLoading={isLoading}
-                  />
-                )}
-
-                {activeTab === "shows" && (
-                  <FestivalSection
-                    events={events}
-                    user={user}
-                    lang={lang}
-                    onAddEvent={handleAddEvent}
-                    onDeleteEvent={handleDeleteEvent}
-                    favorites={favoriteEvents}
-                    onToggleFavorite={handleToggleFavoriteEvent}
-                    initialFilterTab="shows"
-                    isLoading={isLoading}
-                  />
-                )}
-
-                {activeTab === "news" && (
-                  <NewsSection
-                    news={news}
-                    user={user}
-                    lang={lang}
-                    onAddNews={handleAddNews}
-                    onDeleteNews={handleDeleteNews}
+                    onClearGlobalSearch={() => setHeaderSearch("")}
                     isLoading={isLoading}
                   />
                 )}
@@ -1025,19 +913,48 @@ export default function App() {
                   </div>
                 )}
 
+                {activeTab === "bday" && (
+                  <BdaySection
+                    bands={bands}
+                    lang={lang}
+                    onBackToCatalog={() => {
+                      setActiveTabTab("bands");
+                      setHeaderSearch("");
+                    }}
+                    onViewBand={(bandName) => {
+                      setHeaderSearch(bandName);
+                      setActiveTabTab("bands");
+                    }}
+                  />
+                )}
+
+                {activeTab === "festivals" && (
+                  <FestivalSection
+                    events={events}
+                    user={user}
+                    lang={lang}
+                    onAddEvent={async (e) => {
+                      await handleAddEvent(e);
+                      return true;
+                    }}
+                    onDeleteEvent={handleDeleteEvent}
+                    favorites={favoriteEvents}
+                    onToggleFavorite={handleToggleFavoriteEvent}
+                    initialFilterTab="festivals"
+                    isLoading={isLoading}
+                  />
+                )}
+
                 {activeTab === "admin" && (
                   <AdminSection
                     bands={bands}
                     events={events}
-                    news={news}
                     user={user}
                     lang={lang}
                     onApproveBand={handleApproveBand}
                     onDeleteBand={handleDeleteBand}
                     onApproveEvent={handleApproveEvent}
                     onDeleteEvent={handleDeleteEvent}
-                    onApproveNews={handleApproveNews}
-                    onDeleteNews={handleDeleteNews}
                   />
                 )}
               </motion.div>
@@ -1050,7 +967,7 @@ export default function App() {
         <footer className="mt-12 bg-neutral-950 border-t border-neutral-900 py-8 px-4 md:px-8 text-neutral-500 text-xs font-mono">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="space-y-1 text-center md:text-left">
-              <p className="text-stone-300 font-bold uppercase tracking-wider">🤘 Metal Catalog Corporation</p>
+              <p className="text-stone-300 font-bold uppercase tracking-wider">🤘 Stay Metal Corporation</p>
             </div>
 
             <div className="text-center md:text-right space-y-1 leading-snug">

@@ -61,10 +61,10 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
       </div>
 
       {/* Content Center Card */}
-      <div className="z-10 max-w-xl w-full px-6 py-10 flex flex-col items-center text-center space-y-8">
+      <div className="z-10 max-w-xl w-full px-6 pt-16 pb-10 flex flex-col items-center text-center space-y-6">
         
         {/* Visual Animation Stage */}
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center mt-8">
           
           {/* Animated Glowing Sun-Wheel / Circular Spikes */}
           <motion.div
@@ -100,7 +100,7 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
             }}
             transition={{ duration: 3, repeat: Infinity }}
           >
-            <img src={logo} className="w-full h-full object-cover rounded-xl" alt="Metal Catalog Logo" />
+            <img src={logo} className="w-full h-full object-cover rounded-xl" alt="Stay Metal Logo" />
             
             {/* Dark glass overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-red-950/40 via-transparent to-transparent pointer-events-none" />
@@ -108,15 +108,29 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
         </div>
 
         {/* Title & Subtitle Info */}
-        <div className="space-y-3">
-          <motion.h1 
-            className="text-4xl md:text-5xl font-black text-white tracking-widest uppercase filter drop-shadow-[0_4px_15px_rgba(239,68,68,0.3)] font-mono"
+        <div className="space-y-3 flex flex-col items-center select-none pt-10 pb-4">
+          <motion.div 
+            className="relative flex flex-col items-center"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            METAL <span className="text-red-600">CATALOG</span>
-          </motion.h1>
+            {/* Main Text Layer with high-contrast authentic styling */}
+            <h1 className="text-5xl md:text-6xl font-metal iron-maiden-text tracking-wider text-center px-4">
+              STAY METAL
+            </h1>
+            
+            {/* Real-time reflection exactly as in the attached image */}
+            <div 
+              className="absolute top-[90%] left-0 right-0 scale-y-[-0.6] opacity-30 select-none pointer-events-none origin-top font-metal iron-maiden-text tracking-wider text-center px-4 filter blur-[0.5px]"
+              style={{
+                WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 80%)",
+                maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 80%)",
+              }}
+            >
+              STAY METAL
+            </div>
+          </motion.div>
         </div>
 
         {/* Enter Templo Button */}

@@ -1262,15 +1262,15 @@ app.post("/api/notify-access", async (req: Request, res: Response) => {
   const countryStr = detectedCity ? `${detectedCity}, ${detectedCountry}` : detectedCountry;
   const timeStr = clientTime || new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
 
-  const subject = `🤘 Metal Catalog: Novo Acesso Detectado!`;
-  const message = `Um novo usuario acessou o sistema Metal Catalog!
+  const subject = `🤘 Stay Metal: Novo Acesso Detectado!`;
+  const message = `Um novo usuario acessou o sistema Stay Metal!
 
 Data/Hora: ${timeStr}
 Pais/Local: ${countryStr}
 IP (best-effort): ${req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown"}
 User Agent: ${req.headers["user-agent"] || "unknown"}
 
-Gerado por Metal Catalog Vercel Integration`;
+Gerado por Stay Metal Vercel Integration`;
 
   console.log(`[ACCESS NOTIFICATION] Dispatching access email notification for: ${countryStr}`);
 
@@ -1286,7 +1286,7 @@ Gerado por Metal Catalog Vercel Integration`;
           "Authorization": `Bearer ${process.env.RESEND_API_KEY}`
         },
         body: JSON.stringify({
-          from: "Metal Catalog <onboarding@resend.dev>",
+          from: "Stay Metal <onboarding@resend.dev>",
           to: ["patricioaug@gmail.com"],
           subject: subject,
           text: message

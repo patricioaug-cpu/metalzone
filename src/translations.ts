@@ -132,7 +132,7 @@ export interface TranslationDict {
 
 export const translations: { [lang: string]: TranslationDict } = {
   pt: {
-    appName: "Metal Catalog",
+    appName: "Stay Metal",
     appSubtitle: "O Epicentro Mundial de Rock & Heavy Metal",
     refreshBtn: "Atualizar",
     refreshing: "Sincronizando...",
@@ -154,7 +154,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     langEN: "English (EN)",
     langES: "Español (ES)",
 
-    statsTitle: "Comunidade Metal Catalog",
+    statsTitle: "Comunidade Stay Metal",
     statsOnline: "Metalheads Online",
     statsRegistered: "Membros Cadastrados",
 
@@ -192,12 +192,12 @@ export const translations: { [lang: string]: TranslationDict } = {
     buyMerchBtn: "Garantir com o Desenvolvedor (WhatsApp)",
 
     helpTitle: "Ajuda & Suporte",
-    helpWelcome: "Seja bem-vindo ao Metal Catalog! Saiba como utilizar a plataforma mundial do Heavy Metal:",
+    helpWelcome: "Seja bem-vindo ao Stay Metal! Saiba como utilizar a plataforma mundial do Heavy Metal:",
     faqTitle: "Perguntas Frequentes (FAQ)",
     contactDeveloperTitle: "Entrar em Contato com o Desenvolvedor",
     contactDeveloperText: "Para cadastrar novas bandas, festivais, shows, notícias ou para qualquer dúvida, entre em contato diretamente com o desenvolvedor Patrício!",
 
-    loginTitle: "Entrar no Metal Catalog",
+    loginTitle: "Entrar no Stay Metal",
     registerTitle: "Criar Conta de Usuário",
     emailLabel: "Endereço de E-mail",
     passwordLabel: "Senha Secreta",
@@ -247,11 +247,11 @@ export const translations: { [lang: string]: TranslationDict } = {
     onlyAdminPrompt: "Área exclusiva para o administrador patricioaug@gmail.com",
 
     monetizeTitle: "Estratégias de Negócio & Monetização",
-    monetizeSubtitle: "Como transformar o Metal Catalog no maior catálogo B2B do cenário de Heavy Metal e gerar lucros extraordinários",
-    monetizeIntro: "Com uma comunidade altamente engajada e apaixonada por bandas de heavy metal, o Metal Catalog oferece excelentes janelas de lucro:"
+    monetizeSubtitle: "Como transformar o Stay Metal no maior catálogo B2B do cenário de Heavy Metal e gerar lucros extraordinários",
+    monetizeIntro: "Com uma comunidade altamente engajada e apaixonada por bandas de heavy metal, o Stay Metal oferece excelentes janelas de lucro:"
   },
   en: {
-    appName: "Metal Catalog",
+    appName: "Stay Metal",
     appSubtitle: "The Global Epicenter of Heavy Metal & Rock",
     refreshBtn: "Refresh",
     refreshing: "Synchronizing...",
@@ -273,7 +273,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     langEN: "English (EN)",
     langES: "Español (ES)",
 
-    statsTitle: "Metal Catalog Community",
+    statsTitle: "Stay Metal Community",
     statsOnline: "Metalheads Online",
     statsRegistered: "Registered Members",
 
@@ -311,12 +311,12 @@ export const translations: { [lang: string]: TranslationDict } = {
     buyMerchBtn: "Order via WhatsApp with Dev",
 
     helpTitle: "Help & Support",
-    helpWelcome: "Welcome to Metal Catalog! Discover how to easily master the global Heavy Metal catalog:",
+    helpWelcome: "Welcome to Stay Metal! Discover how to easily master the global Heavy Metal catalog:",
     faqTitle: "Frequently Asked Questions (FAQ)",
     contactDeveloperTitle: "Contact the Developer Behind the App",
     contactDeveloperText: "To register new bands, festivals, shows, news, or for any general inquiry, please contact the developer Patrício directly!",
 
-    loginTitle: "Log In to Metal Catalog",
+    loginTitle: "Log In to Stay Metal",
     registerTitle: "Create User Account",
     emailLabel: "Email Address",
     passwordLabel: "Secret Password",
@@ -366,11 +366,11 @@ export const translations: { [lang: string]: TranslationDict } = {
     onlyAdminPrompt: "Exclusive area reserved for patricioaug@gmail.com",
 
     monetizeTitle: "Business Strategy & Monetization",
-    monetizeSubtitle: "How to scale Metal Catalog into the ultimate heavy metal B2B powerhouse and generate passive cashflow",
-    monetizeIntro: "Targeting an incredibly passionate niche community, Metal Catalog has highly lucrative advertising and sponsorship hooks:"
+    monetizeSubtitle: "How to scale Stay Metal into the ultimate heavy metal B2B powerhouse and generate passive cashflow",
+    monetizeIntro: "Targeting an incredibly passionate niche community, Stay Metal has highly lucrative advertising and sponsorship hooks:"
   },
   es: {
-    appName: "Metal Catalog",
+    appName: "Stay Metal",
     appSubtitle: "El Epicentro Mundial del Rock y Heavy Metal",
     refreshBtn: "Actualizar",
     refreshing: "Sincronizando...",
@@ -392,7 +392,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     langEN: "English (EN)",
     langES: "Español (ES)",
 
-    statsTitle: "Comunidad Metal Catalog",
+    statsTitle: "Comunidad Stay Metal",
     statsOnline: "Metalheads Online",
     statsRegistered: "Miembros Registrados",
 
@@ -430,12 +430,12 @@ export const translations: { [lang: string]: TranslationDict } = {
     buyMerchBtn: "Pedir al Desarrollador por WhatsApp",
 
     helpTitle: "Ayuda y Soporte",
-    helpWelcome: "¡Bienvenido a Metal Catalog! Sigue estos sencillos pasos para dominar el catálogo global del Metal:",
+    helpWelcome: "¡Bienvenido a Stay Metal! Sigue estos sencillos pasos para dominar el catálogo global del Metal:",
     faqTitle: "Preguntas Frecuentes (FAQ)",
     contactDeveloperTitle: "Contactar con el Creador",
     contactDeveloperText: "Para registrar nuevas bandas, festivales, conciertos, noticias o para cualquier consulta, ¡comuníquese directamente con el desarrollador Patrício!",
 
-    loginTitle: "Ingresar a Metal Catalog",
+    loginTitle: "Ingresar a Stay Metal",
     registerTitle: "Crear Cuenta de Usuario",
     emailLabel: "Correo Electrónico",
     passwordLabel: "Contraseña Secreta",
@@ -485,7 +485,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     onlyAdminPrompt: "Área reservada exclusivamente para patricioaug@gmail.com",
 
     monetizeTitle: "Estrategias de Negocio y Monetización",
-    monetizeSubtitle: "Cómo transformar Metal Catalog en la mayor red publicitaria B2B de Metal y generar ingresos pasivos",
+    monetizeSubtitle: "Cómo transformar Stay Metal en la mayor red publicitaria B2B de Metal y generar ingresos pasivos",
     monetizeIntro: "Un nicho tan apaixonado presenta impresionantes oportunidades de marketing y patrocinio con marcas premium:"
   }
 };
