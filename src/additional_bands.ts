@@ -2957,12 +2957,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
       en: "Brazilian Hard Rock band formed in Belo Horizonte, Minas Gerais. Fusing classic-inspired power, striking guitar riffs, and energetic vocals, Carmesim is a rising force in the vibrant Brazilian rock scene.",
       es: "Banda brasileña de Hard Rock formada en Belo Horizonte, Minas Gerais. Combinando un potente sonido de inspiración clásica, riffs memorables y voces enérgicas, Carmesim es una fuerza en ascenso en la escena del rock brasileño."
     },
-    members: [
-      { name: "Vocalista / Cantora", role: "Vocals", status: "active" },
-      { name: "Guitarrista", role: "Guitars", status: "active" },
-      { name: "Baixista", role: "Bass", status: "active" },
-      { name: "Baterista", role: "Drums", status: "active" }
-    ],
+    members: [],
     discography: [
       { title: "I Wanna Rock", year: 2023, type: "Single" },
       { title: "Hard Rock BH", year: 2024, type: "Single" }
@@ -2987,9 +2982,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
       es: "Banda brasileña de Deathgrind y Metal Extremo formada en Vitória, de Espírito Santo. Con voces guturales brutales, tempos veloces, guitarras pesadas y una base rítmica demoledora, STRIFER representa la agresión pura del metal extremo capixaba."
     },
     members: [
-      { name: "Elder Strifer", role: "Guitars / Vocals", status: "active" },
-      { name: "Baixista", role: "Bass", status: "active" },
-      { name: "Baterista", role: "Drums", status: "active" }
+      { name: "Elder Strifer", role: "Guitars / Vocals", status: "active" }
     ],
     discography: [
       { title: "Hate", year: 2024, type: "Single" }
@@ -3042,12 +3035,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
       en: "Hailing from Minas Gerais, Slot Machine specializes in the best of 1980s Brazilian Rock, Hard Rock, and international classic rock hits, delivering highly energetic live performances across major pubs and venues.",
       es: "Originaria de Minas Gerais, Slot Machine se especializa en lo mejor del Rock Brasileño de los 80, Hard Rock y clásicos del rock internacional, ofreciendo shows enérgicos en las principales cervecerías y pubs."
     },
-    members: [
-      { name: "Vocalista", role: "Vocals", status: "active" },
-      { name: "Guitarrista", role: "Guitars", status: "active" },
-      { name: "Baixista", role: "Bass", status: "active" },
-      { name: "Baterista", role: "Drums", status: "active" }
-    ],
+    members: [],
     discography: [
       { title: "Rock em ARA", year: 2023, type: "Album" },
       { title: "Beerstock Sessions", year: 2024, type: "Album" }
@@ -3070,12 +3058,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
       en: "Alternative rock and indie pop band from Belo Horizonte, Minas Gerais, Brazil. Blending punchy beats, infectious melodies, and a solid visual identity, Glasgow9 is known for refined singles like 'Connection' and immersive indie-scene performances.",
       es: "Banda de rock alternativo e indie pop de Belo Horizonte, Gerais, Brasil. Combinando ritmos potentes, melodías contagiosas y una sólida identidad visual, Glasgow9 es conocida por refinados sencillos como 'Connection' e inmersivas actuaciones independientes."
     },
-    members: [
-      { name: "Vocalista", role: "Vocals", status: "active" },
-      { name: "Guitarrista", role: "Guitars", status: "active" },
-      { name: "Baixista", role: "Bass", status: "active" },
-      { name: "Baterista", role: "Drums", status: "active" }
-    ],
+    members: [],
     discography: [
       { title: "Connection", year: 2024, type: "Single" },
       { title: "SIM", year: 2024, type: "Single" },
