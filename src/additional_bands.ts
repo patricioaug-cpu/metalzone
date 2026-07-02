@@ -2,6 +2,83 @@ import { Band } from "./firebase";
 
 export const ADDITIONAL_SEED_BANDS: Band[] = [
   {
+    name: "Vader",
+    country: "Poland",
+    formationYear: 1983,
+    genre: "Death Metal / Thrash Metal",
+    bio: {
+      pt: "Uma das bandas pioneiras e mais respeitadas do death metal polonês e mundial, formada em Olsztyn em 1983. Liderada por Piotr 'Peter' Wiwczarek, a banda é aclamada por sua velocidade avassaladora, riffs afiados e influências de thrash metal clássico.",
+      en: "One of the pioneering and most respected bands of Polish and global death metal, formed in Olsztyn in 1983. Led by Piotr 'Peter' Wiwczarek, the band is acclaimed for its relentless speed, razor-sharp riffs, and classic thrash metal influences.",
+      es: "Una de las bandas pioneras y más respetadas del death metal polaco y mundial, formada en Olsztyn en 1983. Liderada por Piotr 'Peter' Wiwczarek, la banda es aclamada por su velocidad implacable y riffs afilados."
+    },
+    members: [
+      { name: "Piotr 'Peter' Wiwczarek", role: "Vocals, Guitars", status: "active" }
+    ],
+    discography: [
+      { title: "HUMANIHILITY", year: 2026, type: "EP" },
+      { title: "The Ultimate Incantation", year: 1992, type: "Album" },
+      { title: "De Profundis", year: 1995, type: "Album" },
+      { title: "Litany", year: 2000, type: "Album" }
+    ],
+    socials: {
+      instagram: "@vader_band_official",
+      website: "https://linktr.ee/vader_band_official"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Carceral",
+    country: "Brazil",
+    formationYear: 2024,
+    genre: "Deathcore / Slam / Death Metal",
+    bio: {
+      pt: "Banda brasileira de metal extremo conhecida por sua sonoridade brutal, combinando riffs agressivos de deathcore com elementos pesados de slam e death metal. Seu aguardado álbum de estreia, 'Descending Reprisal', marca o início de uma nova era de peso.",
+      en: "Brazilian extreme metal band known for its brutal sound, combining aggressive deathcore riffs with heavy slam and death metal elements. Their highly anticipated debut album, 'Descending Reprisal', marks the beginning of a heavy new era.",
+      es: "Banda brasileña de metal extremo conocida por su sonido brutal, combinando riffs agresivos de deathcore con elementos pesados de slam y death metal. Su álbum debut es 'Descending Reprisal'."
+    },
+    members: [
+      { name: "Robe", role: "Vocals", status: "active" }
+    ],
+    discography: [
+      { title: "Descending Reprisal", year: 2026, type: "Album" }
+    ],
+    socials: {
+      instagram: "@carceralofficial",
+      website: "https://youtube.com/c/rZTWELKD4?si=oij5fUS7EjQiBn9t"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Carniçal",
+    country: "Brazil",
+    formationYear: 2022,
+    genre: "Black Metal / Death Metal",
+    bio: {
+      pt: "Banda brasileira de metal extremo com uma estética sombria, teatral e agressiva inspirada no black metal tradicional com toques modernos de death metal. Destaca-se por shows intensos e visuais marcantes com corpsepaint.",
+      en: "Brazilian extreme metal band with a dark, theatrical, and aggressive aesthetic inspired by traditional black metal with modern death metal touches. Stand out for intense live shows and striking corpsepaint visuals.",
+      es: "Banda brasileña de metal extremo con una estética oscura, teatral y agresiva inspirada en el black metal tradicional con toques de death metal."
+    },
+    members: [
+      { name: "Carniçal Members", role: "All Instruments", status: "active" }
+    ],
+    discography: [
+      { title: "Umbral Carniçal", year: 2024, type: "Single" }
+    ],
+    socials: {
+      instagram: "@carnical_",
+      website: "https://uticket.com.br/evento/carnical-em-parelheiros/"
+    },
+    contacts: {
+      phone: "47 99615-8572"
+    },
+    approved: true,
+    submittedBy: "system"
+  },
+  {
     name: "Ofanim",
     country: "Brazil",
     formationYear: 2021,
