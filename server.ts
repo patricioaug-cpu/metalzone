@@ -1248,9 +1248,19 @@ Return STRICTLY this JSON schema (do NOT wrap in markdown code blocks like \`\`\
   }
 });
 
+// Helper to sanitize non-ASCII characters (like emojis and accents) for HTTP headers
+function toAscii(str: string): string {
+  if (!str) return "";
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // remove accents
+    .replace(/[^\x00-\x7F]/g, "") // remove emojis and other non-ASCII characters
+    .trim();
+}
+
 // API: Notify email about new user access
 app.post("/api/notify-access", async (req: Request, res: Response) => {
-  const { country: clientCountry, clientTime } = req.body;
+  const { country: clientCountry, clientTime, userEmail, userType } = req.body;
 
   // Try to extract Vercel country/city headers
   const countryHeader = req.headers["x-vercel-ip-country"] || req.headers["x-vercel-country"];
@@ -1262,28 +1272,36 @@ app.post("/api/notify-access", async (req: Request, res: Response) => {
   const countryStr = detectedCity ? `${detectedCity}, ${detectedCountry}` : detectedCountry;
   const timeStr = clientTime || new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
 
-  const subject = `🤘 Stay Metal: Novo Acesso Detectado!`;
-  const message = `Um novo usuario acessou o sistema Stay Metal!
+  const emailLabel = userEmail ? ` (${userEmail})` : " (Anonimo)";
+  const subject = `🤘 Stay Metal: Novo Acesso Detectado - ${userType || "Guest"}${emailLabel}`;
+  const message = `Um novo usuario (${userType || "Guest"}${emailLabel}) acessou o sistema Stay Metal!
 
 Data/Hora: ${timeStr}
 Pais/Local: ${countryStr}
+Identificacao: ${userEmail || "Anonymous Guest"}
 IP (best-effort): ${req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown"}
 User Agent: ${req.headers["user-agent"] || "unknown"}
 
-Gerado por Stay Metal Vercel Integration`;
+Gerado por Stay Metal Access Monitor`;
 
   console.log(`[ACCESS NOTIFICATION] Dispatching access email notification for: ${countryStr}`);
 
   let sent = false;
 
-  // 1. Optional Resend Service if configured
-  if (process.env.RESEND_API_KEY) {
+  // 1. Optional Resend Service if configured and looks valid
+  const resendKey = process.env.RESEND_API_KEY;
+  const isResendConfigured = resendKey && 
+                             resendKey.startsWith("re_") && 
+                             !resendKey.includes("your_") && 
+                             !resendKey.includes("YOUR_");
+
+  if (isResendConfigured) {
     try {
       const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.RESEND_API_KEY}`
+          "Authorization": `Bearer ${resendKey}`
         },
         body: JSON.stringify({
           from: "Stay Metal <onboarding@resend.dev>",
@@ -1308,11 +1326,12 @@ Gerado por Stay Metal Vercel Integration`;
   if (!sent) {
     try {
       const randomTopic = `metal_catalog_notify_${Math.random().toString(36).substring(7)}`;
+      const cleanTitle = toAscii(subject);
       const response = await fetch(`https://ntfy.sh/${randomTopic}`, {
         method: "POST",
         headers: {
           "Email": "patricioaug@gmail.com",
-          "Title": subject,
+          "Title": cleanTitle,
           "Priority": "high",
           "Tags": "metal,rock,bell"
         },

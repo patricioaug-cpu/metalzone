@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "motion/react";
 import { Globe } from "lucide-react";
+// @ts-ignore
+import stayMetalTitleLogo from "../assets/images/stay_metal_logo_1782983726320.jpg";
 
 interface WelcomeScreenProps {
   lang: "pt" | "en" | "es";
@@ -22,6 +24,46 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
       curation: "Curaduría Underground y Clásicos",
     }
   }[lang];
+
+  const [transparentLogo, setTransparentLogo] = React.useState<string>(stayMetalTitleLogo);
+
+  React.useEffect(() => {
+    const img = new Image();
+    img.src = stayMetalTitleLogo;
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      ctx.drawImage(img, 0, 0);
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imgData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const maxVal = Math.max(r, g, b);
+
+        // Treat pixels with low values in all RGB channels as black/dark-gray background
+        const blackThreshold = 35;
+        const transitionThreshold = 80;
+
+        if (maxVal <= blackThreshold) {
+          data[i + 3] = 0; // Set alpha to 0 (fully transparent)
+        } else if (maxVal < transitionThreshold) {
+          const ratio = (maxVal - blackThreshold) / (transitionThreshold - blackThreshold);
+          const alpha = Math.round(Math.pow(ratio, 1.4) * 255);
+          data[i + 3] = Math.min(data[i + 3], alpha);
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+      setTransparentLogo(canvas.toDataURL("image/png"));
+    };
+  }, []);
 
   return (
     <div className="min-h-screen w-full bg-neutral-950 text-stone-200 flex flex-col items-center justify-center relative overflow-hidden font-sans select-none">
@@ -61,7 +103,7 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
       </div>
 
       {/* Content Center Card */}
-      <div className="z-10 max-w-xl w-full px-6 pt-16 pb-10 flex flex-col items-center text-center space-y-6">
+      <div className="z-10 max-w-xl w-full px-6 py-6 md:py-10 flex flex-col items-center text-center space-y-5">
         
         {/* Visual Animation Stage */}
         <div className="relative flex items-center justify-center mt-8">
@@ -107,29 +149,20 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
           </motion.div>
         </div>
 
-        {/* Title & Subtitle Info */}
-        <div className="space-y-3 flex flex-col items-center select-none pt-10 pb-4">
+        {/* Title Image (Replaces Stay Metal text) */}
+        <div className="w-full max-w-md select-none pt-12 md:pt-16 pb-2">
           <motion.div 
-            className="relative flex flex-col items-center"
+            className="flex flex-col items-center justify-center"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            {/* Main Text Layer with high-contrast authentic styling */}
-            <h1 className="text-5xl md:text-6xl font-metal iron-maiden-text tracking-wider text-center px-4">
-              STAY METAL
-            </h1>
-            
-            {/* Real-time reflection exactly as in the attached image */}
-            <div 
-              className="absolute top-[90%] left-0 right-0 scale-y-[-0.6] opacity-30 select-none pointer-events-none origin-top font-metal iron-maiden-text tracking-wider text-center px-4 filter blur-[0.5px]"
-              style={{
-                WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 80%)",
-                maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 80%)",
-              }}
-            >
-              STAY METAL
-            </div>
+            <img 
+              src={transparentLogo} 
+              alt="Stay Metal" 
+              className="w-full max-w-[260px] sm:max-w-[320px] md:max-w-[380px] h-auto object-contain mx-auto select-none" 
+              referrerPolicy="no-referrer"
+            />
           </motion.div>
         </div>
 

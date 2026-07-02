@@ -60,10 +60,27 @@ export default function App() {
 
   const t = translations[lang];
 
-  // Send access email notification when a new user enters the system
+  // Send access email notification when a new or different user enters/uses the system
   useEffect(() => {
-    const notified = localStorage.getItem("metal_catalog_notified_access");
-    if (!notified) {
+    // Generate or fetch a device-persistent random ID for Guest identification
+    let deviceId = localStorage.getItem("metal_catalog_device_id");
+    if (!deviceId) {
+      deviceId = "dev_" + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+      localStorage.setItem("metal_catalog_device_id", deviceId);
+    }
+
+    const currentUserKey = user ? `user_${user.email || user.uid}` : `guest_${deviceId}`;
+    
+    // Read the array of already notified user keys from localStorage
+    const notifiedKeysStr = localStorage.getItem("metal_catalog_notified_keys") || "[]";
+    let notifiedKeys: string[] = [];
+    try {
+      notifiedKeys = JSON.parse(notifiedKeysStr);
+    } catch (e) {
+      notifiedKeys = [];
+    }
+
+    if (!notifiedKeys.includes(currentUserKey)) {
       const sendAccessNotification = async () => {
         let clientCountry = "Unknown Country";
         try {
@@ -86,12 +103,16 @@ export default function App() {
             },
             body: JSON.stringify({
               country: clientCountry,
-              clientTime: clientTime
+              clientTime: clientTime,
+              userEmail: user ? user.email : `Guest (Device: ${deviceId.substring(4, 10)})`,
+              userType: user ? "Membro Autenticado" : "Visitante Anonimo"
             })
           });
           if (res.ok) {
-            localStorage.setItem("metal_catalog_notified_access", "true");
-            console.log("Access reported successfully to patricioaug@gmail.com.");
+            // Add the current user key to notifiedKeys so we don't spam for this specific user
+            const updatedKeys = [...notifiedKeys, currentUserKey];
+            localStorage.setItem("metal_catalog_notified_keys", JSON.stringify(updatedKeys));
+            console.log("Access reported successfully for " + currentUserKey);
           }
         } catch (err) {
           console.error("Access notification report failed:", err);
@@ -105,7 +126,7 @@ export default function App() {
 
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [user, isGuest]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -400,15 +421,6 @@ export default function App() {
             <h1 className="text-md font-black text-white uppercase tracking-widest font-mono select-none leading-none">
               Stay Metal
             </h1>
-            <div className="flex items-center gap-1 mt-1 select-none">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-              </span>
-              <span className="text-[8.5px] text-emerald-500 font-bold uppercase tracking-wider font-mono">
-                {onlineCount} {lang === "pt" ? "ONLINE" : lang === "es" ? "EN LÍNEA" : "ONLINE"}
-              </span>
-            </div>
           </div>
         </div>
         
@@ -749,45 +761,7 @@ export default function App() {
               </span>
             </div>
 
-            {/* ONLINE USERS INDICATOR WITH INTERACTIVE ACTIVE LIST */}
-            <div className="flex justify-between items-center pt-1.5 border-t border-neutral-900 mt-1.5">
-              <span className="flex items-center gap-1.5 select-none">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-                </span>
-                <span>{lang === "pt" ? "Online agora:" : lang === "es" ? "En línea:" : "Online now:"}</span>
-              </span>
-              <span className="text-emerald-400 font-mono font-bold cursor-help relative group/tooltip">
-                {onlineCount}
-                
-                {/* TOOLTIP SHOWING ACTIVE USERS DETAIL */}
-                <span className="pointer-events-none absolute right-0 bottom-6 w-48 bg-neutral-950 border border-neutral-850 p-2.5 rounded-xl shadow-2xl opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 z-50 text-[9px] font-mono text-zinc-400 space-y-1 block">
-                  <span className="text-[8px] font-bold uppercase tracking-wider text-emerald-400 block border-b border-neutral-900 pb-1">
-                    {lang === "pt" ? "Usuários Ativos" : lang === "es" ? "Usuarios Activos" : "Active Users"}
-                  </span>
-                  <span className="block max-h-24 overflow-y-auto space-y-1">
-                    {onlineUsers.map((u, i) => (
-                      <span key={u.id || i} className="flex justify-between items-center gap-1">
-                        <span className="truncate max-w-[120px] text-[8.5px]">
-                          {u.isMe 
-                            ? (lang === "pt" ? "Você" : lang === "es" ? "Tú" : "You")
-                            : (u.email ? u.email.split("@")[0] : `Guest_${u.id.substring(5, 9)}`)}
-                        </span>
-                        <span className="text-[7.5px] bg-neutral-900 px-1 rounded text-zinc-500 shrink-0">
-                          {u.isGuest ? "guest" : "member"}
-                        </span>
-                      </span>
-                    ))}
-                    {onlineUsers.length === 0 && (
-                      <span className="text-zinc-600 block text-center py-1">
-                        {lang === "pt" ? "Calculando..." : "Calculating..."}
-                      </span>
-                    )}
-                  </span>
-                </span>
-              </span>
-            </div>
+
           </div>
 
         </div>

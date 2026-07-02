@@ -1,6 +1,30 @@
 import { Band } from "./firebase";
 
 export const ADDITIONAL_SEED_BANDS: Band[] = [
+  {
+    name: "Ofanim",
+    country: "Brazil",
+    formationYear: 2021,
+    genre: "Deathcore / Extreme Metal",
+    bio: {
+      pt: "Banda brasileira de metal extremo e deathcore conhecida por sua atmosfera pesada e sombria, riffs colossais e vocal visceral. Com grande impacto no cenário independente nacional, destaca-se pelo aclamado lançamento 'Sacrificio'.",
+      en: "Brazilian extreme metal and deathcore band known for its heavy, dark atmosphere, colossal riffs, and visceral vocals. A rising power in the national independent scene, highly recognized for their release 'Sacrificio'.",
+      es: "Banda brasileña de metal extremo y deathcore conocida por su atmósfera pesada y oscura, riffs colosales y voces viscerales. Con gran presencia en la escena independiente nacional, destaca por su aclamado lanzamiento 'Sacrificio'."
+    },
+    members: [
+      { name: "Ofanim Crew", role: "All Instruments", status: "active" }
+    ],
+    discography: [
+      { title: "Sacrificio (Reissue)", year: 2024, type: "Album" }
+    ],
+    socials: {
+      instagram: "@ofanimofficial",
+      website: "https://linktr.ee/ofanimofficial"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
 
   {
     name: "Frozen Crown",
@@ -1250,17 +1274,6 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     contacts: {}, approved: true, submittedBy: "system"
   },
   {
-    name: "Banda Overdose",
-    country: "Brazil",
-    formationYear: 1983,
-    genre: "Thrash Metal / Heavy Metal",
-    bio: "Lenda pioneira do metal de Belo Horizonte, famosa pelo split álbum histórico 'Século XX' com o Sepultura em 1985 e turnês mundiais nos anos 90.",
-    members: [{ name: "Pedro 'Bozó'", role: "Vocals", status: "active" }],
-    discography: [{ title: "Século XX (Split)", year: 1985, type: "Album" }],
-    socials: { instagram: "@overdose_official_band" },
-    contacts: {}, approved: true, submittedBy: "system"
-  },
-  {
     name: "Banda Foxie",
     country: "Brazil",
     formationYear: 1986,
@@ -1282,17 +1295,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: { instagram: "@ancientmariners_maidentribute" },
     contacts: {}, approved: true, submittedBy: "system"
   },
-  {
-    name: "Banda Sacrificed",
-    country: "Brazil",
-    formationYear: 2004,
-    genre: "Melodic Death Metal / Heavy Metal",
-    bio: "Destaque do metal moderno em Belo Horizonte, liderada pelos potentes vocais de Kell Hell, aliando peso extremo, agressividade e melodias marcantes.",
-    members: [{ name: "Kell Hell", role: "Vocals", status: "active" }],
-    discography: [{ title: "Enraged", year: 2018, type: "Album" }],
-    socials: { instagram: "@sacrificedofficial" },
-    contacts: {}, approved: true, submittedBy: "system"
-  },
+
   {
     name: "Banda Living Park",
     country: "Brazil",

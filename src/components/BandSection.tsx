@@ -123,6 +123,23 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const isLogged = true;
 
   const [search, setSearch] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+
+  useEffect(() => {
+    setActiveSuggestionIndex(-1);
+  }, [search]);
+
+  const handleSelectSuggestion = (bandName: string) => {
+    setSearch(bandName);
+    setAppliedSearch(bandName);
+    setAppliedGenres([]);
+    setAppliedCountries([]);
+    setHasSearched(true);
+    setMatchedIds(null);
+    setShowSuggestions(false);
+  };
+
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
   const [genreSearch, setGenreSearch] = useState("");
@@ -673,23 +690,83 @@ export const BandSection: React.FC<BandSectionProps> = ({
     }
   };
 
+  const suggestedBands = search.trim()
+    ? bands
+        .filter(b => b.approved && b.name.toLowerCase().includes(search.toLowerCase()))
+        .slice(0, 6)
+    : [];
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions || suggestedBands.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveSuggestionIndex((prev) => 
+        prev < suggestedBands.length - 1 ? prev + 1 : 0
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveSuggestionIndex((prev) => 
+        prev > 0 ? prev - 1 : suggestedBands.length - 1
+      );
+    } else if (e.key === "Enter") {
+      if (activeSuggestionIndex >= 0 && activeSuggestionIndex < suggestedBands.length) {
+        e.preventDefault();
+        handleSelectSuggestion(suggestedBands[activeSuggestionIndex].name);
+      }
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+    }
+  };
+
   return (
     <div id="band-section-wrapper" className="space-y-6">
       {/* FILTER CONTROLS GRID */}
       <form onSubmit={handleManualSearch} className="bg-neutral-900/60 p-4 rounded-xl border border-neutral-800/80 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
+          <div className="relative">
             <label className="block text-[10px] uppercase font-mono tracking-wider text-zinc-400 mb-1 font-semibold">
               {lang === "pt" ? "🔍 Palavra-Chave / Nome" : "🔍 Keyword / Name"}
             </label>
-            <input
-              type="text"
-              placeholder={t.searchPlaceholder}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-neutral-950 border border-neutral-805 text-xs text-neutral-200 px-3 py-2 rounded-lg font-mono focus:outline-none focus:border-red-600"
-            />
-
+            <div className="relative">
+              <input
+                type="text"
+                placeholder={t.searchPlaceholder}
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setShowSuggestions(true);
+                }}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => {
+                  setTimeout(() => setShowSuggestions(false), 200);
+                }}
+                onKeyDown={handleKeyDown}
+                className="w-full bg-neutral-950 border border-neutral-805 text-xs text-neutral-200 px-3 py-2 rounded-lg font-mono focus:outline-none focus:border-red-600"
+              />
+              {showSuggestions && suggestedBands.length > 0 && (
+                <div className="absolute left-0 right-0 mt-1 bg-neutral-950 border border-neutral-800 rounded-xl max-h-60 overflow-y-auto shadow-2xl z-50">
+                  {suggestedBands.map((b, idx) => (
+                    <button
+                      key={b.id || idx}
+                      type="button"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                      }}
+                      onClick={() => handleSelectSuggestion(b.name)}
+                      className={`w-full text-left px-3 py-2 text-xs font-mono border-b border-neutral-900 last:border-b-0 transition flex justify-between items-center ${
+                        activeSuggestionIndex === idx 
+                          ? "bg-red-950/40 text-rose-400 border-l-2 border-red-600 pl-2.5" 
+                          : "hover:bg-red-950/20 text-neutral-300 hover:text-rose-400 pl-3"
+                      }`}
+                    >
+                      <span>{b.name}</span>
+                      <span className="text-[9px] text-zinc-500 capitalize">{b.genre}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="relative">
