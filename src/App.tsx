@@ -22,9 +22,10 @@ import { YesterdayBandsSection } from "./components/YesterdayBandsSection";
 import { 
   Flame, Music, Newspaper, ShoppingBag, Shield, DollarSign, HelpCircle, 
   RefreshCw, Globe, Phone, Mail, Star, Radio, Skull, Search, X, MapPin, Menu, LogOut,
-  Calendar, Clock, Eye
+  Calendar, Clock, Eye, Video
 } from "lucide-react";
 import { WelcomeScreen } from "./components/WelcomeScreen";
+import { FloatingVideoPlayer, FloatingWindow } from "./components/FloatingVideoPlayer";
 
 export default function App() {
   const [lang, setLang] = useState<"pt" | "en" | "es">("pt");
@@ -32,6 +33,61 @@ export default function App() {
   type TabType = "bands" | "festivals" | "bday" | "help" | "admin" | "yesterday";
   const [activeTab, setActiveTabTab] = useState<TabType>("bands");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // Floating Video Windows State
+  const [videoWindows, setVideoWindows] = useState<FloatingWindow[]>([]);
+
+  const handleOpenVideoWindow = () => {
+    const newId = `video-win-${Date.now()}`;
+    const videoUrl = "https://youtu.be/BH7oNQ2SYs8?si=05hr3i8BMnqJdXWF";
+    
+    // Calculate initial centered position
+    const winW = Math.min(500, window.innerWidth - 40);
+    const winH = Math.min(300, window.innerHeight - 100);
+    
+    // Stagger slightly if there are existing windows
+    const staggerOffset = videoWindows.length * 25;
+    const winX = Math.max(10, (window.innerWidth - winW) / 2 + staggerOffset);
+    const winY = Math.max(10, (window.innerHeight - winH) / 2 + staggerOffset);
+    
+    // Get maximum zIndex
+    const maxZ = videoWindows.reduce((max, w) => Math.max(max, w.zIndex), 1000);
+    
+    const newWindow: FloatingWindow = {
+      id: newId,
+      title: lang === "pt" ? "Vídeo da Semana" : lang === "es" ? "Video de la Semana" : "Video of the Week",
+      videoUrl,
+      x: winX,
+      y: winY,
+      width: winW,
+      height: winH,
+      zIndex: maxZ + 1,
+    };
+    
+    setVideoWindows((prev) => [...prev, newWindow]);
+  };
+
+  const handleCloseVideoWindow = (id: string) => {
+    setVideoWindows((prev) => prev.filter((w) => w.id !== id));
+  };
+
+  const handleFocusVideoWindow = (id: string) => {
+    setVideoWindows((prev) => {
+      const maxZ = prev.reduce((max, w) => Math.max(max, w.zIndex), 1000);
+      return prev.map((w) => {
+        if (w.id === id) {
+          return { ...w, zIndex: maxZ + 1 };
+        }
+        return w;
+      });
+    });
+  };
+
+  const handleUpdateVideoWindow = (id: string, updates: Partial<FloatingWindow>) => {
+    setVideoWindows((prev) =>
+      prev.map((w) => (w.id === id ? { ...w, ...updates } : w))
+    );
+  };
   
   const [headerSearch, setHeaderSearch] = useState("");
   const deferredSearch = useDeferredValue(headerSearch);
@@ -973,6 +1029,17 @@ export default function App() {
             </div>
           </div>
 
+          {/* VIDEO OF THE WEEK BANNER */}
+          <div id="video-of-the-week-banner" className="py-0.5 flex justify-center max-w-xs mx-auto">
+            <button
+              onClick={handleOpenVideoWindow}
+              className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0"
+            >
+              <Video size={10} className="text-red-500" />
+              <span>{lang === "pt" ? "Vídeo da Semana" : lang === "es" ? "Vídeo de la Semana" : "Video of the Week"}</span>
+            </button>
+          </div>
+
           {/* USER AUTHENTICATION EXPAND PANEL */}
           <AuthSection 
             user={user} 
@@ -1111,6 +1178,15 @@ export default function App() {
 
 
       </div>
+
+      {/* Floating Picture-In-Picture Video Players */}
+      <FloatingVideoPlayer
+        windows={videoWindows}
+        onCloseWindow={handleCloseVideoWindow}
+        onFocusWindow={handleFocusVideoWindow}
+        onUpdateWindow={handleUpdateVideoWindow}
+        lang={lang}
+      />
     </div>
   );
 }
