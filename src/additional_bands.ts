@@ -2,6 +2,57 @@ import { Band } from "./firebase";
 
 export const ADDITIONAL_SEED_BANDS: Band[] = [
   {
+    name: "Neural Abyss",
+    country: "Brazil",
+    formationYear: 2023,
+    genre: "Old School Death Metal",
+    bio: {
+      pt: "Banda brasileira de Old School Death Metal (OSDM) originária de Campina Grande, Paraíba. Conhecida por sua sonoridade brutal, densa e agressiva com riffs pesados, vocais guturais intensos e andamentos rápidos que resgatam a essência clássica do death metal dos anos 80 e 90. Lançaram o aclamado álbum de estreia 'Everything Is Over'.",
+      en: "Brazilian Old School Death Metal (OSDM) band from Campina Grande, Paraíba. Known for their brutal, dense, and aggressive sonic style featuring heavy riffs, intense guttural vocals, and fast tempos that bring back the classic 80s and 90s death metal essence. Released their debut full-length album 'Everything Is Over'.",
+      es: "Banda brasileña de Old School Death Metal (OSDM) originaria de Campina Grande, Paraíba. Conocida por su sonido brutal, denso y agresivo con riffs pesados, voces guturales intensas y tempos rápidos. Lanzaron su álbum debut 'Everything Is Over'."
+    },
+    members: [
+      { name: "Neural Abyss Crew", role: "All Instruments", status: "active" }
+    ],
+    discography: [
+      { title: "Everything Is Over", year: 2026, type: "Album" },
+      { title: "Misanthropic Flame", year: 2025, type: "Single" }
+    ],
+    socials: {
+      instagram: "@neural.abyss",
+      website: "https://linktr.ee/neuralabyss"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Red Devil Vortex",
+    country: "United States",
+    formationYear: 2016,
+    genre: "Retrofuture Metal",
+    bio: {
+      pt: "Banda de metal moderno e Retrofuture Metal fundada em Los Angeles por músicos brasileiros. Conhecida por sua sonoridade enérgica, riffs pesados, arranjos eletrônicos futuristas e vocais marcantes, combinando a atitude clássica do heavy metal com elementos de ficção científica e sintetizadores retro.",
+      en: "Modern metal and Retrofuture Metal band formed in Los Angeles by Brazilian musicians. Renowned for their energetic sound, heavy riffs, futuristic electronic arrangements, and striking vocals, combining classic heavy metal attitude with sci-fi and retro synth elements.",
+      es: "Banda de metal moderno y Retrofuture Metal fundada en Ángeles por músicos brasileños. Conocida por su sonido enérgico, riffs pesados, arreglos electrónicos futuristas y voces de ciencia ficción con sintetizadores retro."
+    },
+    members: [
+      { name: "Red Devil Vortex Crew", role: "All Instruments", status: "active" }
+    ],
+    discography: [
+      { title: "Darkness Beyond the Light", year: 2021, type: "Album" },
+      { title: "Pathways", year: 2022, type: "EP" },
+      { title: "Something Has To Die", year: 2018, type: "EP" }
+    ],
+    socials: {
+      instagram: "@reddevilvortex",
+      website: "https://www.rdvstore.com"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
     name: "Vader",
     country: "Poland",
     formationYear: 1983,
