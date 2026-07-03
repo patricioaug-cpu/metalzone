@@ -17,18 +17,19 @@ import { MonetizeSection } from "./components/MonetizeSection";
 import { HelpSection } from "./components/HelpSection";
 import { OnlineUsersTracker } from "./components/OnlineUsersTracker";
 import { BdaySection, getDeterministicReleaseDate } from "./components/BdaySection";
+import { YesterdayBandsSection } from "./components/YesterdayBandsSection";
 
 import { 
   Flame, Music, Newspaper, ShoppingBag, Shield, DollarSign, HelpCircle, 
   RefreshCw, Globe, Phone, Mail, Star, Radio, Skull, Search, X, MapPin, Menu, LogOut,
-  Calendar
+  Calendar, Clock
 } from "lucide-react";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 
 export default function App() {
   const [lang, setLang] = useState<"pt" | "en" | "es">("pt");
   const [hasEntered, setHasEntered] = useState(false);
-  type TabType = "bands" | "festivals" | "bday" | "help" | "admin";
+  type TabType = "bands" | "festivals" | "bday" | "help" | "admin" | "yesterday";
   const [activeTab, setActiveTabTab] = useState<TabType>("bands");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
@@ -48,7 +49,45 @@ export default function App() {
   const [onlineUsers, setOnlineUsers] = useState<Array<{ id: string; email: string | null; isGuest: boolean; isMe: boolean }>>([]);
   const [authChecked, setAuthChecked] = useState(false);
 
-  const [bands, setBands] = useState<Band[]>(SEED_BANDS);
+  const [bands, setBands] = useState<Band[]>(() => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString();
+    return SEED_BANDS.map(b => {
+      if (b.name === "AnAkA" || b.name === "AutÓpsia") {
+        return { ...b, createdAt: b.createdAt || yesterdayStr };
+      }
+      return b;
+    });
+  });
+
+  const getYesterdayCount = () => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayYear = yesterday.getFullYear();
+    const yesterdayMonth = yesterday.getMonth();
+    const yesterdayDate = yesterday.getDate();
+
+    return bands.filter(b => {
+      if (!b.createdAt) return false;
+      let createdDate: Date;
+      if (typeof b.createdAt === "string") {
+        createdDate = new Date(b.createdAt);
+      } else if (b.createdAt.toDate && typeof b.createdAt.toDate === "function") {
+        createdDate = b.createdAt.toDate();
+      } else if (b.createdAt.seconds) {
+        createdDate = new Date(b.createdAt.seconds * 1000);
+      } else {
+        createdDate = new Date(b.createdAt);
+      }
+      if (isNaN(createdDate.getTime())) return false;
+      return createdDate.getFullYear() === yesterdayYear &&
+             createdDate.getMonth() === yesterdayMonth &&
+             createdDate.getDate() === yesterdayDate;
+    }).length;
+  };
   const [events, setEvents] = useState<EventItem[]>(SEED_EVENTS);
   const [merch, setMerch] = useState<MerchItem[]>(SEED_MERCH);
   const [isLoading, setIsLoading] = useState(true);
@@ -181,9 +220,29 @@ export default function App() {
         });
 
         const merged = [...SEED_BANDS.filter(sb => !updatedLoadedBands.some(lb => lb.name === sb.name)), ...updatedLoadedBands];
-        setBands(merged);
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString();
+        const enriched = merged.map(b => {
+          if (b.name === "AnAkA" || b.name === "AutÓpsia") {
+            return { ...b, createdAt: b.createdAt || yesterdayStr };
+          }
+          return b;
+        });
+        setBands(enriched);
       } else {
-        setBands(SEED_BANDS);
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString();
+        const enriched = SEED_BANDS.map(b => {
+          if (b.name === "AnAkA" || b.name === "AutÓpsia") {
+            return { ...b, createdAt: b.createdAt || yesterdayStr };
+          }
+          return b;
+        });
+        setBands(enriched);
       }
 
       const eventSnap = await fetchWithTimeout(getDocs(collection(db, "events")), 7000, { empty: true, docs: [] } as any);
@@ -505,6 +564,23 @@ export default function App() {
                   </button>
 
                   <button
+                    onClick={() => { setActiveTabTab("yesterday"); setIsSidebarOpen(false); }}
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition duration-200 cursor-pointer ${
+                      activeTab === "yesterday" 
+                        ? "bg-red-950/40 text-rose-400 border-red-900/40" 
+                        : "bg-transparent text-neutral-450 border-transparent hover:bg-neutral-900"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <Clock size={15} />
+                      {lang === "pt" ? "Adicionadas Ontem" : lang === "es" ? "Añadidas Ayer" : "Added Yesterday"}
+                    </span>
+                    <span className="text-[9px] text-red-400 font-bold bg-red-950/30 px-2 py-0.5 rounded-full border border-red-900/40 shadow-sm">
+                      {getYesterdayCount()}
+                    </span>
+                  </button>
+
+                  <button
                     onClick={() => { setActiveTabTab("festivals"); setIsSidebarOpen(false); }}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition duration-200 cursor-pointer ${
                       activeTab === "festivals" 
@@ -653,6 +729,24 @@ export default function App() {
               </div>
               <span className="text-[9px] text-neutral-500 bg-neutral-900/60 px-2 py-0.5 rounded-full border border-neutral-850">
                 {bands.length}
+              </span>
+            </button>
+
+            <button
+              id="sidebar-nav-yesterday"
+              onClick={() => setActiveTabTab("yesterday")}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition duration-200 cursor-pointer ${
+                activeTab === "yesterday" 
+                  ? "bg-red-950/40 text-rose-400 border-red-900/40 shadow-md shadow-red-950/20" 
+                  : "bg-transparent text-neutral-400 border-transparent hover:bg-neutral-900/50 hover:text-white"
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Clock size={15} />
+                <span>{lang === "pt" ? "Adicionadas Ontem" : lang === "es" ? "Añadidas Ayer" : "Added Yesterday"}</span>
+              </div>
+              <span className="text-[9px] text-red-400 font-bold bg-red-950/30 px-2 py-0.5 rounded-full border border-red-900/40 shadow-sm animate-pulse">
+                {getYesterdayCount()}
               </span>
             </button>
 
@@ -831,7 +925,10 @@ export default function App() {
               <span className="text-xs font-mono uppercase tracking-widest text-zinc-300 font-bold">
                 {activeTab === "bands" 
                   ? (lang === "pt" ? "Menu Principal / Catálogo" : lang === "es" ? "Menú Principal / Catálogo" : "Main Menu / Catalog")
-                  : (lang === "pt" ? `Navegando: ${activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Aniversários de Lançamento" : activeTab === "help" ? "Ajuda" : t.navAdmin}` : `Navigating: ${activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Album Anniversaries" : activeTab === "help" ? "Help" : t.navAdmin}`)
+                  : (lang === "pt" 
+                      ? `Navegando: ${activeTab === "yesterday" ? "Adicionadas Ontem" : activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Aniversários de Lançamento" : activeTab === "help" ? "Ajuda" : t.navAdmin}` 
+                      : `Navigating: ${activeTab === "yesterday" ? "Added Yesterday" : activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Album Anniversaries" : activeTab === "help" ? "Help" : t.navAdmin}`
+                    )
                 }
               </span>
             </div>
@@ -878,6 +975,17 @@ export default function App() {
                     globalSearch={deferredSearch}
                     onClearGlobalSearch={() => setHeaderSearch("")}
                     isLoading={isLoading}
+                  />
+                )}
+
+                {activeTab === "yesterday" && (
+                  <YesterdayBandsSection
+                    bands={bands}
+                    lang={lang}
+                    onBackToCatalog={() => {
+                      setActiveTabTab("bands");
+                      setHeaderSearch("");
+                    }}
                   />
                 )}
 

@@ -3279,5 +3279,76 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     contacts: {},
     approved: true,
     submittedBy: "system"
+  },
+  {
+    name: "AnAkA",
+    country: "United States",
+    formationYear: 2000,
+    genre: "Heavy Metal / Groove Metal",
+    bio: {
+      pt: "Formada no Brooklyn, Nova York, no ano de 2000, o AnAkA é uma das forças mais consolidadas do metal independente norte-americano. Liderada pelos irmãos Anastasopoulos, a banda desenvolveu uma assinatura rítmica agressiva e pesada conhecida regionalmente como 'BKNY Metal'.",
+      en: "Formed in Brooklyn, New York, in 2000, AnAkA is an established independent heavy and groove metal band. Led by the Anastasopoulos brothers, they developed a signature aggressive sound often referred to as 'BKNY Metal'.",
+      es: "Formada en Brooklyn, Nueva York, en 2000, AnAkA es una banda de heavy metal y groove metal independiente estadounidense. Liderada por los hermanos Anastasopoulos, han desarrollado un sonido agresivo conocido como 'BKNY Metal'."
+    },
+    members: [
+      { name: "Peter Anastasopoulos", role: "Vocals, Guitars", status: "active" },
+      { name: "Jimmy Anastasopoulos", role: "Lead Guitars", status: "active" },
+      { name: "Matt Siconolfi", role: "Bass", status: "active" },
+      { name: "Tony Inserra", role: "Drums", status: "active" }
+    ],
+    discography: [
+      { title: "The Synergist", year: 2002, type: "Album" },
+      { title: "The Desolate", year: 2004, type: "Album" },
+      { title: "Into The Great Unknown", year: 2009, type: "Album" },
+      { title: "The Point of No Return", year: 2012, type: "Album" },
+      { title: "The West Coast Ep", year: 2018, type: "EP" },
+      { title: "The Oblivion Call", year: 2024, type: "Album" }
+    ],
+    socials: {
+      instagram: "@anakametal",
+      website: "https://anaka.net/"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "AutÓpsia",
+    country: "Brazil",
+    formationYear: 1999,
+    genre: "Black Metal / Punk Apparel",
+    bio: {
+      pt: "Criada em 1999, a AutÓpsia é uma renomada marca brasileira de vestuário e produtos oficiais dedicada à estética do black metal e da cultura punk subterrânea, fornecendo camisas artesanais e colecionáveis para todo o território nacional.",
+      en: "Established in 1999, AutÓpsia is a Brazilian clothing brand dedicated to the black metal and underground punk subculture, providing premium t-shirts and alternative apparel across Brazil.",
+      es: "Establecida en 1999, AutÓpsia es una marca brasileña de indumentaria dedicada a la estética del black metal y la cultura punk subterránea, distribuyendo camisetas coleccionables en todo Brasil."
+    },
+    members: [],
+    discography: [],
+    socials: {
+      instagram: "@_aut0psia",
+      website: "https://www.autopsiaoficial.com.br"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Metallstein",
+    country: "Brazil",
+    formationYear: 2023,
+    genre: "Underground Metal Community / Media",
+    bio: {
+      pt: "O Metallstein é um veículo e portal de conteúdo digital independente brasileiro focado na exaltação e promoção do cenário de metal extremo nacional, apoiando bandas independentes sob o manifesto de espalhar a brutalidade sonora nacional.",
+      en: "Metallstein is a Brazilian digital media portal and community channel dedicated to promoting independent underground metal music, supporting local extreme metal bands and new releases.",
+      es: "Metallstein es un canal de conteúdo digital y medio de comunicación brasileño independiente enfocado en la promoción de la escena del metal extremo local."
+    },
+    members: [],
+    discography: [],
+    socials: {
+      instagram: "@metallstein.rock"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
   }
 ];
