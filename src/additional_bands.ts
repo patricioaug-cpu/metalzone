@@ -2816,25 +2816,7 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     socials: {},
     contacts: {}, approved: true, submittedBy: "system"
   },
-  {
-    name: "Give It Uai",
-    country: "Brazil",
-    formationYear: 2024,
-    genre: "Rock / Metal",
-    bio: {
-      pt: "Banda de Belo Horizonte (MG) com conta oficial no Instagram @give_it_uai.",
-      en: "Band from Belo Horizonte (MG) with official Instagram account @give_it_uai.",
-      es: "Banda de Belo Horizonte (MG) con cuenta oficial de Instagram @give_it_uai."
-    },
-    members: [],
-    discography: [],
-    socials: {
-      instagram: "@give_it_uai"
-    },
-    contacts: {},
-    approved: true,
-    submittedBy: "system"
-  },
+
   {
     name: "Crypta",
     country: "Brazil",
@@ -3346,6 +3328,56 @@ export const ADDITIONAL_SEED_BANDS: Band[] = [
     discography: [],
     socials: {
       instagram: "@metallstein.rock"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Collapse Death",
+    country: "Brazil",
+    formationYear: 2018,
+    genre: "Death Metal",
+    bio: {
+      pt: "Formada em São Luís, Maranhão, a Collapse Death é uma força brutal do Death Metal brasileiro. Conhecida por sua energia visceral no palco, a banda se destaca em festivais de metal extremo como o São Luís Rock Fest e o Necro Fest, carregando o estandarte do death metal maranhense com composições pesadas e agressivas.",
+      en: "Formed in São Luís, Maranhão, Collapse Death is a brutal force in Brazilian Death Metal. Known for their visceral stage energy, the band stands out in extreme metal festivals such as São Luís Rock Fest and Necro Fest, carrying the banner of Maranhão's death metal with heavy and aggressive compositions.",
+      es: "Formada en São Luís, Maranhão, Collapse Death es una fuerza brutal del Death Metal brasileño. Conocida por su energía visceral en el escenario, la banda se destaca en festivales de metal extremo como el São Luís Rock Fest y el Necro Fest, llevando el estandarte del death metal de Maranhão con composiciones pesadas y agresivas."
+    },
+    members: [],
+    discography: [
+      { title: "Empire of Lies", year: 2023, type: "Single" }
+    ],
+    socials: {
+      instagram: "@collapsedeath",
+      website: "https://linktr.ee/collapsedeath"
+    },
+    contacts: {},
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    name: "Rygel",
+    country: "Brazil",
+    formationYear: 2004,
+    genre: "Heavy Metal / Thrash Metal",
+    bio: {
+      pt: "Fundada em Santos, São Paulo, em 2004, a banda Rygel é um importante expoente do Heavy/Thrash Metal paulista. Liderada por Wanderson Santos, a banda conquistou notoriedade nacional com riffs velozes e composições técnicas que equilibram agressividade e melodia, evidenciados em álbuns aclamados como 'Imminent Chaos' e 'Revolution', além de singles recentes como 'Resilience'.",
+      en: "Formed in Santos, São Paulo, in 2004, Rygel is a prominent force in Brazilian Heavy/Thrash Metal. Led by Wanderson Santos, the band has earned national recognition for their fast riffs and technical compositions balancing aggression and melody, showcased in acclaimed albums like 'Imminent Chaos' and 'Revolution', alongside recent singles such as 'Resilience'.",
+      es: "Fundada en Santos, de São Paulo, en 2004, la banda Rygel es un exponente destacado del Heavy/Thrash Metal brasileño. Liderada por Wanderson Santos, la banda ha ganado reconocimiento nacional por sus riffs veloces y composiciones técnicas, presentes en álbumes como 'Imminent Chaos' y 'Revolution'."
+    },
+    members: [
+      { name: "Wanderson Santos", role: "Vocals, Guitars", status: "active" },
+      { name: "Cláudio 'Kbeça'", role: "Guitars", status: "active" }
+    ],
+    discography: [
+      { title: "Resilience", year: 2024, type: "Single" },
+      { title: "Living With My Fears", year: 2023, type: "Single" },
+      { title: "Revolution", year: 2015, type: "Album" },
+      { title: "Imminent Chaos", year: 2012, type: "Album" }
+    ],
+    socials: {
+      instagram: "@rygelofficial",
+      website: "https://linktr.ee/rygel"
     },
     contacts: {},
     approved: true,

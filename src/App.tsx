@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useDeferredValue } from "react";
 import { auth, db, SEED_BANDS, SEED_EVENTS, SEED_MERCH, Band, EventItem, MerchItem } from "./firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, updateDoc as fsUpdateDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, updateDoc as fsUpdateDoc, getDoc, setDoc, increment } from "firebase/firestore";
 import { translations } from "./translations";
 import { motion, AnimatePresence } from "motion/react";
 // @ts-ignore
@@ -22,7 +22,7 @@ import { YesterdayBandsSection } from "./components/YesterdayBandsSection";
 import { 
   Flame, Music, Newspaper, ShoppingBag, Shield, DollarSign, HelpCircle, 
   RefreshCw, Globe, Phone, Mail, Star, Radio, Skull, Search, X, MapPin, Menu, LogOut,
-  Calendar, Clock
+  Calendar, Clock, Eye
 } from "lucide-react";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 
@@ -49,13 +49,73 @@ export default function App() {
   const [onlineUsers, setOnlineUsers] = useState<Array<{ id: string; email: string | null; isGuest: boolean; isMe: boolean }>>([]);
   const [authChecked, setAuthChecked] = useState(false);
 
+  const [accesses, setAccesses] = useState<number>(() => {
+    const saved = localStorage.getItem("metal_catalog_local_accesses");
+    return saved ? parseInt(saved, 10) : 1240;
+  });
+
+  // Stats tracking for accesses (views)
+  useEffect(() => {
+    const trackAccess = async () => {
+      try {
+        const statsRef = doc(db, "stats", "global");
+        const statsSnap = await getDoc(statsRef);
+        
+        let currentCount = 0;
+        if (statsSnap.exists()) {
+          const data = statsSnap.data();
+          currentCount = data.accesses || 0;
+          // Increment in Firestore
+          await updateDoc(statsRef, {
+            accesses: increment(1)
+          });
+          currentCount += 1;
+        } else {
+          // Create the document if it doesn't exist
+          currentCount = 1240;
+          await setDoc(statsRef, { accesses: currentCount });
+        }
+        
+        setAccesses(currentCount);
+        localStorage.setItem("metal_catalog_local_accesses", String(currentCount));
+      } catch (err) {
+        console.warn("Firestore stats tracking skipped or blocked, using local simulation:", err);
+        const localSaved = localStorage.getItem("metal_catalog_local_accesses");
+        const nextCount = localSaved ? parseInt(localSaved, 10) + 1 : 1241;
+        setAccesses(nextCount);
+        localStorage.setItem("metal_catalog_local_accesses", String(nextCount));
+      }
+    };
+    
+    const sessionKey = "metal_catalog_session_tracked_" + new Date().toDateString();
+    if (!sessionStorage.getItem(sessionKey)) {
+      trackAccess();
+      sessionStorage.setItem(sessionKey, "true");
+    } else {
+      const fetchAccessOnly = async () => {
+        try {
+          const statsRef = doc(db, "stats", "global");
+          const statsSnap = await getDoc(statsRef);
+          if (statsSnap.exists()) {
+            const count = statsSnap.data().accesses || 1240;
+            setAccesses(count);
+          }
+        } catch {
+          const localSaved = localStorage.getItem("metal_catalog_local_accesses");
+          if (localSaved) setAccesses(parseInt(localSaved, 10));
+        }
+      };
+      fetchAccessOnly();
+    }
+  }, []);
+
   const [bands, setBands] = useState<Band[]>(() => {
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
     const yesterdayStr = yesterday.toISOString();
     return SEED_BANDS.map(b => {
-      if (b.name === "AnAkA" || b.name === "AutÓpsia") {
+      if (b.name === "AnAkA" || b.name === "AutÓpsia" || b.name === "Collapse Death" || b.name === "Rygel") {
         return { ...b, createdAt: b.createdAt || yesterdayStr };
       }
       return b;
@@ -225,7 +285,7 @@ export default function App() {
         yesterday.setDate(today.getDate() - 1);
         const yesterdayStr = yesterday.toISOString();
         const enriched = merged.map(b => {
-          if (b.name === "AnAkA" || b.name === "AutÓpsia") {
+          if (b.name === "AnAkA" || b.name === "AutÓpsia" || b.name === "Collapse Death" || b.name === "Rygel") {
             return { ...b, createdAt: b.createdAt || yesterdayStr };
           }
           return b;
@@ -237,7 +297,7 @@ export default function App() {
         yesterday.setDate(today.getDate() - 1);
         const yesterdayStr = yesterday.toISOString();
         const enriched = SEED_BANDS.map(b => {
-          if (b.name === "AnAkA" || b.name === "AutÓpsia") {
+          if (b.name === "AnAkA" || b.name === "AutÓpsia" || b.name === "Collapse Death" || b.name === "Rygel") {
             return { ...b, createdAt: b.createdAt || yesterdayStr };
           }
           return b;
@@ -563,22 +623,7 @@ export default function App() {
                     </span>
                   </button>
 
-                  <button
-                    onClick={() => { setActiveTabTab("yesterday"); setIsSidebarOpen(false); }}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition duration-200 cursor-pointer ${
-                      activeTab === "yesterday" 
-                        ? "bg-red-950/40 text-rose-400 border-red-900/40" 
-                        : "bg-transparent text-neutral-450 border-transparent hover:bg-neutral-900"
-                    }`}
-                  >
-                    <span className="flex items-center gap-2.5">
-                      <Clock size={15} />
-                      {lang === "pt" ? "Adicionadas Ontem" : lang === "es" ? "Añadidas Ayer" : "Added Yesterday"}
-                    </span>
-                    <span className="text-[9px] text-red-400 font-bold bg-red-950/30 px-2 py-0.5 rounded-full border border-red-900/40 shadow-sm">
-                      {getYesterdayCount()}
-                    </span>
-                  </button>
+
 
                   <button
                     onClick={() => { setActiveTabTab("festivals"); setIsSidebarOpen(false); }}
@@ -732,23 +777,7 @@ export default function App() {
               </span>
             </button>
 
-            <button
-              id="sidebar-nav-yesterday"
-              onClick={() => setActiveTabTab("yesterday")}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition duration-200 cursor-pointer ${
-                activeTab === "yesterday" 
-                  ? "bg-red-950/40 text-rose-400 border-red-900/40 shadow-md shadow-red-950/20" 
-                  : "bg-transparent text-neutral-400 border-transparent hover:bg-neutral-900/50 hover:text-white"
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <Clock size={15} />
-                <span>{lang === "pt" ? "Adicionadas Ontem" : lang === "es" ? "Añadidas Ayer" : "Added Yesterday"}</span>
-              </div>
-              <span className="text-[9px] text-red-400 font-bold bg-red-950/30 px-2 py-0.5 rounded-full border border-red-900/40 shadow-sm animate-pulse">
-                {getYesterdayCount()}
-              </span>
-            </button>
+
 
             <button
               id="sidebar-nav-festivals"
@@ -907,6 +936,43 @@ export default function App() {
         
         <main className="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-1 z-10 w-full space-y-6">
           
+          {/* STATISTICS HEADER BAR */}
+          <div className="flex items-center justify-around bg-zinc-950/80 backdrop-blur-md border border-neutral-900 py-2 px-3 sm:px-4 rounded-xl shadow-lg text-xs font-mono">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <Eye size={13} className="text-rose-500 animate-pulse shrink-0" />
+              <span className="text-zinc-500 font-bold text-[10px] sm:text-xs truncate">
+                {lang === "pt" ? "Acessos:" : lang === "es" ? "Accesos:" : "Accesses:"}
+              </span>
+              <span className="text-white font-black text-[11px] sm:text-xs">
+                {accesses}
+              </span>
+            </div>
+            
+            <div className="h-4 w-px bg-neutral-800 shrink-0 mx-1" />
+            
+            <div className="flex items-center gap-1.5 min-w-0">
+              <Music size={13} className="text-rose-500 shrink-0" />
+              <span className="text-zinc-500 font-bold text-[10px] sm:text-xs truncate">
+                {lang === "pt" ? "Bandas:" : lang === "es" ? "Bandas:" : "Bands:"}
+              </span>
+              <span className="text-rose-500 font-black text-[11px] sm:text-xs">
+                {bands.length}
+              </span>
+            </div>
+            
+            <div className="h-4 w-px bg-neutral-800 shrink-0 mx-1" />
+            
+            <div className="flex items-center gap-1.5 min-w-0">
+              <Globe size={13} className="text-rose-400 shrink-0" />
+              <span className="text-zinc-500 font-bold text-[10px] sm:text-xs truncate">
+                {lang === "pt" ? "Países:" : lang === "es" ? "Países:" : "Countries:"}
+              </span>
+              <span className="text-rose-400 font-black text-[11px] sm:text-xs">
+                {Array.from(new Set(bands.map(b => b.country).filter(Boolean))).length}
+              </span>
+            </div>
+          </div>
+
           {/* USER AUTHENTICATION EXPAND PANEL */}
           <AuthSection 
             user={user} 
@@ -919,22 +985,19 @@ export default function App() {
           />
 
           {/* GLOBAL BACK TO MENU NAVIGATION BAR */}
-          <div id="global-navigation-bar" className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-neutral-900/40 border border-neutral-900 p-4 rounded-xl shadow-xl backdrop-blur-md">
-            <div className="flex items-center gap-2.5">
-              <span className={`w-2 h-2 rounded-full ${activeTab === "bands" ? "bg-red-600 animate-pulse" : "bg-neutral-600"}`}></span>
-              <span className="text-xs font-mono uppercase tracking-widest text-zinc-300 font-bold">
-                {activeTab === "bands" 
-                  ? (lang === "pt" ? "Menu Principal / Catálogo" : lang === "es" ? "Menú Principal / Catálogo" : "Main Menu / Catalog")
-                  : (lang === "pt" 
-                      ? `Navegando: ${activeTab === "yesterday" ? "Adicionadas Ontem" : activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Aniversários de Lançamento" : activeTab === "help" ? "Ajuda" : t.navAdmin}` 
-                      : `Navigating: ${activeTab === "yesterday" ? "Added Yesterday" : activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Album Anniversaries" : activeTab === "help" ? "Help" : t.navAdmin}`
-                    )
-                }
-              </span>
-            </div>
-            
-            <div className="flex flex-wrap items-center gap-3">
-              {activeTab !== "bands" && (
+          {activeTab !== "bands" && (
+            <div id="global-navigation-bar" className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-neutral-900/40 border border-neutral-900 p-4 rounded-xl shadow-xl backdrop-blur-md">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-neutral-600"></span>
+                <span className="text-xs font-mono uppercase tracking-widest text-zinc-300 font-bold">
+                  {lang === "pt" 
+                    ? `Navegando: ${activeTab === "yesterday" ? "Adicionadas Ontem" : activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Aniversários de Lançamento" : activeTab === "help" ? "Ajuda" : t.navAdmin}` 
+                    : `Navigating: ${activeTab === "yesterday" ? "Added Yesterday" : activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Album Anniversaries" : activeTab === "help" ? "Help" : t.navAdmin}`
+                  }
+                </span>
+              </div>
+              
+              <div className="flex flex-wrap items-center gap-3">
                 <button
                   id="global-btn-back-to-main"
                   onClick={() => {
@@ -948,9 +1011,9 @@ export default function App() {
                     {lang === "pt" ? "Voltar ao Menu" : lang === "es" ? "Volver al Menú" : "Back to Menu"}
                   </span>
                 </button>
-              )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* ACTIVE CONTENT WORKSPACE SWAPPER */}
           <div className="p-1 min-h-[500px]">
@@ -1045,19 +1108,7 @@ export default function App() {
 
         </main>
 
-        {/* FOOTER GENERAL SECTION */}
-        <footer className="mt-12 bg-neutral-950 border-t border-neutral-900 py-8 px-4 md:px-8 text-neutral-500 text-xs font-mono">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="space-y-1 text-center md:text-left">
-              <p className="text-stone-300 font-bold uppercase tracking-wider">🤘 Stay Metal Corporation</p>
-            </div>
 
-            <div className="text-center md:text-right space-y-1 leading-snug">
-              <p className="text-zinc-400">Patrício - patricioaug@gmail.com</p>
-              <p className="text-zinc-500">+55 (31) 97326-7529</p>
-            </div>
-          </div>
-        </footer>
 
       </div>
     </div>

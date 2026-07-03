@@ -930,6 +930,32 @@ export const SEED_EVENTS: EventItem[] = [
     approved: true,
     submittedBy: "system"
   },
+  {
+    id: "seed-festival-saoluisrockfest",
+    name: "São Luís Rock Fest",
+    date: "2026-07-17",
+    location: "São Luís, MA, Brazil (The Rock Pub)",
+    lineup: ["Critical Fear", "Brutallian", "Bastardz", "Distorch", "Collapse Death", "Prodby"],
+    ticketLink: "https://www.sympla.com.br",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Goiania_Noise_Festival_Stage.jpg",
+    isFestival: true,
+    countdownDate: "2026-07-17T20:00:00Z",
+    approved: true,
+    submittedBy: "system"
+  },
+  {
+    id: "seed-festival-necrofest",
+    name: "Necro Fest 2",
+    date: "2026-08-08",
+    location: "São Luís, MA, Brazil (Parada 64 - Litorânea)",
+    lineup: ["Necroneurose", "Inferno", "Exumador", "Collapse Death", "Razor", "Cranium Crushing"],
+    ticketLink: "https://www.sympla.com.br",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Extreme_metal_stage_lights.jpg",
+    isFestival: true,
+    countdownDate: "2026-08-08T16:00:00Z",
+    approved: true,
+    submittedBy: "system"
+  },
 
   // --- OUTROS/SHOWS ---
   {

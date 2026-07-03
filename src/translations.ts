@@ -195,7 +195,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     helpWelcome: "Seja bem-vindo ao Stay Metal! Saiba como utilizar a plataforma mundial do Heavy Metal:",
     faqTitle: "Perguntas Frequentes (FAQ)",
     contactDeveloperTitle: "Entrar em Contato com o Desenvolvedor",
-    contactDeveloperText: "Para cadastrar novas bandas, festivais, shows, notícias ou para qualquer dúvida, entre em contato diretamente com o desenvolvedor Patrício!",
+    contactDeveloperText: "Para cadastrar novas bandas, festivais, shows, notícias ou para qualquer dúvida, entre em contato diretamente com o desenvolvedor!",
 
     loginTitle: "Entrar no Stay Metal",
     registerTitle: "Criar Conta de Usuário",
@@ -314,7 +314,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     helpWelcome: "Welcome to Stay Metal! Discover how to easily master the global Heavy Metal catalog:",
     faqTitle: "Frequently Asked Questions (FAQ)",
     contactDeveloperTitle: "Contact the Developer Behind the App",
-    contactDeveloperText: "To register new bands, festivals, shows, news, or for any general inquiry, please contact the developer Patrício directly!",
+    contactDeveloperText: "To register new bands, festivals, shows, news, or for any general inquiry, please contact the developer directly!",
 
     loginTitle: "Log In to Stay Metal",
     registerTitle: "Create User Account",
@@ -433,7 +433,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     helpWelcome: "¡Bienvenido a Stay Metal! Sigue estos sencillos pasos para dominar el catálogo global del Metal:",
     faqTitle: "Preguntas Frecuentes (FAQ)",
     contactDeveloperTitle: "Contactar con el Creador",
-    contactDeveloperText: "Para registrar nuevas bandas, festivales, conciertos, noticias o para cualquier consulta, ¡comuníquese directamente con el desarrollador Patrício!",
+    contactDeveloperText: "Para registrar nuevas bandas, festivales, conciertos, noticias o para cualquier consulta, ¡comuníquese directamente con el desarrollador!",
 
     loginTitle: "Ingresar a Stay Metal",
     registerTitle: "Crear Cuenta de Usuario",
