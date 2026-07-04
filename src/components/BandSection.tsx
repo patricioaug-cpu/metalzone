@@ -8,7 +8,7 @@ import { getProxiedImageUrl } from "../utils/imageProxy";
 import { 
   Sparkles, Globe, Calendar, Music, UserCheck, Disc, Mail, Phone, 
   MapPin, Plus, Trash2, Edit2, CheckCircle, Clock, ExternalLink, X, Youtube,
-  Share2, QrCode, Play, Video, Heart
+  Share2, QrCode, Play, Video
 } from "lucide-react";
 import { BandSkeletonList } from "./SkeletonLoader";
 import { QRCodeSVG } from "qrcode.react";
@@ -124,43 +124,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
   const isAdmin = user?.email === "patricioaug@gmail.com";
   const isLogged = true;
 
-  // Like Band System
-  const [likedBands, setLikedBands] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem("metal_user_liked_bands");
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
 
-  const getBandLikes = (band: Band) => {
-    const localVal = localStorage.getItem(`metal_likes_count_${band.name}`);
-    if (localVal !== null) {
-      return parseInt(localVal, 10);
-    }
-    if (band.likesCount !== undefined) {
-      return band.likesCount;
-    }
-    return 0;
-  };
-
-  const handleLikeBand = (band: Band) => {
-    const currentCount = getBandLikes(band);
-    const newCount = currentCount + 1;
-
-    if (!likedBands.includes(band.name)) {
-      const updatedLikedBands = [...likedBands, band.name];
-      setLikedBands(updatedLikedBands);
-      localStorage.setItem("metal_user_liked_bands", JSON.stringify(updatedLikedBands));
-    }
-
-    localStorage.setItem(`metal_likes_count_${band.name}`, newCount.toString());
-
-    if (band.id) {
-      onEditBand(band.id, { likesCount: newCount });
-    }
-  };
 
   const [search, setSearch] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -1178,8 +1142,6 @@ export const BandSection: React.FC<BandSectionProps> = ({
           {sortedBands.map((band, index) => {
             const isExpanded = expandedBandId === band.id;
             const bioText = typeof band.bio === "string" ? band.bio : (band.bio[lang] || band.bio["en"] || "");
-            const isLiked = likedBands.includes(band.name);
-            const likesCount = getBandLikes(band);
 
             return (
               <motion.div
@@ -1227,22 +1189,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                     </div>
 
                     <div className="flex gap-1.5 shrink-0">
-                      <motion.button
-                        whileTap={{ scale: 0.85 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleLikeBand(band);
-                        }}
-                        className={`p-1.5 bg-neutral-950 hover:bg-neutral-850 rounded-lg transition cursor-pointer flex items-center gap-1.5 border ${
-                          isLiked 
-                            ? "text-red-500 bg-red-950/20 border-red-900/30" 
-                            : "text-neutral-400 hover:text-red-500 border-transparent"
-                        }`}
-                        title={lang === "pt" ? "Curtir Banda" : lang === "es" ? "Dar me gusta a la Banda" : "Like Band"}
-                      >
-                        <Heart size={12} fill={isLiked ? "currentColor" : "none"} className={isLiked ? "scale-105" : ""} />
-                        <span className="text-[10px] font-mono font-bold leading-none">{likesCount}</span>
-                      </motion.button>
+
                       <button
                         onClick={() => setSharingBand(band)}
                         className="p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-amber-500 rounded-lg transition cursor-pointer"
@@ -1422,6 +1369,40 @@ export const BandSection: React.FC<BandSectionProps> = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           onOpenVideoWindow("https://youtu.be/-q66zKQ3-XM?is=IqIditj5sVwC0_Zm", "Slayer");
+                        }}
+                        className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
+                      >
+                        <Video size={10} className="text-red-500" />
+                        <span>{lang === "pt" ? "Vídeo da Banda" : lang === "es" ? "Vídeo de la Banda" : "Band Video"}</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Metallica Custom Video Button */}
+                  {band.name?.toLowerCase().trim() === "metallica" && onOpenVideoWindow && (
+                    <div className="mt-2 mb-4 flex justify-start">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenVideoWindow("https://youtu.be/qdlQyNe_9tE?is=2TK3uW4Cdf3OFmnZ", "Metallica");
+                        }}
+                        className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
+                      >
+                        <Video size={10} className="text-red-500" />
+                        <span>{lang === "pt" ? "Vídeo da Banda" : lang === "es" ? "Vídeo de la Banda" : "Band Video"}</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Red Devil Vortex Custom Video Button */}
+                  {band.name?.toLowerCase().trim() === "red devil vortex" && onOpenVideoWindow && (
+                    <div className="mt-2 mb-4 flex justify-start">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenVideoWindow("https://youtu.be/aFc43UhZsNI?is=thWnwMXg7n-SzW5C", "Red Devil Vortex");
                         }}
                         className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
                       >
