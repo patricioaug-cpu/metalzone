@@ -784,9 +784,7 @@ export default function App() {
                   </button>
                 </div>
                 
-                <div className="text-center text-[9px] text-neutral-500">
-                  🤘 Stay Metal | patricioaug@gmail.com
-                </div>
+
               </div>
 
             </motion.nav>
