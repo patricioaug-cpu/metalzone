@@ -96,6 +96,7 @@ export interface Band {
   submittedBy: string;
   sourceUrl?: string;
   createdAt?: any;
+  likesCount?: number;
 }
 
 export interface EventItem {
