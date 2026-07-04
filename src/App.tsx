@@ -37,9 +37,9 @@ export default function App() {
   // Floating Video Windows State
   const [videoWindows, setVideoWindows] = useState<FloatingWindow[]>([]);
 
-  const handleOpenVideoWindow = () => {
+  const handleOpenVideoWindow = (customUrl?: string, customTitle?: string) => {
     const newId = `video-win-${Date.now()}`;
-    const videoUrl = "https://youtu.be/BH7oNQ2SYs8?si=05hr3i8BMnqJdXWF";
+    const videoUrl = customUrl || "https://youtu.be/BH7oNQ2SYs8?si=05hr3i8BMnqJdXWF";
     
     // Calculate initial centered position
     const winW = Math.min(500, window.innerWidth - 40);
@@ -55,7 +55,7 @@ export default function App() {
     
     const newWindow: FloatingWindow = {
       id: newId,
-      title: lang === "pt" ? "Vídeo da Semana" : lang === "es" ? "Video de la Semana" : "Video of the Week",
+      title: customTitle || (lang === "pt" ? "Vídeo da Semana" : lang === "es" ? "Video de la Semana" : "Video of the Week"),
       videoUrl,
       x: winX,
       y: winY,
@@ -1105,6 +1105,7 @@ export default function App() {
                     globalSearch={deferredSearch}
                     onClearGlobalSearch={() => setHeaderSearch("")}
                     isLoading={isLoading}
+                    onOpenVideoWindow={handleOpenVideoWindow}
                   />
                 )}
 

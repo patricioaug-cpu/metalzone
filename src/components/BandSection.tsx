@@ -8,7 +8,7 @@ import { getProxiedImageUrl } from "../utils/imageProxy";
 import { 
   Sparkles, Globe, Calendar, Music, UserCheck, Disc, Mail, Phone, 
   MapPin, Plus, Trash2, Edit2, CheckCircle, Clock, ExternalLink, X, Youtube,
-  Share2, QrCode, Play
+  Share2, QrCode, Play, Video
 } from "lucide-react";
 import { BandSkeletonList } from "./SkeletonLoader";
 import { QRCodeSVG } from "qrcode.react";
@@ -104,6 +104,7 @@ interface BandSectionProps {
   globalSearch?: string;
   onClearGlobalSearch?: () => void;
   isLoading?: boolean;
+  onOpenVideoWindow?: (url?: string, title?: string) => void;
 }
 
 export const BandSection: React.FC<BandSectionProps> = ({
@@ -116,7 +117,8 @@ export const BandSection: React.FC<BandSectionProps> = ({
   isRefreshing,
   globalSearch,
   onClearGlobalSearch,
-  isLoading
+  isLoading,
+  onOpenVideoWindow
 }) => {
   const t = translations[lang];
   const isAdmin = user?.email === "patricioaug@gmail.com";
@@ -1235,6 +1237,91 @@ export const BandSection: React.FC<BandSectionProps> = ({
                     <p className="text-xs text-stone-400 leading-relaxed font-sans mb-3">
                       {bioText}
                     </p>
+                  )}
+
+                  {/* Iron Maiden Custom Video Button */}
+                  {band.name?.toLowerCase().trim() === "iron maiden" && onOpenVideoWindow && (
+                    <div className="mt-2 mb-4 flex justify-start">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenVideoWindow("https://youtu.be/Ij99dud8-0A?is=9D0afOxpSgKjmCa0", "Iron Maiden - Wasted Years");
+                        }}
+                        className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
+                      >
+                        <Video size={10} className="text-red-500" />
+                        <span>{lang === "pt" ? "Vídeo da Banda" : lang === "es" ? "Vídeo de la Banda" : "Band Video"}</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Death Custom Video Button */}
+                  {band.name?.toLowerCase().trim() === "death" && onOpenVideoWindow && (
+                    <div className="mt-2 mb-4 flex justify-start">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenVideoWindow("https://youtu.be/7j8vUbMmOwM?is=-OTDhB4Wi7a8Ct05", "Death");
+                        }}
+                        className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
+                      >
+                        <Video size={10} className="text-red-500" />
+                        <span>{lang === "pt" ? "Vídeo da Banda" : lang === "es" ? "Vídeo de la Banda" : "Band Video"}</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Dream Theater Custom Video Button */}
+                  {(band.name?.toLowerCase().trim() === "dream theater" || band.name?.toLowerCase().trim() === "dream theather") && onOpenVideoWindow && (
+                    <div className="mt-2 mb-4 flex justify-start">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenVideoWindow("https://youtu.be/JuZ2zp-6lLY?is=6Dtto7VH0leXKhJS", "Dream Theater");
+                        }}
+                        className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
+                      >
+                        <Video size={10} className="text-red-500" />
+                        <span>{lang === "pt" ? "Vídeo da Banda" : lang === "es" ? "Vídeo de la Banda" : "Band Video"}</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Candlemass Custom Video Button */}
+                  {band.name?.toLowerCase().trim() === "candlemass" && onOpenVideoWindow && (
+                    <div className="mt-2 mb-4 flex justify-start">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenVideoWindow("https://youtu.be/5cMPITYwvTs?is=25JsCrRAp4U9q3tZ", "Candlemass");
+                        }}
+                        className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
+                      >
+                        <Video size={10} className="text-red-500" />
+                        <span>{lang === "pt" ? "Vídeo da Banda" : lang === "es" ? "Vídeo de la Banda" : "Band Video"}</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Sepultura Custom Video Button */}
+                  {band.name?.toLowerCase().trim() === "sepultura" && onOpenVideoWindow && (
+                    <div className="mt-2 mb-4 flex justify-start">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenVideoWindow("https://youtu.be/0K4J90s1A2M?is=HZYGBeUjOYKZzkYT", "Sepultura");
+                        }}
+                        className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
+                      >
+                        <Video size={10} className="text-red-500" />
+                        <span>{lang === "pt" ? "Vídeo da Banda" : lang === "es" ? "Vídeo de la Banda" : "Band Video"}</span>
+                      </button>
+                    </div>
                   )}
                 </div>
 
