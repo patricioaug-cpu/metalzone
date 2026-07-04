@@ -1413,6 +1413,23 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       </button>
                     </div>
                   )}
+
+                  {/* Slayer Custom Video Button */}
+                  {band.name?.toLowerCase().trim() === "slayer" && onOpenVideoWindow && (
+                    <div className="mt-2 mb-4 flex justify-start">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenVideoWindow("https://youtu.be/-q66zKQ3-XM?is=IqIditj5sVwC0_Zm", "Slayer");
+                        }}
+                        className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
+                      >
+                        <Video size={10} className="text-red-500" />
+                        <span>{lang === "pt" ? "Vídeo da Banda" : lang === "es" ? "Vídeo de la Banda" : "Band Video"}</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* EXPANDED DETAILED AREA */}
