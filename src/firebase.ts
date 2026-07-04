@@ -365,43 +365,6 @@ export const SEED_BANDS: Band[] = [
     submittedBy: "system"
   },
   {
-    id: "seed-band-7",
-    name: "Sarcófago",
-    logoUrl: "https://upload.wikimedia.org/wikipedia/commons/8/87/Behemoth_live_at_Wacken_2018.jpg",
-    logoPlaceholderText: "Raw black spike horror crypt logo",
-    country: "Brazil",
-    formationYear: 1985,
-    genre: "First Wave Black / Death Metal",
-    bio: {
-      pt: "Formada em Belo Horizonte, Minas Gerais, é amplamente celebrada em enciclopédias oficiais de metal como a Metal-Archives por pavimentar o caminho do black metal extremo mundial. Sua estética agressiva com maquiagem corpse paint influenciou diretamente a renomada cena escandinava e norueguesa.",
-      en: "Formed in Belo Horizonte, Brazil, Sarcófago is highly celebrated by official encylopedias like Metal-Archives for pioneering raw, extreme black and death metal. Their blast beats, spiked leather, and corpse paint style heavily inspired the European black metal scene.",
-      es: "Formada en Belo Horizonte, Sarcófago es altamente celebrada por enciclopedias oficiales como Metal-Archives por pavimentar el camino del brutal black y death metal extremo. Su estética de maquillaje pintoresco influyó directamente en la escena escandinava."
-    },
-    members: [
-      { name: "Wagner Lamounier", role: "Vocals, Guitars", status: "active" },
-      { name: "Gerald Minelli", role: "Bass", status: "active" },
-      { name: "Zéder Patrício", role: "Guitars", status: "former" },
-      { name: "Eduardo Pompu", role: "Drums", status: "former" }
-    ],
-    discography: [
-      { title: "I.N.R.I.", year: 1987, type: "Album" },
-      { title: "Rotting", year: 1989, type: "EP" },
-      { title: "The Laws of Scourge", year: 1991, type: "Album" },
-      { title: "Hate", year: 1994, type: "Album" }
-    ],
-    socials: {
-      spotify: "https://open.spotify.com/embed/artist/4hXvR9m9wY2X6w4p16yF1G",
-      instagram: "@sarcofagometalbg",
-      website: "https://www.cogumelo.com.br"
-    },
-    contacts: {
-      email: "cogumelobookings@cogumelo.com",
-      phone: "+55 31 3224-0493"
-    },
-    approved: true,
-    submittedBy: "system"
-  },
-  {
     id: "seed-band-8",
     name: "Black Sabbath",
     logoUrl: "https://upload.wikimedia.org/wikipedia/commons/4/42/Black_Sabbath_1970.jpg",
