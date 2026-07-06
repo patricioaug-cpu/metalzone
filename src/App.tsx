@@ -1027,16 +1027,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* VIDEO OF THE WEEK BANNER */}
-          <div id="video-of-the-week-banner" className="py-0.5 flex justify-center max-w-xs mx-auto">
-            <button
-              onClick={handleOpenVideoWindow}
-              className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-red-950/80 hover:bg-red-900 border-red-900/30 hover:border-red-600 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0"
-            >
-              <Video size={10} className="text-red-500" />
-              <span>{lang === "pt" ? "Vídeo da Semana" : lang === "es" ? "Vídeo de la Semana" : "Video of the Week"}</span>
-            </button>
-          </div>
 
           {/* USER AUTHENTICATION EXPAND PANEL */}
           <AuthSection 
