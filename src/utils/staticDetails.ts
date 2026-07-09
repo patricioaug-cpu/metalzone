@@ -813,24 +813,12 @@ export function getStaticFallbackDetails(
 
     return {
       name: targetName,
-      birthInfo: lang === "pt" ? "Registro histórico pendente ou indisponível" : lang === "es" ? "Registro histórico pendiente" : "Historical record pending",
+      birthInfo: "",
       instruments,
-      contributions: lang === "pt"
-        ? `Integrante da respeitável banda de metal ${bandName}, onde contribui de forma decisiva para a sonoridade característica do grupo.`
-        : lang === "es"
-        ? `Miembro de la respetable banda de metal ${bandName}, donde contribuye de forma decisiva al sonido característico del grupo.`
-        : `Member of the metal group ${bandName}, contributing to the signature heavy soundscapes of the lineup.`,
+      contributions: "",
       otherBands: [],
-      trivia: lang === "pt"
-        ? `Tem forte dedicação aos palcos e à energia direta do metal nacional.`
-        : lang === "es"
-        ? `Tiene una gran dedicación a los escenarios y la energía directa del metal.`
-        : `Highly dedicated to performing and delivering pure energy to metal audiences.`,
-      summary: lang === "pt"
-        ? `Músico ativo da comunidade de metal, prezando pela autenticidade e som honesto.`
-        : lang === "es"
-        ? `Músico activo de la comunidad metalera, valorando la autenticidad.`
-        : `Active musician in the global metal scene, valuing authenticity and technical passion.`
+      trivia: "",
+      summary: ""
     };
   } else {
     // 1. Try to find precise historical album in STATIC_ALBUMS
