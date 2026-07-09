@@ -1242,6 +1242,30 @@ export const BandSection: React.FC<BandSectionProps> = ({
                     </p>
                   )}
 
+                  {/* More Info Section (Metal Archives & Wikipedia) */}
+                  <div className="mt-2 mb-4 flex flex-wrap gap-2">
+                    <a
+                      href={`https://www.metal-archives.com/search?searchString=${encodeURIComponent(band.name)}&type=band_name`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-neutral-950 hover:bg-neutral-900 border-neutral-850 hover:border-red-900 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
+                      title={lang === "pt" ? "Ver no Metal Archives" : lang === "es" ? "Ver en Metal Archives" : "View on Metal Archives"}
+                    >
+                      <ExternalLink size={10} className="text-red-500" />
+                      <span>Metal Archives</span>
+                    </a>
+                    <a
+                      href={`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(band.name + " (band)")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-neutral-950 hover:bg-neutral-900 border-neutral-850 hover:border-red-900 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
+                      title={lang === "pt" ? "Ver na Wikipedia" : lang === "es" ? "Ver en Wikipedia" : "View on Wikipedia"}
+                    >
+                      <Globe size={10} className="text-blue-500" />
+                      <span>{lang === "pt" ? "Mais Info (Wiki)" : lang === "es" ? "Más Info (Wiki)" : "More Info (Wiki)"}</span>
+                    </a>
+                  </div>
+
                   {/* Iron Maiden Custom Video Button */}
                   {band.name?.toLowerCase().trim() === "iron maiden" && onOpenVideoWindow && (
                     <div className="mt-2 mb-4 flex justify-start">

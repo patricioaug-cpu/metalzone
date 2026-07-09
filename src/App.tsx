@@ -22,7 +22,7 @@ import { YesterdayBandsSection } from "./components/YesterdayBandsSection";
 import { 
   Flame, Music, Newspaper, ShoppingBag, Shield, DollarSign, HelpCircle, 
   RefreshCw, Globe, Phone, Mail, Star, Radio, Skull, Search, X, MapPin, Menu, LogOut,
-  Calendar, Clock, Eye, Video
+  Calendar, Clock, Eye, Video, Mic, Sun, Moon
 } from "lucide-react";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 import { FloatingVideoPlayer, FloatingWindow } from "./components/FloatingVideoPlayer";
@@ -92,10 +92,122 @@ export default function App() {
   const [headerSearch, setHeaderSearch] = useState("");
   const deferredSearch = useDeferredValue(headerSearch);
 
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    return (localStorage.getItem('theme') as 'dark' | 'light') || 'dark';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  }, [theme]);
+
   const handleHeaderSearchChange = (value: string) => {
     setHeaderSearch(value);
     if (value && activeTab !== "bands" && activeTab !== "help") {
       setActiveTabTab("bands");
+    }
+  };
+
+  const [isListening, setIsListening] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(true);
+  const [voiceStatus, setVoiceStatus] = useState<string | null>(null);
+
+  const handleVoiceSearch = () => {
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setVoiceSupported(false);
+      setVoiceStatus(
+        lang === "pt"
+          ? "Comando de voz não suportado neste navegador."
+          : lang === "es"
+          ? "El comando de voz no es compatible con este navegador."
+          : "Voice command not supported in this browser."
+      );
+      setTimeout(() => setVoiceStatus(null), 4000);
+      return;
+    }
+
+    if (isListening) {
+      setIsListening(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      
+      if (lang === "pt") {
+        recognition.lang = "pt-BR";
+      } else if (lang === "es") {
+        recognition.lang = "es-ES";
+      } else {
+        recognition.lang = "en-US";
+      }
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setVoiceStatus(
+          lang === "pt"
+            ? "Ouvindo... Fale o nome da banda."
+            : lang === "es"
+            ? "Escuchando... Di el nombre de la banda."
+            : "Listening... Speak the band name."
+        );
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          const cleanTranscript = transcript.replace(/\.$/, "");
+          handleHeaderSearchChange(cleanTranscript);
+          setVoiceStatus(
+            lang === "pt"
+              ? `Banda reconhecida: "${cleanTranscript}"`
+              : lang === "es"
+              ? `Banda reconocida: "${cleanTranscript}"`
+              : `Recognized band: "${cleanTranscript}"`
+          );
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error("Speech recognition error", event.error);
+        setIsListening(false);
+        if (event.error === "not-allowed") {
+          setVoiceStatus(
+            lang === "pt"
+              ? "Permissão do microfone negada."
+              : lang === "es"
+              ? "Permiso de micrófono denegado."
+              : "Microphone permission denied."
+          );
+        } else {
+          setVoiceStatus(
+            lang === "pt"
+              ? "Sem correspondência ou erro de áudio."
+              : lang === "es"
+              ? "Sin coincidencia o error de audio."
+              : "No match or audio capture error."
+          );
+        }
+        setTimeout(() => setVoiceStatus(null), 4000);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.start();
+    } catch (err) {
+      console.error("Failed to start speech recognition", err);
+      setIsListening(false);
     }
   };
   
@@ -561,7 +673,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-stone-200 selection:bg-red-900 selection:text-white flex flex-col md:flex-row font-sans relative overflow-x-hidden">
+    <div className={`min-h-screen bg-black text-stone-200 selection:bg-red-900 selection:text-white flex flex-col md:flex-row font-sans relative overflow-x-hidden transition-colors duration-300 ${theme}`}>
       
       {/* REAL-TIME ONLINE USERS PRESENCE SYSTEM */}
       <OnlineUsersTracker 
@@ -784,6 +896,24 @@ export default function App() {
                   </button>
                 </div>
                 
+                {/* Theme Selector in Mobile Drawer */}
+                <div className="flex bg-neutral-900 p-0.5 rounded-lg border border-neutral-850 justify-between">
+                  <button
+                    onClick={() => setTheme("dark")}
+                    className={`flex-1 py-1 text-xs font-mono font-bold rounded cursor-pointer flex items-center justify-center gap-1.5 transition-colors ${theme === "dark" ? "bg-red-950 text-white" : "text-neutral-500"}`}
+                  >
+                    <Moon size={11} />
+                    <span>DARK</span>
+                  </button>
+                  <button
+                    onClick={() => setTheme("light")}
+                    className={`flex-1 py-1 text-xs font-mono font-bold rounded cursor-pointer flex items-center justify-center gap-1.5 transition-colors ${theme === "light" ? "bg-red-950 text-white" : "text-neutral-500"}`}
+                  >
+                    <Sun size={11} />
+                    <span>LIGHT</span>
+                  </button>
+                </div>
+                
 
               </div>
 
@@ -979,6 +1109,24 @@ export default function App() {
             </button>
           </div>
 
+          {/* Theme selector in sidebar */}
+          <div className="flex bg-neutral-900 p-0.5 rounded-lg border border-neutral-850 justify-between">
+            <button
+              onClick={() => setTheme("dark")}
+              className={`flex-1 py-1 text-[10.5px] font-mono font-bold rounded cursor-pointer flex items-center justify-center gap-1.5 transition-colors ${theme === "dark" ? "bg-red-950 text-white" : "text-neutral-500 hover:text-stone-200"}`}
+            >
+              <Moon size={11} />
+              <span>DARK</span>
+            </button>
+            <button
+              onClick={() => setTheme("light")}
+              className={`flex-1 py-1 text-[10.5px] font-mono font-bold rounded cursor-pointer flex items-center justify-center gap-1.5 transition-colors ${theme === "light" ? "bg-red-950 text-white" : "text-neutral-500 hover:text-stone-200"}`}
+            >
+              <Sun size={11} />
+              <span>LIGHT</span>
+            </button>
+          </div>
+
           <div className="text-center text-[8px] text-zinc-650 leading-tight">
             Patrício | {new Date().getFullYear()} Stay Metal
           </div>
@@ -989,6 +1137,76 @@ export default function App() {
       <div className="md:pl-64 flex-1 flex flex-col min-w-0">
         
         <main className="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-1 z-10 w-full space-y-6">
+          
+          {/* GLOBAL SEARCH & VOICE COMMAND BAR */}
+          <div id="global-search-container" className="bg-zinc-950/80 backdrop-blur-md border border-neutral-900 p-4 rounded-xl shadow-lg space-y-3">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+              
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-neutral-500" />
+                <input
+                  type="text"
+                  id="global-search-input"
+                  placeholder={
+                    lang === "pt" 
+                      ? "Pesquisar bandas por voz ou digitação..." 
+                      : lang === "es" 
+                      ? "Buscar bandas por voz o texto..." 
+                      : "Search bands by voice or typing..."
+                  }
+                  value={headerSearch}
+                  onChange={(e) => handleHeaderSearchChange(e.target.value)}
+                  className="w-full bg-neutral-900/60 border border-neutral-850 text-xs text-neutral-200 pl-9 pr-24 py-2 rounded-lg font-mono focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/30 transition-all placeholder-neutral-600"
+                />
+                
+                <div className="absolute right-1.5 top-1.5 flex items-center gap-1.5">
+                  {headerSearch && (
+                    <button
+                      type="button"
+                      onClick={() => setHeaderSearch("")}
+                      className="p-1 text-neutral-500 hover:text-white transition cursor-pointer"
+                      title={lang === "pt" ? "Limpar busca" : "Clear search"}
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                  
+                  <button
+                    type="button"
+                    onClick={handleVoiceSearch}
+                    className={`p-1.5 rounded-md flex items-center justify-center transition-all cursor-pointer ${
+                      isListening
+                        ? "bg-red-650 text-white animate-pulse shadow-md shadow-red-600/40"
+                        : "bg-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-stone-100"
+                    }`}
+                    title={
+                      lang === "pt" 
+                        ? "Ativar comando de voz (Falar nome)" 
+                        : lang === "es" 
+                        ? "Activar comando de voz (Hablar nombre)" 
+                        : "Activate voice command (Speak name)"
+                    }
+                  >
+                    <Mic size={14} className={isListening ? "animate-bounce" : ""} />
+                  </button>
+                </div>
+              </div>
+              
+              {/* Listening Feedback / Error Notifications */}
+              {voiceStatus && (
+                <div className={`px-3 py-1.5 rounded-lg text-xs font-mono flex items-center gap-2 border animate-pulse ${
+                  isListening 
+                    ? "bg-red-950/40 border-red-900/40 text-red-400" 
+                    : voiceStatus.includes("negada") || voiceStatus.includes("denied") || voiceStatus.includes("não") || voiceStatus.includes("no")
+                    ? "bg-neutral-900 border-neutral-800 text-amber-500"
+                    : "bg-neutral-900 border-neutral-800 text-emerald-400"
+                }`}>
+                  {isListening && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>}
+                  <span>{voiceStatus}</span>
+                </div>
+              )}
+            </div>
+          </div>
           
           {/* STATISTICS HEADER BAR */}
           <div className="flex items-center justify-around bg-zinc-950/80 backdrop-blur-md border border-neutral-900 py-2 px-3 sm:px-4 rounded-xl shadow-lg text-xs font-mono">
