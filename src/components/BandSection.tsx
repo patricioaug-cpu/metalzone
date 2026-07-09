@@ -724,10 +724,10 @@ export const BandSection: React.FC<BandSectionProps> = ({
   };
 
   return (
-    <div id="band-section-wrapper" className="space-y-6">
+    <div id="band-section-wrapper" className="space-y-3.5">
       {/* FILTER CONTROLS GRID */}
-      <form onSubmit={handleManualSearch} className="bg-neutral-900/60 p-4 rounded-xl border border-neutral-800/80 space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <form onSubmit={handleManualSearch} className="bg-neutral-900/60 p-3 rounded-lg border border-neutral-800/80 space-y-2.5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
           <div className="relative">
             <label className="block text-[10px] uppercase font-mono tracking-wider text-zinc-400 mb-1 font-semibold">
               {lang === "pt" ? "🔍 Palavra-Chave / Nome" : "🔍 Keyword / Name"}

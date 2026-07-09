@@ -22,7 +22,7 @@ import { YesterdayBandsSection } from "./components/YesterdayBandsSection";
 import { 
   Flame, Music, Newspaper, ShoppingBag, Shield, DollarSign, HelpCircle, 
   RefreshCw, Globe, Phone, Mail, Star, Radio, Skull, Search, X, MapPin, Menu, LogOut,
-  Calendar, Clock, Eye, Video, Mic, Sun, Moon
+  Calendar, Clock, Eye, Video, Sun, Moon
 } from "lucide-react";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 import { FloatingVideoPlayer, FloatingWindow } from "./components/FloatingVideoPlayer";
@@ -112,104 +112,6 @@ export default function App() {
     }
   };
 
-  const [isListening, setIsListening] = useState(false);
-  const [voiceSupported, setVoiceSupported] = useState(true);
-  const [voiceStatus, setVoiceStatus] = useState<string | null>(null);
-
-  const handleVoiceSearch = () => {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      setVoiceSupported(false);
-      setVoiceStatus(
-        lang === "pt"
-          ? "Comando de voz não suportado neste navegador."
-          : lang === "es"
-          ? "El comando de voz no es compatible con este navegador."
-          : "Voice command not supported in this browser."
-      );
-      setTimeout(() => setVoiceStatus(null), 4000);
-      return;
-    }
-
-    if (isListening) {
-      setIsListening(false);
-      return;
-    }
-
-    try {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      
-      if (lang === "pt") {
-        recognition.lang = "pt-BR";
-      } else if (lang === "es") {
-        recognition.lang = "es-ES";
-      } else {
-        recognition.lang = "en-US";
-      }
-
-      recognition.onstart = () => {
-        setIsListening(true);
-        setVoiceStatus(
-          lang === "pt"
-            ? "Ouvindo... Fale o nome da banda."
-            : lang === "es"
-            ? "Escuchando... Di el nombre de la banda."
-            : "Listening... Speak the band name."
-        );
-      };
-
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        if (transcript) {
-          const cleanTranscript = transcript.replace(/\.$/, "");
-          handleHeaderSearchChange(cleanTranscript);
-          setVoiceStatus(
-            lang === "pt"
-              ? `Banda reconhecida: "${cleanTranscript}"`
-              : lang === "es"
-              ? `Banda reconocida: "${cleanTranscript}"`
-              : `Recognized band: "${cleanTranscript}"`
-          );
-        }
-      };
-
-      recognition.onerror = (event: any) => {
-        console.error("Speech recognition error", event.error);
-        setIsListening(false);
-        if (event.error === "not-allowed") {
-          setVoiceStatus(
-            lang === "pt"
-              ? "Permissão do microfone negada."
-              : lang === "es"
-              ? "Permiso de micrófono denegado."
-              : "Microphone permission denied."
-          );
-        } else {
-          setVoiceStatus(
-            lang === "pt"
-              ? "Sem correspondência ou erro de áudio."
-              : lang === "es"
-              ? "Sin coincidencia o error de audio."
-              : "No match or audio capture error."
-          );
-        }
-        setTimeout(() => setVoiceStatus(null), 4000);
-      };
-
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-
-      recognition.start();
-    } catch (err) {
-      console.error("Failed to start speech recognition", err);
-      setIsListening(false);
-    }
-  };
   
   const [user, setUser] = useState<User | null>(null);
   const [isGuest, setIsGuest] = useState(true);
@@ -699,7 +601,7 @@ export default function App() {
       )}
 
       {/* ----------------- MOBILE TOP BAR ----------------- */}
-      <header className="md:hidden sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-md border-b border-neutral-900 py-2.5 px-4 flex justify-between items-center shadow-md w-full shrink-0">
+      <header className="md:hidden sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-md border-b border-neutral-900 py-1.5 px-3 flex justify-between items-center shadow-md w-full shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-black border border-neutral-800 rounded-xl flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
             <img src={metalCatalogLogo} className="w-full h-full object-cover" alt="Stay Metal Logo" />
@@ -1136,80 +1038,10 @@ export default function App() {
       {/* ----------------- MAIN WORKSPACE LAYER (RIGHT PANEL) ----------------- */}
       <div className="md:pl-64 flex-1 flex flex-col min-w-0">
         
-        <main className="max-w-7xl mx-auto px-4 md:px-8 py-8 flex-1 z-10 w-full space-y-6">
-          
-          {/* GLOBAL SEARCH & VOICE COMMAND BAR */}
-          <div id="global-search-container" className="bg-zinc-950/80 backdrop-blur-md border border-neutral-900 p-4 rounded-xl shadow-lg space-y-3">
-            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-              
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-neutral-500" />
-                <input
-                  type="text"
-                  id="global-search-input"
-                  placeholder={
-                    lang === "pt" 
-                      ? "Pesquisar bandas por voz ou digitação..." 
-                      : lang === "es" 
-                      ? "Buscar bandas por voz o texto..." 
-                      : "Search bands by voice or typing..."
-                  }
-                  value={headerSearch}
-                  onChange={(e) => handleHeaderSearchChange(e.target.value)}
-                  className="w-full bg-neutral-900/60 border border-neutral-850 text-xs text-neutral-200 pl-9 pr-24 py-2 rounded-lg font-mono focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/30 transition-all placeholder-neutral-600"
-                />
-                
-                <div className="absolute right-1.5 top-1.5 flex items-center gap-1.5">
-                  {headerSearch && (
-                    <button
-                      type="button"
-                      onClick={() => setHeaderSearch("")}
-                      className="p-1 text-neutral-500 hover:text-white transition cursor-pointer"
-                      title={lang === "pt" ? "Limpar busca" : "Clear search"}
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                  
-                  <button
-                    type="button"
-                    onClick={handleVoiceSearch}
-                    className={`p-1.5 rounded-md flex items-center justify-center transition-all cursor-pointer ${
-                      isListening
-                        ? "bg-red-650 text-white animate-pulse shadow-md shadow-red-600/40"
-                        : "bg-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-stone-100"
-                    }`}
-                    title={
-                      lang === "pt" 
-                        ? "Ativar comando de voz (Falar nome)" 
-                        : lang === "es" 
-                        ? "Activar comando de voz (Hablar nombre)" 
-                        : "Activate voice command (Speak name)"
-                    }
-                  >
-                    <Mic size={14} className={isListening ? "animate-bounce" : ""} />
-                  </button>
-                </div>
-              </div>
-              
-              {/* Listening Feedback / Error Notifications */}
-              {voiceStatus && (
-                <div className={`px-3 py-1.5 rounded-lg text-xs font-mono flex items-center gap-2 border animate-pulse ${
-                  isListening 
-                    ? "bg-red-950/40 border-red-900/40 text-red-400" 
-                    : voiceStatus.includes("negada") || voiceStatus.includes("denied") || voiceStatus.includes("não") || voiceStatus.includes("no")
-                    ? "bg-neutral-900 border-neutral-800 text-amber-500"
-                    : "bg-neutral-900 border-neutral-800 text-emerald-400"
-                }`}>
-                  {isListening && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>}
-                  <span>{voiceStatus}</span>
-                </div>
-              )}
-            </div>
-          </div>
+        <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 pt-2 pb-6 md:pt-4 flex-1 z-10 w-full space-y-4">
           
           {/* STATISTICS HEADER BAR */}
-          <div className="flex items-center justify-around bg-zinc-950/80 backdrop-blur-md border border-neutral-900 py-2 px-3 sm:px-4 rounded-xl shadow-lg text-xs font-mono">
+          <div className="flex items-center justify-around bg-zinc-950/80 backdrop-blur-md border border-neutral-900 py-1.5 px-3 sm:px-4 rounded-lg shadow-md text-[11px] sm:text-xs font-mono">
             <div className="flex items-center gap-1.5 min-w-0">
               <Eye size={13} className="text-rose-500 animate-pulse shrink-0" />
               <span className="text-zinc-500 font-bold text-[10px] sm:text-xs truncate">

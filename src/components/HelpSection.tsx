@@ -64,7 +64,7 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
   };
 
   return (
-    <div id="help-section-wrapper" className="space-y-6">
+    <div id="help-section-wrapper" className="space-y-4">
       {/* TUTORIAL AND GUIDE */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* FAQs */}
