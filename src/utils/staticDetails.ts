@@ -788,7 +788,7 @@ export function getStaticFallbackDetails(
   type: "member" | "album",
   bandName: string,
   targetName: string,
-  lang: "pt" | "en" | "es"
+  lang: "pt" | "en" | "es" | "de"
 ): MemberDetail | AlbumDetail {
   const normBand = bandName.toLowerCase().trim();
   const normTarget = targetName.toLowerCase().trim();
@@ -801,14 +801,14 @@ export function getStaticFallbackDetails(
 
     // 2. Otherwise, dynamically generate a realistic biography details object
     const instruments = [
-      normTarget.includes("vocal") || normTarget.includes("lira") ? (lang === "pt" ? "Vocal Principal" : lang === "es" ? "Voz principal" : "Lead Vocals") : "",
-      normTarget.includes("guitar") || normTarget.includes("guedz") || normTarget.includes("afram") || normTarget.includes("kotina") ? (lang === "pt" ? "Guitarra solo" : lang === "es" ? "Guitarra solista" : "Lead Guitar") : "",
-      normTarget.includes("drum") || normTarget.includes("dametto") || normTarget.includes("abud") || normTarget.includes("oliveira") ? (lang === "pt" ? "Bateria" : lang === "es" ? "Batería" : "Drums") : "",
-      normTarget.includes("bass") || normTarget.includes("lira") || normTarget.includes("pyre") ? (lang === "pt" ? "Contra-baixo" : lang === "es" ? "Bajo" : "Bass guitar") : ""
+      normTarget.includes("vocal") || normTarget.includes("lira") ? (lang === "pt" ? "Vocal Principal" : lang === "es" ? "Voz principal" : lang === "de" ? "Hauptgesang" : "Lead Vocals") : "",
+      normTarget.includes("guitar") || normTarget.includes("guedz") || normTarget.includes("afram") || normTarget.includes("kotina") ? (lang === "pt" ? "Guitarra solo" : lang === "es" ? "Guitarra solista" : lang === "de" ? "Leadgitarre" : "Lead Guitar") : "",
+      normTarget.includes("drum") || normTarget.includes("dametto") || normTarget.includes("abud") || normTarget.includes("oliveira") ? (lang === "pt" ? "Bateria" : lang === "es" ? "Batería" : lang === "de" ? "Schlagzeug" : "Drums") : "",
+      normTarget.includes("bass") || normTarget.includes("lira") || normTarget.includes("pyre") ? (lang === "pt" ? "Contra-baixo" : lang === "es" ? "Bajo" : lang === "de" ? "E-Bass" : "Bass guitar") : ""
     ].filter(Boolean);
 
     if (instruments.length === 0) {
-      instruments.push(lang === "pt" ? "Multi-instrumentista" : lang === "es" ? "Multiinstrumentista" : "Multi-instrumentalist");
+      instruments.push(lang === "pt" ? "Multi-instrumentista" : lang === "es" ? "Multiinstrumentista" : lang === "de" ? "Multiinstrumentalist" : "Multi-instrumentalist");
     }
 
     return {
@@ -833,6 +833,8 @@ export function getStaticFallbackDetails(
         ? `Lançamento oficial da banda ${bandName}.`
         : lang === "es"
         ? `Lanzamiento oficial de la banda ${bandName}.`
+        : lang === "de"
+        ? `Offizielle Veröffentlichung der Band ${bandName}.`
         : `Official release by ${bandName}.`,
       genre: lang === "pt" ? "Metal" : "Metal",
       tracklist: [
@@ -845,11 +847,15 @@ export function getStaticFallbackDetails(
         ? `Este trabalho musical foi concebido e gravado com dedicação total para capturar a energia do metal extremo brasileiro.`
         : lang === "es"
         ? `Este trabajo musical fue concebido y grabado con total dedicación para capturar la energía del metal.`
+        : lang === "de"
+        ? `Dieses musikalische Werk wurde mit voller Hingabe aufgenommen, um die reine Energie des Metal einzufangen.`
         : `This release was crafted with high dedication to showcase the power and essence of extreme metal.`,
       reception: lang === "pt"
         ? `Recebido com grande entusiasmo pelos fãs de metal underground e colecionadores.`
         : lang === "es"
         ? `Recibido con gran entusiasmo por los fans de metal underground.`
+        : lang === "de"
+        ? `Von Underground-Metal-Fans weltweit begeistert aufgenommen.`
         : `Well-received by extreme metal fans and collectors worldwide.`
     };
   }

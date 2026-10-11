@@ -5,8 +5,8 @@ import { Globe } from "lucide-react";
 import stayMetalTitleLogo from "../assets/images/stay_metal_logo_1782983726320.jpg";
 
 interface WelcomeScreenProps {
-  lang: "pt" | "en" | "es";
-  setLang: (l: "pt" | "en" | "es") => void;
+  lang: "pt" | "en" | "es" | "de";
+  setLang: (l: "pt" | "en" | "es" | "de") => void;
   onEnter: () => void;
   logo: string;
 }
@@ -22,6 +22,9 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
     },
     es: {
       curation: "Curaduría Underground y Clásicos",
+    },
+    de: {
+      curation: "Kuratierte Underground- & Klassiker-Auswahl",
     }
   }[lang];
 
@@ -175,16 +178,16 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
             className="w-full bg-red-700 hover:bg-red-600 text-white font-mono uppercase text-xs tracking-widest font-black py-4 px-6 rounded-xl cursor-pointer border border-red-500/30 shadow-[0_4px_30px_rgba(185,28,28,0.25)] hover:shadow-[0_4px_40px_rgba(220,38,38,0.45)] transition duration-150 flex items-center justify-center gap-1.5"
           >
             <span className="text-sm tracking-widest">
-              {lang === "en" ? "Enter" : "Entrar"}
+              {lang === "en" ? "Enter" : lang === "de" ? "Eintreten" : "Entrar"}
             </span>
           </motion.button>
         </div>
 
         {/* Welcome Languages Selector */}
-        <div className="pt-6 border-t border-neutral-900/60 w-56 flex flex-col items-center gap-2.5">
+        <div className="pt-6 border-t border-neutral-900/60 w-64 flex flex-col items-center gap-2.5">
           <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 font-mono font-bold uppercase tracking-wider">
             <Globe size={11} />
-            <span>Idioma / Language / Idioma</span>
+            <span>Idioma / Language / Sprache</span>
           </div>
           <div className="flex bg-neutral-900 p-0.5 rounded-lg border border-neutral-850 justify-between w-full">
             <button
@@ -204,6 +207,12 @@ export function WelcomeScreen({ lang, setLang, onEnter, logo }: WelcomeScreenPro
               className={`flex-1 py-1.5 text-[9.5px] font-mono font-bold rounded cursor-pointer transition-colors ${lang === "es" ? "bg-red-950 text-white" : "text-neutral-500 hover:text-stone-300"}`}
             >
               ES
+            </button>
+            <button
+              onClick={() => setLang("de")}
+              className={`flex-1 py-1.5 text-[9.5px] font-mono font-bold rounded cursor-pointer transition-colors ${lang === "de" ? "bg-red-950 text-white" : "text-neutral-500 hover:text-stone-300"}`}
+            >
+              DE
             </button>
           </div>
         </div>

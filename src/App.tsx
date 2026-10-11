@@ -28,7 +28,7 @@ import { WelcomeScreen } from "./components/WelcomeScreen";
 import { FloatingVideoPlayer, FloatingWindow } from "./components/FloatingVideoPlayer";
 
 export default function App() {
-  const [lang, setLang] = useState<"pt" | "en" | "es">("pt");
+  const [lang, setLang] = useState<"pt" | "en" | "es" | "de">("pt");
   const [hasEntered, setHasEntered] = useState(false);
   type TabType = "bands" | "festivals" | "bday" | "help" | "admin" | "yesterday";
   const [activeTab, setActiveTabTab] = useState<TabType>("bands");
@@ -55,7 +55,7 @@ export default function App() {
     
     const newWindow: FloatingWindow = {
       id: newId,
-      title: customTitle || (lang === "pt" ? "Vídeo da Semana" : lang === "es" ? "Video de la Semana" : "Video of the Week"),
+      title: customTitle || (lang === "pt" ? "Vídeo da Semana" : lang === "es" ? "Video de la Semana" : lang === "de" ? "Video der Woche" : "Video of the Week"),
       videoUrl,
       x: winX,
       y: winY,
@@ -338,13 +338,16 @@ export default function App() {
 
         const updatedLoadedBands = loadedBands.map(lb => {
           const seedMatch = SEED_BANDS.find(sb => sb.name === lb.name);
-          if (seedMatch && seedMatch.logoUrl && lb.logoUrl !== seedMatch.logoUrl) {
-            if (lb.id) {
+          if (seedMatch) {
+            if (seedMatch.logoUrl && lb.logoUrl !== seedMatch.logoUrl && lb.id) {
               updateDoc(doc(db, "bands", lb.id), { logoUrl: seedMatch.logoUrl }).catch(e => 
                 console.warn(`Could not update band logoUrl in database for ${lb.name}:`, e)
               );
             }
-            return { ...lb, logoUrl: seedMatch.logoUrl };
+            if (lb.name === "Torture Squad") {
+              return { ...seedMatch, id: lb.id };
+            }
+            return seedMatch.logoUrl ? { ...lb, logoUrl: seedMatch.logoUrl } : lb;
           }
           return lb;
         });
@@ -354,8 +357,17 @@ export default function App() {
         const yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
         const yesterdayStr = yesterday.toISOString();
+        const NEW_BANDS_SET = new Set([
+          "AnAkA", "AutÓpsia", "Collapse Death", "Rygel",
+          "Angelus Seraphim", "Whiplash Metallica Cover Bh", "Fifth Essence",
+          "Apoteom", "Beto Lani", "Cactek", "Darkship", "Deadly Shadows",
+          "Föxx Salema", "Harmony Fault", "Inner Caligula", "Ocaradometal",
+          "One of Them", "Overdose Nuclear", "Pandemmy", "Pettalom",
+          "Royal Rage", "Silver Talon", "Tempusvernum", "Thunder Force",
+          "Thinking Head", "Treze Black"
+        ]);
         const enriched = merged.map(b => {
-          if (b.name === "AnAkA" || b.name === "AutÓpsia" || b.name === "Collapse Death" || b.name === "Rygel") {
+          if (NEW_BANDS_SET.has(b.name)) {
             return { ...b, createdAt: b.createdAt || yesterdayStr };
           }
           return b;
@@ -366,8 +378,17 @@ export default function App() {
         const yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
         const yesterdayStr = yesterday.toISOString();
+        const NEW_BANDS_SET = new Set([
+          "AnAkA", "AutÓpsia", "Collapse Death", "Rygel",
+          "Angelus Seraphim", "Whiplash Metallica Cover Bh", "Fifth Essence",
+          "Apoteom", "Beto Lani", "Cactek", "Darkship", "Deadly Shadows",
+          "Föxx Salema", "Harmony Fault", "Inner Caligula", "Ocaradometal",
+          "One of Them", "Overdose Nuclear", "Pandemmy", "Pettalom",
+          "Royal Rage", "Silver Talon", "Tempusvernum", "Thunder Force",
+          "Thinking Head", "Treze Black"
+        ]);
         const enriched = SEED_BANDS.map(b => {
-          if (b.name === "AnAkA" || b.name === "AutÓpsia" || b.name === "Collapse Death" || b.name === "Rygel") {
+          if (NEW_BANDS_SET.has(b.name)) {
             return { ...b, createdAt: b.createdAt || yesterdayStr };
           }
           return b;
@@ -596,7 +617,7 @@ export default function App() {
       {refreshNotify && (
         <div className="fixed top-4 right-4 z-50 bg-neutral-900 border border-emerald-900/50 text-emerald-400 px-4 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-2 shadow-2xl shadow-black/85 animate-bounce">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          {lang === "pt" ? "Sincronizado e Atualizado!" : "Database successfully synced!"}
+          {lang === "pt" ? "Sincronizado e Atualizado!" : lang === "es" ? "¡Sincronizado y Actualizado!" : lang === "de" ? "Synchronisiert & Aktualisiert!" : "Database successfully synced!"}
         </div>
       )}
 
@@ -619,7 +640,7 @@ export default function App() {
             onClick={handleMasterRefresh}
             disabled={isRefreshing}
             className="p-1.5 bg-neutral-900 border border-neutral-850 rounded-lg text-stone-300 cursor-pointer"
-            title={lang === "pt" ? "Sincronizar" : "Sync"}
+            title={lang === "pt" ? "Sincronizar" : lang === "es" ? "Sincronizar" : lang === "de" ? "Synchronisieren" : "Sync"}
           >
             <RefreshCw size={14} className={isRefreshing ? "animate-spin text-red-500" : ""} />
           </button>
@@ -722,7 +743,7 @@ export default function App() {
                   >
                     <span className="flex items-center gap-2.5">
                       <Calendar size={15} className={bdayTodayCount > 0 ? "text-amber-500" : ""} />
-                      {lang === "pt" ? "Aniversários (BDAY)" : lang === "es" ? "Aniversarios (BDAY)" : "Anniversaries (BDAY)"}
+                      {lang === "pt" ? "Aniversários (BDAY)" : lang === "es" ? "Aniversarios (BDAY)" : lang === "de" ? "Album-Jubiläen" : "Anniversaries (BDAY)"}
                     </span>
                     {bdayTodayCount > 0 && (
                       <span className="text-[9px] text-amber-400 font-bold bg-amber-950/30 px-2 py-0.5 rounded-full border border-amber-900/40 shadow-sm">
@@ -741,7 +762,7 @@ export default function App() {
                   >
                     <span className="flex items-center gap-2.5">
                       <HelpCircle size={15} />
-                      {lang === "pt" ? "Ajuda" : lang === "es" ? "Ayuda" : "Help"}
+                      {lang === "pt" ? "Ajuda" : lang === "es" ? "Ayuda" : lang === "de" ? "Hilfe" : "Help"}
                     </span>
                   </button>
 
@@ -768,7 +789,7 @@ export default function App() {
                   >
                     <span className="flex items-center gap-2.5">
                       <LogOut size={15} />
-                      {lang === "pt" ? "Sair do Aplicativo" : lang === "es" ? "Salir de la App" : "Exit App"}
+                      {lang === "pt" ? "Sair do Aplicativo" : lang === "es" ? "Salir de la App" : lang === "de" ? "App Beenden" : "Exit App"}
                     </span>
                   </button>
                 </div>
@@ -795,6 +816,12 @@ export default function App() {
                     className={`flex-1 py-1 text-xs font-mono font-bold rounded cursor-pointer ${lang === "es" ? "bg-red-950 text-white" : "text-neutral-500"}`}
                   >
                     ES
+                  </button>
+                  <button
+                    onClick={() => setLang("de")}
+                    className={`flex-1 py-1 text-xs font-mono font-bold rounded cursor-pointer ${lang === "de" ? "bg-red-950 text-white" : "text-neutral-500"}`}
+                  >
+                    DE
                   </button>
                 </div>
                 
@@ -838,7 +865,7 @@ export default function App() {
                 Stay Metal
               </h1>
               <p className="text-[8px] text-zinc-500 uppercase tracking-widest mt-2.5 font-bold">
-                {lang === "pt" ? "Enciclopédia" : lang === "es" ? "Enciclopedia" : "Metal Wiki & Logs"}
+                {lang === "pt" ? "Enciclopédia" : lang === "es" ? "Enciclopedia" : lang === "de" ? "Enzyklopädie" : "Metal Wiki & Logs"}
               </p>
             </div>
           </div>
@@ -894,7 +921,7 @@ export default function App() {
             >
               <div className="flex items-center gap-2.5">
                 <Calendar size={15} className={bdayTodayCount > 0 ? "text-amber-500" : ""} />
-                <span>{lang === "pt" ? "Aniversários (BDAY)" : lang === "es" ? "Aniversarios (BDAY)" : "Anniversaries (BDAY)"}</span>
+                <span>{lang === "pt" ? "Aniversários (BDAY)" : lang === "es" ? "Aniversarios (BDAY)" : lang === "de" ? "Album-Jubiläen" : "Anniversaries (BDAY)"}</span>
               </div>
               {bdayTodayCount > 0 && (
                 <span className="text-[9px] text-amber-400 font-bold bg-amber-950/30 px-2 py-0.5 rounded-full border border-amber-900/40 shadow-sm animate-pulse">
@@ -914,7 +941,7 @@ export default function App() {
             >
               <div className="flex items-center gap-2.5">
                 <HelpCircle size={15} />
-                <span>{lang === "pt" ? "Ajuda" : lang === "es" ? "Ayuda" : "Help"}</span>
+                <span>{lang === "pt" ? "Ajuda" : lang === "es" ? "Ayuda" : lang === "de" ? "Hilfe" : "Help"}</span>
               </div>
             </button>
 
@@ -949,7 +976,7 @@ export default function App() {
             >
               <div className="flex items-center gap-2.5">
                 <LogOut size={15} />
-                <span>{lang === "pt" ? "Sair do Aplicativo" : lang === "es" ? "Salir de la App" : "Exit App"}</span>
+                <span>{lang === "pt" ? "Sair do Aplicativo" : lang === "es" ? "Salir de la App" : lang === "de" ? "App Beenden" : "Exit App"}</span>
               </div>
             </button>
           </div>
@@ -957,7 +984,7 @@ export default function App() {
           {/* Database Info Widget inside sidebar */}
           <div className="px-6 py-4 mx-4 mb-4 bg-neutral-900/50 border border-neutral-900 rounded-xl space-y-2 text-[10px] text-neutral-500 leading-snug mt-auto relative group">
             <span className="text-[8px] text-red-500 font-bold uppercase tracking-widest block border-b border-neutral-850 pb-1 select-none">
-              {lang === "pt" ? "Estatísticas" : lang === "es" ? "Estadísticas" : "Database Stats"}
+              {lang === "pt" ? "Estatísticas" : lang === "es" ? "Estadísticas" : lang === "de" ? "Statistiken" : "Database Stats"}
             </span>
             <div className="flex justify-between select-none">
               <span>Bands Ativas:</span>
@@ -1009,6 +1036,12 @@ export default function App() {
             >
               ES
             </button>
+            <button
+              onClick={() => setLang("de")}
+              className={`flex-1 py-1 text-[10.5px] font-mono font-bold rounded cursor-pointer transition-colors ${lang === "de" ? "bg-red-950 text-white" : "text-neutral-500 hover:text-stone-200"}`}
+            >
+              DE
+            </button>
           </div>
 
           {/* Theme selector in sidebar */}
@@ -1045,7 +1078,7 @@ export default function App() {
             <div className="flex items-center gap-1.5 min-w-0">
               <Eye size={13} className="text-rose-500 animate-pulse shrink-0" />
               <span className="text-zinc-500 font-bold text-[10px] sm:text-xs truncate">
-                {lang === "pt" ? "Acessos:" : lang === "es" ? "Accesos:" : "Accesses:"}
+                {lang === "pt" ? "Acessos:" : lang === "es" ? "Accesos:" : lang === "de" ? "Zugriffe:" : "Accesses:"}
               </span>
               <span className="text-white font-black text-[11px] sm:text-xs">
                 {accesses}
@@ -1057,7 +1090,7 @@ export default function App() {
             <div className="flex items-center gap-1.5 min-w-0">
               <Music size={13} className="text-rose-500 shrink-0" />
               <span className="text-zinc-500 font-bold text-[10px] sm:text-xs truncate">
-                {lang === "pt" ? "Bandas:" : lang === "es" ? "Bandas:" : "Bands:"}
+                {lang === "pt" ? "Bandas:" : lang === "es" ? "Bandas:" : lang === "de" ? "Bands:" : "Bands:"}
               </span>
               <span className="text-rose-500 font-black text-[11px] sm:text-xs">
                 {bands.length}
@@ -1069,7 +1102,7 @@ export default function App() {
             <div className="flex items-center gap-1.5 min-w-0">
               <Globe size={13} className="text-rose-400 shrink-0" />
               <span className="text-zinc-500 font-bold text-[10px] sm:text-xs truncate">
-                {lang === "pt" ? "Países:" : lang === "es" ? "Países:" : "Countries:"}
+                {lang === "pt" ? "Países:" : lang === "es" ? "Países:" : lang === "de" ? "Länder:" : "Countries:"}
               </span>
               <span className="text-rose-400 font-black text-[11px] sm:text-xs">
                 {Array.from(new Set(bands.map(b => b.country).filter(Boolean))).length}
@@ -1097,6 +1130,10 @@ export default function App() {
                 <span className="text-xs font-mono uppercase tracking-widest text-zinc-300 font-bold">
                   {lang === "pt" 
                     ? `Navegando: ${activeTab === "yesterday" ? "Adicionadas Ontem" : activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Aniversários de Lançamento" : activeTab === "help" ? "Ajuda" : t.navAdmin}` 
+                    : lang === "es"
+                    ? `Navegando: ${activeTab === "yesterday" ? "Añadidas Ayer" : activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Aniversarios de Álbumes" : activeTab === "help" ? "Ayuda" : t.navAdmin}`
+                    : lang === "de"
+                    ? `Navigation: ${activeTab === "yesterday" ? "Gestern hinzugefügt" : activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Album-Jubiläen" : activeTab === "help" ? "Hilfe" : t.navAdmin}`
                     : `Navigating: ${activeTab === "yesterday" ? "Added Yesterday" : activeTab === "festivals" ? t.navFestivals : activeTab === "bday" ? "Album Anniversaries" : activeTab === "help" ? "Help" : t.navAdmin}`
                   }
                 </span>
@@ -1113,7 +1150,7 @@ export default function App() {
                 >
                   <Skull size={13} className="animate-pulse text-red-500" />
                   <span>
-                    {lang === "pt" ? "Voltar ao Menu" : lang === "es" ? "Volver al Menú" : "Back to Menu"}
+                    {lang === "pt" ? "Voltar ao Menu" : lang === "es" ? "Volver al Menú" : lang === "de" ? "Zurück zum Menü" : "Back to Menu"}
                   </span>
                 </button>
               </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Band, EventItem } from "../firebase";
-import { translations } from "../translations";
+import { translations, getBioText } from "../translations";
 import { User } from "firebase/auth";
 import { ShieldCheck, CheckCircle2, Trash2, Milestone, BellRing, Sparkles } from "lucide-react";
 
@@ -8,7 +8,7 @@ interface AdminSectionProps {
   bands: Band[];
   events: EventItem[];
   user: User | null;
-  lang: "pt" | "en" | "es";
+  lang: "pt" | "en" | "es" | "de";
   onApproveBand: (id: string) => Promise<void>;
   onDeleteBand: (id: string) => Promise<void>;
   onApproveEvent: (id: string) => Promise<void>;
@@ -36,6 +36,10 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
         <p className="text-xs text-neutral-400 max-w-md mx-auto">
           {lang === "pt" 
             ? "Para gerenciar aprovações de conteúdo enviado e administrar o catálogo global, faça login acima utilizando o e-mail administrador patricioaug@gmail.com." 
+            : lang === "es"
+            ? "Para gestionar aprobaciones de contenido enviado y administrar el catálogo global, inicie sesión arriba con el correo patricioaug@gmail.com."
+            : lang === "de"
+            ? "Melden Sie sich oben mit der E-Mail-Adresse patricioaug@gmail.com an, um Anträge zu verwalten und den Katalog zu moderieren."
             : "To authorize user submissions and moderate the rock index, authenticate above as the system manager patricioaug@gmail.com."}
         </p>
       </div>
@@ -69,17 +73,23 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center font-mono">
         <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-850">
-          <span className="text-[10px] text-neutral-500 uppercase">Aprovações Pendentes</span>
+          <span className="text-[10px] text-neutral-500 uppercase">
+            {lang === "pt" ? "Aprovações Pendentes" : lang === "es" ? "Aprobaciones Pendientes" : lang === "de" ? "Ausstehende Genehmigungen" : "Pending Approvals"}
+          </span>
           <span className="text-2xl font-black text-amber-500 block mt-1">{totalPending}</span>
         </div>
         <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-850">
-          <span className="text-[10px] text-neutral-500 uppercase">Bandas Ativas</span>
+          <span className="text-[10px] text-neutral-500 uppercase">
+            {lang === "pt" ? "Bandas Ativas" : lang === "es" ? "Bandas Activas" : lang === "de" ? "Aktive Bands" : "Active Bands"}
+          </span>
           <span className="text-2xl font-black text-rose-500 block mt-1">
             {bands.filter(b => b.approved).length} / {bands.length}
           </span>
         </div>
         <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-850">
-          <span className="text-[10px] text-neutral-500 uppercase">Festivais Ativos</span>
+          <span className="text-[10px] text-neutral-500 uppercase">
+            {lang === "pt" ? "Festivais Ativos" : lang === "es" ? "Festivales Activos" : lang === "de" ? "Aktive Festivals" : "Active Festivals"}
+          </span>
           <span className="text-2xl font-black text-amber-500 block mt-1">
             {events.filter(e => e.isFestival && e.approved).length} / {events.filter(e => e.isFestival).length}
           </span>
@@ -101,7 +111,7 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
           {pendingBands.length > 0 && (
             <div className="space-y-3">
               <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                🎸 Bandas enviadas por usuários ({pendingBands.length})
+                {lang === "pt" ? "🎸 Bandas enviadas por usuários" : lang === "es" ? "🎸 Bandas enviadas por usuarios" : lang === "de" ? "🎸 Von Benutzern eingereichte Bands" : "🎸 User submitted bands"} ({pendingBands.length})
               </h4>
               <div className="grid grid-cols-1 gap-3">
                 {pendingBands.map(b => (
@@ -110,7 +120,7 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
                       <h5 className="text-sm font-bold text-white font-mono">{b.name}</h5>
                       <p className="text-[10px] text-amber-500 font-mono uppercase">{b.genre} • {b.country} • {b.formationYear}</p>
                       <p className="text-[11px] text-neutral-400 font-sans line-clamp-1 italic max-w-xl">
-                        {typeof b.bio === "string" ? b.bio : b.bio[lang] || b.bio["en"]}
+                        {getBioText(b.bio, lang)}
                       </p>
                     </div>
                     <div className="flex gap-1.5 font-mono">
@@ -118,13 +128,13 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
                         onClick={() => b.id && onApproveBand(b.id)}
                         className="bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-900 px-3 py-1 text-[10px] uppercase font-bold rounded cursor-pointer transition"
                       >
-                        ✔ Aprovar
+                        {lang === "pt" ? "✔ Aprovar" : lang === "es" ? "✔ Aprobar" : lang === "de" ? "✔ Genehmigen" : "✔ Approve"}
                       </button>
                       <button
                         onClick={() => b.id && onDeleteBand(b.id)}
                         className="bg-red-950 hover:bg-red-900 text-red-300 border border-red-900 px-3 py-1 text-[10px] uppercase font-bold rounded cursor-pointer transition"
                       >
-                        ✖ Deletar
+                        {lang === "pt" ? "✖ Deletar" : lang === "es" ? "✖ Eliminar" : lang === "de" ? "✖ Löschen" : "✖ Delete"}
                       </button>
                     </div>
                   </div>
@@ -137,7 +147,7 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
           {pendingEvents.length > 0 && (
             <div className="space-y-3">
               <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                🎪 Festivais pendentes de aprovação ({pendingEvents.length})
+                {lang === "pt" ? "🎪 Festivais pendentes de aprovação" : lang === "es" ? "🎪 Festivales pendientes de aprobación" : lang === "de" ? "🎪 Ausstehende Festivals" : "🎪 Pending festivals"} ({pendingEvents.length})
               </h4>
               <div className="grid grid-cols-1 gap-3">
                 {pendingEvents.map(e => (
@@ -156,13 +166,13 @@ export const AdminSection: React.FC<AdminSectionProps> = ({
                         onClick={() => e.id && onApproveEvent(e.id)}
                         className="bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-900 px-3 py-1 text-[10px] uppercase font-bold rounded cursor-pointer transition"
                       >
-                        ✔ Aprovar
+                        {lang === "pt" ? "✔ Aprovar" : lang === "es" ? "✔ Aprobar" : lang === "de" ? "✔ Genehmigen" : "✔ Approve"}
                       </button>
                       <button
                         onClick={() => e.id && onDeleteEvent(e.id)}
                         className="bg-red-950 hover:bg-red-900 text-red-300 border border-red-900 px-3 py-1 text-[10px] uppercase font-bold rounded cursor-pointer transition"
                       >
-                        ✖ Deletar
+                        {lang === "pt" ? "✖ Deletar" : lang === "es" ? "✖ Eliminar" : lang === "de" ? "✖ Löschen" : "✖ Delete"}
                       </button>
                     </div>
                   </div>

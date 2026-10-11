@@ -5,7 +5,7 @@ import { Calendar, ArrowLeft, Disc, Music, Sparkles, Volume2, Search, Flame } fr
 
 interface BdaySectionProps {
   bands: Band[];
-  lang: "pt" | "en" | "es";
+  lang: "pt" | "en" | "es" | "de";
   onBackToCatalog: () => void;
   onViewBand: (bandName: string) => void;
 }
@@ -37,7 +37,8 @@ export function getDeterministicReleaseDate(bandName: string, albumTitle: string
 const monthNames = {
   pt: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
   en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-  es: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+  es: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+  de: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
 };
 // Localized strings
 const t = {
@@ -109,6 +110,29 @@ const t = {
     todayLabel: "¡HOY!",
     epicMarcos: "Hitos Históricos",
     showMore: "Ver más aniversarios de la semana"
+  },
+  de: {
+    title: "📅 Album-Jubiläen",
+    subtitle: "Feiere die Meilensteine des Metal! Legendäre Alben, die heute und diese Woche ihr Veröffentlichungsjubiläum feiern.",
+    todayTab: "📅 Heutige Jubiläen",
+    weekTab: "📅 Diese Woche",
+    allTab: "🎸 Alle Alben",
+    backBtn: "Zurück zum Katalog",
+    released: "Veröffentlicht im Jahr",
+    celebrating: "",
+    years: "Jahre",
+    viewBand: "Bandprofil ansehen",
+    emptyToday: "Heute feiert kein Metal-Album Jubiläum. Schau dir die anderen Tage dieser Woche an!",
+    searchPlaceholder: "Nach Band oder Album filtern...",
+    anniversaryOn: "Jubiläum am",
+    daysLeft: "In",
+    daysAgo: "Vor",
+    daysUnit: "Tagen",
+    yesterday: "Gestern",
+    tomorrow: "Morgen",
+    todayLabel: "HEUTE!",
+    epicMarcos: "Historische Meilensteine",
+    showMore: "Mehr Jubiläen dieser Woche anzeigen"
   }
 };
 

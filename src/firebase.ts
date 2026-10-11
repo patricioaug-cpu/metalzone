@@ -136,7 +136,8 @@ export const SEED_BANDS: Band[] = [
     bio: {
       pt: "Uma das bandas mais influentes no heavy metal, os ícones britânicos do Iron Maiden moldaram o gênero com guitarras gêmeas harmonizadas, os vocais operáticos de Bruce Dickinson e seu mascote icônico Eddie.",
       en: "One of the most influential and enduring heavy metal bands of all time, British icons Iron Maiden pioneered the NWOBHM sound with harmonized twin guitars, Bruce Dickinson's operatic vocals, and their iconic mascot Eddie.",
-      es: "Una de las bandas de heavy metal más influyentes de todos los tiempos, los iconos británicos Iron Maiden fueron pioneros del sonido NWOBHM con guitarras gemelas armonizadas, la voz operística de Bruce Dickinson y su icónica mascota Eddie."
+      es: "Una de las bandas de heavy metal más influyentes de todos los tiempos, los iconos británicos Iron Maiden fueron pioneros del sonido NWOBHM con guitarras gemelas armonizadas, la voz operística de Bruce Dickinson y su icónica mascota Eddie.",
+      de: "Eine der einflussreichsten und beständigsten Heavy Metal bands of all time, British icons Iron Maiden pioneered the NWOBHM sound with harmonized twin guitars, Bruce Dickinson's operatic vocals, and their iconic mascot Eddie."
     },
     members: [
       { name: "Bruce Dickinson", role: "Vocals", status: "active" },
@@ -177,7 +178,8 @@ export const SEED_BANDS: Band[] = [
     bio: {
       pt: "Liderada pelo brilhante guitarrista e vocalista Chuck Schuldiner (o pioneiro influente do death metal), a banda Death evoluiu de um som brutal e cru para um death metal altamente progressivo e técnico, mudando a história da música agressiva.",
       en: "Led by mastermind guitarist/vocalist Chuck Schuldiner, widely regarded as a key pioneer of death metal, Death evolved from raw primitive speed brutality into a highly technical, philosophical, and progressive force.",
-      es: "Liderada por el guitarrista y vocalista Chuck Schuldiner, considerado un pionero clave del death metal, Death evolucionó desde una brutalidad cruda hacia una fuerza altamente técnica, filosófica y progresiva."
+      es: "Liderada por el guitarrista y vocalista Chuck Schuldiner, considerado un pionero clave del death metal, Death evolucionó desde una brutalidad cruda hacia una fuerza altamente técnica, filosófica y progresiva.",
+      de: "Geführt von mastermind guitarist/vocalist Chuck Schuldiner, widely regarded as a key pioneer of Death Metal, Death evolved from raw primitive speed brutality into a highly technical, philosophical, and progressive force."
     },
     members: [
       { name: "Chuck Schuldiner", role: "Guitar, Vocals", status: "active" },
@@ -216,7 +218,8 @@ export const SEED_BANDS: Band[] = [
     bio: {
       pt: "Gigantes pioneiros do metal progressivo moderno. Unindo a agressividade do metal clássico e a brilhante complexidade do rock progressivo britânico dos anos 70, com solos virtuosos insanos.",
       en: "The undisputed pioneers of modern progressive metal. Blending the heavy aggression of traditional metal with the intricate, virtuoso complexity of 70s progressive rock.",
-      es: "Los pioneros indiscutibles del metal progresivo moderno. Mezclando la agresión del metal tradicional con la compleja complejidad virtuosa del rock progresivo de los 70."
+      es: "Los pioneros indiscutibles del metal progresivo moderno. Mezclando la agresión del metal tradicional con la compleja complejidad virtuosa del rock progresivo de los 70.",
+      de: "The undisputed Pioniere von modern progressive metal. Blending the heavy aggression of traditional metal with the intricate, virtuoso complexity of 70s progressive rock."
     },
     members: [
       { name: "James LaBrie", role: "Vocals", status: "active" },
@@ -254,7 +257,8 @@ export const SEED_BANDS: Band[] = [
     bio: {
       pt: "Mestres suecos do doom metal tradicional. Seus riffs ultra lentos, pesados e vocais quase religiosos definiram os pilares do doom metal épico em clássicos eternos de melancolia medieval.",
       en: "Swedish masters of traditional doom metal. Their ultra-slow, crushing riffs, crushing basslines, and operatic, theatrical vocals defined the blueprint of Epic Doom Metal with tales of grief and ancient magic.",
-      es: "Maestros suecos del doom metal tradicional. Sus riffs lentos y aplastantes, y su voz operística definieron el plano del Doom Metal Épico lleno de tristeza medieval."
+      es: "Maestros suecos del doom metal tradicional. Sus riffs lentos y aplastantes, y su voz operística definieron el plano del Doom Metal Épico lleno de tristeza medieval.",
+      de: "Swedish masters of traditional doom metal. Their ultra-slow, crushing riffs, crushing basslines, and operatic, theatrical vocals defined the blueprint of Epic Doom Metal with tales of grief and ancient magic."
     },
     members: [
       { name: "Johan Längqvist", role: "Vocals", status: "active" },
@@ -293,7 +297,8 @@ export const SEED_BANDS: Band[] = [
     bio: {
       pt: "Nascida em Belo Horizonte, Minas Gerais, o Sepultura levou o metal brasileiro para o cenário global. Com raízes no thrash e death metal, a banda revolucionou a música mundial ao fundir o peso do metal com ritmos tribais brasileiros e parcerias icônicas.",
       en: "Formed in Belo Horizonte, Brazil, Sepultura conquered the global metal scene. Starting as a raw black/death thrash force, they redefined heavy music with ground-breaking tribal percussion mixtures.",
-      es: "Formada en Belo Horizonte, Brasil, Sepultura conquistó la escena del metal global. Inicialmente thrash metal crudo, transformaron la música pesada al fusionar metal con percusión tribal tradicional de Brasil."
+      es: "Formada en Belo Horizonte, Brasil, Sepultura conquistó la escena del metal global. Inicialmente thrash metal crudo, transformaron la música pesada al fusionar metal con percusión tribal tradicional de Brasil.",
+      de: "Formed in Belo Horizonte, Brazil, Sepultura conquered the global metal scene. Starting as a raw black/death thrash force, they redefined heavy music with ground-breaking tribal percussion mixtures."
     },
     members: [
       { name: "Andreas Kisser", role: "Guitars", status: "active" },
@@ -334,7 +339,8 @@ export const SEED_BANDS: Band[] = [
     bio: {
       pt: "Uma das maiores expressões do metal melódico global, o Angra de São Paulo combina impecavelmente arranjos neoclássicos, guitarras harmonizadas ultrarrápidas, e música folclórica brasileira e progressiva de forma genial.",
       en: "One of the absolute premier forces in progressive power metal, Angra blends neoclassical symphonic precision, rapid-fire dual guitars, and subtle Brazilian traditional regional music.",
-      es: "Una de las mayores fuerzas del power progressive metal, Angra de São Paulo fusiona arreglos melódicos neoclásicos, solos dobles ultrarrápidos y folclore brasileño tradicional."
+      es: "Una de las mayores fuerzas del power progressive metal, Angra de São Paulo fusiona arreglos melódicos neoclásicos, solos dobles ultrarrápidos y folclore brasileño tradicional.",
+      de: "One of the absolute premier forces in progressive power metal, Angra blends neoclassical symphonic precision, rapid-fire dual guitars, and subtle Brazilian traditional regional music."
     },
     members: [
       { name: "Rafael Bittencourt", role: "Guitars", status: "active" },
@@ -375,7 +381,8 @@ export const SEED_BANDS: Band[] = [
     bio: {
       pt: "Os padrinhos absolutos e criadores do Heavy Metal. Nascida nas indústrias cinzentas de Birmingham, a banda foi liderada pelos riffs pesados de Tony Iommi e o carisma de Ozzy Osbourne, desenhando a estética sombria de toda a música pesada moderna.",
       en: "The founding fathers who spawned Heavy Metal. Hailing from industrial Birmingham, the heavy riffs of Tony Iommi and the ominous charisma of Ozzy Osbourne birthed the occult, slow, and crushed sounds of heavy metal.",
-      es: "Los padres fundadores que sembraron el Heavy Metal. Nacidos de la Birmingham industrial, los pesados acordes de Tony Iommi y el carisma lúgubre de Ozzy Osbourne gestaron toda la gama del metal gótico y doom."
+      es: "Los padres fundadores que sembraron el Heavy Metal. Nacidos de la Birmingham industrial, los pesados acordes de Tony Iommi y el carisma lúgubre de Ozzy Osbourne gestaron toda la gama del metal gótico y doom.",
+      de: "The founding fathers who spawned Heavy Metal. Hailing from industrial Birmingham, the heavy riffs of Tony Iommi and the ominous charisma of Ozzy Osbourne birthed the occult, slow, and crushed sounds of Heavy Metal."
     },
     members: [
       { name: "Tony Iommi", role: "Guitars", status: "active" },
@@ -413,7 +420,8 @@ export const SEED_BANDS: Band[] = [
     bio: {
       pt: "Considerada a face mais agressiva da realeza do thrash metal estadounidense. Conhecidos por seus andamentos ultrarrápidos, solos caóticos e letras profanas, influenciaram quase todas as gerações de death e black metal subsequentes.",
       en: "Widely regarded as the most aggressive of the Thrash Metal royalty. Renowned for their breakneck-speed tempos, chaotic chromatic twin solos, and dark themes that inspired death and black metal.",
-      es: "Considerada la versión más violenta de la realeza del thrash metal. Reconocidos por tempos vertiginosos, caóticos solos duales y temática oscura que inspiró al death y black metal mundiales."
+      es: "Considerada la versión más violenta de la realeza del thrash metal. Reconocidos por tempos vertiginosos, caóticos solos duales y temática oscura que inspiró al death y black metal mundiales.",
+      de: "Widely regarded as the most aggressive of the Thrash Metal royalty. Renowned for their breakneck-speed tempos, chaotic chromatic twin solos, and dark themes that inspired death and black metal."
     },
     members: [
       { name: "Kerry King", role: "Guitars", status: "active" },
@@ -452,7 +460,8 @@ export const SEED_BANDS: Band[] = [
     bio: {
       pt: "A banda de heavy metal de maior sucesso comercial da história da música nacional e internacional. Iniciando como uma força implacável do thrash californiano, evoluíram para turnês de estádio globais imensas sem perder os riffs pesados.",
       en: "The most commercially successful heavy metal band of all time. Starting as a fierce force of underground Californian thrash metal, they rose to conquer world stadiums while retaining classic riffs.",
-      es: "La banda de heavy metal con mayor éxito comercial en la historia musical. Partiendo de un feroz thrash metal underground en California, conquistaron estadios enteros alrededor del mundo entero."
+      es: "La banda de heavy metal con mayor éxito comercial en la historia musical. Partiendo de un feroz thrash metal underground en California, conquistaron estadios enteros alrededor del mundo entero.",
+      de: "The most commercially successful Heavy Metal band of all time. Starting as a fierce force of underground Californian Thrash Metal, they rose to conquer world stadiums while retaining classic riffs."
     },
     members: [
       { name: "James Hetfield", role: "Vocals, Rhythm Guitars", status: "active" },

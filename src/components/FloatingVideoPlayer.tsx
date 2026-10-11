@@ -17,7 +17,7 @@ interface FloatingVideoPlayerProps {
   onCloseWindow: (id: string) => void;
   onFocusWindow: (id: string) => void;
   onUpdateWindow: (id: string, updates: Partial<FloatingWindow>) => void;
-  lang: "pt" | "en" | "es";
+  lang: "pt" | "en" | "es" | "de";
 }
 
 export const FloatingVideoPlayer: React.FC<FloatingVideoPlayerProps> = ({

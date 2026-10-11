@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import { Band } from "../firebase";
+import { getBioText } from "../translations";
 import { Music, Globe, Calendar, ArrowLeft, Skull, Clock, HelpCircle, AlertCircle } from "lucide-react";
 // @ts-ignore
 import metalCatalogLogo from "../assets/images/metal_catalog_logo_1782380109985.jpg";
@@ -8,7 +9,7 @@ import { getProxiedImageUrl } from "../utils/imageProxy";
 
 interface YesterdayBandsSectionProps {
   bands: Band[];
-  lang: "pt" | "en" | "es";
+  lang: "pt" | "en" | "es" | "de";
   onBackToCatalog: () => void;
 }
 
@@ -90,11 +91,23 @@ export const YesterdayBandsSection: React.FC<YesterdayBandsSectionProps> = ({
       viewInCatalog: "Ver en Catálogo",
       yesterdayDate: "Fecha de referencia"
     },
+    de: {
+      title: "Gestern hinzugefügt",
+      subtitle: "Bands, die gestern zum Katalog hinzugefügt wurden",
+      backBtn: "Zurück zum Hauptmenü",
+      noBands: "Gestern wurden keine Bands hinzugefügt.",
+      addedOn: "Hinzugefügt am",
+      formation: "Gegründet in",
+      country: "Herkunftsland",
+      genre: "Metal-Genre",
+      viewInCatalog: "Im Katalog ansehen",
+      yesterdayDate: "Referenzdatum"
+    },
   }[lang];
 
   // Format yesterday's date beautifully
   const formattedYesterdayStr = yesterday.toLocaleDateString(
-    lang === "pt" ? "pt-BR" : lang === "es" ? "es-ES" : "en-US",
+    lang === "pt" ? "pt-BR" : lang === "es" ? "es-ES" : lang === "de" ? "de-DE" : "en-US",
     { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
   );
 
@@ -153,10 +166,7 @@ export const YesterdayBandsSection: React.FC<YesterdayBandsSectionProps> = ({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {yesterdayBands.map((band, index) => {
-            const bioText =
-              typeof band.bio === "string"
-                ? band.bio
-                : band.bio?.[lang] || band.bio?.en || "";
+            const bioText = getBioText(band.bio, lang);
 
             return (
               <motion.div

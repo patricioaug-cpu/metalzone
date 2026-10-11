@@ -9,7 +9,7 @@ import { ShieldAlert, LogOut, Mail } from "lucide-react";
 interface AuthSectionProps {
   user: User | null;
   onAuthChange: (user: User | null, isGuest: boolean) => void;
-  lang: "pt" | "en" | "es";
+  lang: "pt" | "en" | "es" | "de";
   isGuest: boolean;
 }
 
@@ -34,6 +34,8 @@ export const AuthSection: React.FC<AuthSectionProps> = ({ user, onAuthChange, la
           ? "Por favor, digite um endereço de e-mail válido." 
           : lang === "es"
           ? "Por favor, introduzca un correo electrónico válido."
+          : lang === "de"
+          ? "Bitte geben Sie eine gültige E-Mail-Adresse ein."
           : "Please enter a valid email address."
       );
       return;
@@ -46,6 +48,8 @@ export const AuthSection: React.FC<AuthSectionProps> = ({ user, onAuthChange, la
           ? "Formato de e-mail inválido."
           : lang === "es"
           ? "Formato de correo inválido."
+          : lang === "de"
+          ? "Ungültiges E-Mail-Format."
           : "Invalid email format."
       );
       return;
@@ -96,7 +100,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({ user, onAuthChange, la
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
               <p className="text-sm text-neutral-400 uppercase tracking-widest font-mono">
-                {lang === "pt" ? "Membro Autenticado" : lang === "es" ? "Miembro Autenticado" : "Authenticated Member"}
+                {lang === "pt" ? "Membro Autenticado" : lang === "es" ? "Miembro Autenticado" : lang === "de" ? "Authentifiziertes Mitglied" : "Authenticated Member"}
               </p>
             </div>
             <h3 className="text-xl font-bold text-white mt-1 flex items-center gap-2">
@@ -112,6 +116,8 @@ export const AuthSection: React.FC<AuthSectionProps> = ({ user, onAuthChange, la
                 ? "Acesso total aos recursos do catálogo principal." 
                 : lang === "es"
                 ? "Acceso total a los recursos del catálogo principal."
+                : lang === "de"
+                ? "Vollständiger Zugriff auf den Katalog."
                 : "Full access to global rock catalog resources."}
             </p>
           </div>
@@ -141,13 +147,15 @@ export const AuthSection: React.FC<AuthSectionProps> = ({ user, onAuthChange, la
       
       <div className="text-center mb-6">
         <h2 className="text-xl font-bold text-white uppercase tracking-wider font-mono mb-2">
-          {lang === "pt" ? "Acessar o Stay Metal" : lang === "es" ? "Acceder a Stay Metal" : "Access Stay Metal"}
+          {lang === "pt" ? "Acessar o Stay Metal" : lang === "es" ? "Acceder a Stay Metal" : lang === "de" ? "Bei Stay Metal anmelden" : "Access Stay Metal"}
         </h2>
         <p className="text-xs text-neutral-400 max-w-sm mx-auto leading-relaxed">
           {lang === "pt"
             ? "Insira seu e-mail para propor bandas, interagir com o catálogo, gerenciar aprovações e usufruir de recursos avançados."
             : lang === "es"
             ? "Ingrese su correo para proponer bandas, interactuar con el catálogo, gestionar aprobaciones y disfrutar de funciones avanzadas."
+            : lang === "de"
+            ? "Geben Sie Ihre E-Mail ein, um Bands vorzuschlagen, mit dem Katalog zu interagieren und erweiterte Funktionen zu nutzen."
             : "Enter your email to submit bands, interact with the catalog, manage approvals, and enjoy advanced features."}
         </p>
       </div>
@@ -155,7 +163,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({ user, onAuthChange, la
       <form onSubmit={handleInstantLogin} className="space-y-4">
         <div>
           <label className="block text-[10px] uppercase tracking-widest font-mono text-zinc-400 mb-1.5">
-            {lang === "pt" ? "Endereço de E-mail" : lang === "es" ? "Dirección de Correo" : "Email Address"}
+            {lang === "pt" ? "Endereço de E-mail" : lang === "es" ? "Dirección de Correo" : lang === "de" ? "E-Mail-Adresse" : "Email Address"}
           </label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-zinc-500 pointer-events-none">
@@ -178,14 +186,14 @@ export const AuthSection: React.FC<AuthSectionProps> = ({ user, onAuthChange, la
           className="w-full bg-red-700 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg text-sm font-sans tracking-wide transition-all duration-300 shadow-xl disabled:opacity-50 cursor-pointer"
         >
           {loading 
-            ? (lang === "pt" ? "Acessando..." : lang === "es" ? "Accediendo..." : "Accessing...") 
-            : (lang === "pt" ? "Acessar Catálogo" : lang === "es" ? "Acceder al Catálogo" : "Access Catalog")}
+            ? (lang === "pt" ? "Acessando..." : lang === "es" ? "Accediendo..." : lang === "de" ? "Anmelden..." : "Accessing...") 
+            : (lang === "pt" ? "Acessar Catálogo" : lang === "es" ? "Acceder al Catálogo" : lang === "de" ? "Katalog öffnen" : "Access Catalog")}
         </button>
 
         <div className="flex items-center my-4">
           <div className="grow border-t border-neutral-800"></div>
           <span className="mx-3 text-[10px] text-neutral-500 uppercase tracking-widest font-mono">
-            {lang === "pt" ? "ou" : lang === "es" ? "o" : "or"}
+            {lang === "pt" ? "ou" : lang === "es" ? "o" : lang === "de" ? "oder" : "or"}
           </span>
           <div className="grow border-t border-neutral-800"></div>
         </div>

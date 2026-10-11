@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Band, BandMember, DiscographyItem } from "../firebase";
-import { translations } from "../translations";
+import { translations, getBioText } from "../translations";
 import { getStaticFallbackDetails } from "../utils/staticDetails";
 import { User } from "firebase/auth";
 import { getProxiedImageUrl } from "../utils/imageProxy";
@@ -96,7 +96,7 @@ const BandLogo: React.FC<{
 interface BandSectionProps {
   bands: Band[];
   user: User | null;
-  lang: "pt" | "en" | "es";
+  lang: "pt" | "en" | "es" | "de";
   onAddBand: (band: Omit<Band, "id">) => Promise<boolean>;
   onDeleteBand: (id: string) => Promise<void>;
   onEditBand: (id: string, updated: Partial<Band>) => Promise<void>;
@@ -280,12 +280,11 @@ export const BandSection: React.FC<BandSectionProps> = ({
     let bBio = "";
     let bBioAll = "";
     if (band.bio) {
-      if (typeof band.bio === "string") {
-        bBio = band.bio.toLowerCase();
-        bBioAll = bBio;
-      } else if (typeof band.bio === "object") {
-        bBio = ((band.bio[lang] || band.bio["en"] || band.bio["es"] || "") as string).toLowerCase();
+      bBio = getBioText(band.bio, lang).toLowerCase();
+      if (typeof band.bio === "object") {
         bBioAll = Object.values(band.bio).join(" ").toLowerCase();
+      } else {
+        bBioAll = bBio;
       }
     }
 
@@ -480,7 +479,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
       setFormGenre(data.genre || "");
       setFormCountry(data.country || "");
       setFormYear(Number(data.formationYear) || 2000);
-      setFormBio(typeof data.bio === "string" ? data.bio : (data.bio[lang] || JSON.stringify(data.bio)));
+      setFormBio(getBioText(data.bio, lang));
       
       if (data.logoUrl) {
         setFormLogoUrl(data.logoUrl);
@@ -1141,7 +1140,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {sortedBands.map((band, index) => {
             const isExpanded = expandedBandId === band.id;
-            const bioText = typeof band.bio === "string" ? band.bio : (band.bio[lang] || band.bio["en"] || "");
+            const bioText = getBioText(band.bio, lang);
 
             return (
               <motion.div
@@ -1170,16 +1169,16 @@ export const BandSection: React.FC<BandSectionProps> = ({
                           <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 scale-95 opacity-0 group-hover/tooltip:scale-100 group-hover/tooltip:opacity-100 transition-all duration-200 z-50 bg-neutral-950 border border-red-900/60 text-neutral-200 rounded-md p-3 shadow-2xl text-left font-mono normal-case tracking-normal">
                             <div className="text-red-400 font-extrabold border-b border-neutral-800 pb-1 mb-1 text-[11px] truncate">{band.name}</div>
                             <div className="space-y-1 text-[10px] text-zinc-300">
-                              <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "Gênero:" : "Genre:"}</span> {band.genre}</div>
-                              <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "País:" : "Country:"}</span> {band.country}</div>
-                              <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "Formação:" : "Year Formed:"}</span> {band.formationYear || "N/A"}</div>
+                              <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "Gênero:" : lang === "es" ? "Género:" : lang === "de" ? "Genre:" : "Genre:"}</span> {band.genre}</div>
+                              <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "País:" : lang === "es" ? "País:" : lang === "de" ? "Land:" : "Country:"}</span> {band.country}</div>
+                              <div><span className="text-zinc-500 font-bold uppercase text-[8px] tracking-wider">{lang === "pt" ? "Formação:" : lang === "es" ? "Año de Formación:" : lang === "de" ? "Gründung:" : "Year Formed:"}</span> {band.formationYear || "N/A"}</div>
                             </div>
                             <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-950 border-r border-b border-red-900/60 rotate-45 -mt-1"></div>
                           </span>
                         </span>
                         {!band.approved && (
                           <span className="bg-amber-950 border border-amber-800 text-amber-400 text-[9px] px-1.5 py-0.5 rounded uppercase font-mono">
-                            {lang === "pt" ? "Pendente" : "Pending"}
+                            {lang === "pt" ? "Pendente" : lang === "es" ? "Pendiente" : lang === "de" ? "Ausstehend" : "Pending"}
                           </span>
                         )}
                       </h3>
@@ -1193,14 +1192,14 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       <button
                         onClick={() => setSharingBand(band)}
                         className="p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-amber-500 rounded-lg transition cursor-pointer"
-                        title={lang === "pt" ? "Compartilhar Banda" : lang === "es" ? "Compartir Banda" : "Share Band"}
+                        title={lang === "pt" ? "Compartilhar Banda" : lang === "es" ? "Compartir Banda" : lang === "de" ? "Band teilen" : "Share Band"}
                       >
                         <Share2 size={13} />
                       </button>
                       <button
                         onClick={() => setQrBand(band)}
                         className="p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-red-500 rounded-lg transition cursor-pointer"
-                        title={lang === "pt" ? "QR Code da Banda" : lang === "es" ? "Código QR de la Banda" : "Band QR Code"}
+                        title={lang === "pt" ? "QR Code da Banda" : lang === "es" ? "Código QR de la Banda" : lang === "de" ? "Band-QR-Code" : "Band QR Code"}
                       >
                         <QrCode size={13} />
                       </button>
@@ -1249,7 +1248,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-neutral-950 hover:bg-neutral-900 border-neutral-850 hover:border-red-900 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
-                      title={lang === "pt" ? "Ver no Metal Archives" : lang === "es" ? "Ver en Metal Archives" : "View on Metal Archives"}
+                      title={lang === "pt" ? "Ver no Metal Archives" : lang === "es" ? "Ver en Metal Archives" : lang === "de" ? "In Metal Archives ansehen" : "View on Metal Archives"}
                     >
                       <ExternalLink size={10} className="text-red-500" />
                       <span>Metal Archives</span>
@@ -1259,10 +1258,10 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-2.5 py-1 rounded-full text-[8.5px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all border bg-neutral-950 hover:bg-neutral-900 border-neutral-850 hover:border-red-900 text-zinc-300 hover:text-white hover:scale-[1.02] active:scale-[0.98] shrink-0 shadow-md"
-                      title={lang === "pt" ? "Ver na Wikipedia" : lang === "es" ? "Ver en Wikipedia" : "View on Wikipedia"}
+                      title={lang === "pt" ? "Ver na Wikipedia" : lang === "es" ? "Ver en Wikipedia" : lang === "de" ? "In Wikipedia ansehen" : "View on Wikipedia"}
                     >
                       <Globe size={10} className="text-blue-500" />
-                      <span>{lang === "pt" ? "Mais Info (Wiki)" : lang === "es" ? "Más Info (Wiki)" : "More Info (Wiki)"}</span>
+                      <span>{lang === "pt" ? "Mais Info (Wiki)" : lang === "es" ? "Más Info (Wiki)" : lang === "de" ? "Mehr Info (Wiki)" : "More Info (Wiki)"}</span>
                     </a>
                   </div>
 
@@ -1467,7 +1466,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                     {band.photoUrl && band.photoUrl.trim() !== "" && (
                       <div className="bg-neutral-950/50 p-3.5 rounded-lg border border-neutral-850/70 shadow-inner">
                         <span className="text-[9px] text-zinc-400 font-mono block uppercase mb-2 flex items-center gap-1.5 font-bold tracking-wider">
-                          📸 {lang === "pt" ? "FOTO OFICIAL DA BANDA" : "OFFICIAL BAND PHOTO"}
+                          📸 {lang === "pt" ? "FOTO OFICIAL DA BANDA" : lang === "es" ? "FOTO OFICIAL DE LA BANDA" : lang === "de" ? "OFFIZIELLES BANDFOTO" : "OFFICIAL BAND PHOTO"}
                         </span>
                         <div className="w-full max-h-72 overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900/40 flex items-center justify-center">
                           <img
@@ -1490,7 +1489,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       <div>
                         <h4 className="text-xs font-bold text-neutral-300 uppercase tracking-widest font-mono mb-2 flex items-center gap-1">
                           <UserCheck size={12} className="text-amber-500" />
-                          {t.members} <span className="text-[9px] text-neutral-500 normal-case font-normal">({lang === "pt" ? "clique para ver detalhes" : "click to view profile"})</span>
+                          {t.members} <span className="text-[9px] text-neutral-500 normal-case font-normal">({lang === "pt" ? "clique para ver detalhes" : lang === "es" ? "clic para ver detalles" : lang === "de" ? "klicken für Details" : "click to view profile"})</span>
                         </h4>
                         <div className="flex flex-wrap gap-1.55">
                           {band.members.map((m, idx) => (
@@ -1502,7 +1501,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                                   ? "bg-neutral-950 text-neutral-200 border-neutral-850 hover:border-amber-500/80 hover:bg-neutral-900" 
                                   : "bg-neutral-950 text-neutral-500 line-through decoration-red-900 border-neutral-850 hover:border-amber-700/80 hover:bg-neutral-900"
                               }`}
-                              title={lang === "pt" ? `Ver perfil do integrante ${m.name}` : `View details for ${m.name}`}
+                              title={lang === "pt" ? `Ver perfil do integrante ${m.name}` : lang === "es" ? `Ver perfil del integrante ${m.name}` : lang === "de" ? `Mitgliederprofil ansehen ${m.name}` : `View details for ${m.name}`}
                             >
                               👤 {m.name} <span className="text-[9px] text-zinc-500 font-sans">({m.role})</span>
                             </button>
@@ -1516,7 +1515,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       <div>
                         <h4 className="text-xs font-bold text-neutral-300 uppercase tracking-widest font-mono mb-2 flex items-center gap-1">
                           <Disc size={12} className="text-red-500" />
-                          {t.discography} <span className="text-[9px] text-neutral-500 normal-case font-normal">({lang === "pt" ? "clique para ver faixa/estúdio" : "click to see tracks/info"})</span>
+                          {t.discography} <span className="text-[9px] text-neutral-500 normal-case font-normal">({lang === "pt" ? "clique para ver faixa/estúdio" : lang === "es" ? "clic para ver pistas/info" : lang === "de" ? "klicken für Tracks/Info" : "click to see tracks/info"})</span>
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                           {band.discography.map((d, idx) => (
@@ -1524,7 +1523,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                               key={idx}
                               onClick={() => handleFetchDetails("album", band.name, d.title)}
                               className="w-full text-left bg-neutral-950/70 p-2.5 border border-neutral-850 hover:border-red-600/80 hover:bg-neutral-900 rounded flex justify-between text-[11px] font-mono cursor-pointer transition-all"
-                              title={lang === "pt" ? `Ver detalhes do disco ${d.title}` : `View tracklist and trivia for ${d.title}`}
+                              title={lang === "pt" ? `Ver detalhes do disco ${d.title}` : lang === "es" ? `Ver detalles del disco ${d.title}` : lang === "de" ? `Albumdetails anzeigen ${d.title}` : `View tracklist and trivia for ${d.title}`}
                             >
                               <span className="text-neutral-200 font-bold truncate pr-1">📀 {d.title}</span>
                               <span className="text-red-500 italic shrink-0">{d.year} ({d.type})</span>
@@ -1564,7 +1563,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                           rel="noopener noreferrer"
                           className="bg-neutral-950 hover:bg-neutral-850 px-2.5 py-1.5 rounded text-[10px] font-mono text-blue-400 hover:text-blue-300 flex items-center gap-1 border border-neutral-850 hover:border-blue-900/40 transition duration-200"
                         >
-                          <ExternalLink size={11} /> {lang === "pt" ? "Site Oficial" : "Official Website"}
+                          <ExternalLink size={11} /> {lang === "pt" ? "Site Oficial" : lang === "es" ? "Sitio Oficial" : lang === "de" ? "Offizielle Website" : "Official Website"}
                         </a>
                       )}
                       {band.sourceUrl && (
@@ -1574,7 +1573,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                           rel="noopener noreferrer"
                           className="bg-neutral-950 hover:bg-neutral-850 px-2.5 py-1.5 rounded text-[10px] font-mono text-amber-500 hover:text-amber-400 flex items-center gap-1.5 border border-neutral-850 hover:border-amber-900/40 transition duration-200"
                         >
-                          <Globe size={11} className="text-amber-500" /> {lang === "pt" ? "Fonte de Informações" : "Verified Source"}
+                          <Globe size={11} className="text-amber-500" /> {lang === "pt" ? "Fonte de Informações" : lang === "es" ? "Fuente de Información" : lang === "de" ? "Verifizierte Quelle" : "Verified Source"}
                         </a>
                       )}
                       {band.socials?.instagram && (
@@ -1619,8 +1618,8 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   className="w-full mt-4 bg-neutral-950 hover:bg-neutral-850 py-2 rounded-lg text-[10px] font-mono tracking-widest uppercase transition text-neutral-300 border border-neutral-800/80 flex items-center justify-center gap-1 cursor-pointer"
                 >
                   {isExpanded 
-                    ? (lang === "pt" ? "▲ Recolher Detalhes" : "▲ Collapse Details")
-                    : (lang === "pt" ? "▼ Mostrar Discografia" : "▼ Show Discography")
+                    ? (lang === "pt" ? "▲ Recolher Detalhes" : lang === "es" ? "▲ Plegar Detalles" : lang === "de" ? "▲ Details einklappen" : "▲ Collapse Details")
+                    : (lang === "pt" ? "▼ Mostrar Discografia" : lang === "es" ? "▼ Mostrar Discografía" : lang === "de" ? "▼ Diskografie anzeigen" : "▼ Show Discography")
                   }
                 </button>
               </motion.div>
@@ -1637,7 +1636,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
             <button
               onClick={() => setActiveDetailType(null)}
               className="absolute top-4 right-4 p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-lg border border-neutral-800 transition cursor-pointer"
-              title="Close"
+              title={lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : lang === "de" ? "Schließen" : "Close"}
             >
               <X size={14} />
             </button>
@@ -1649,7 +1648,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   <Music className="text-red-500 animate-pulse" size={18} />
                 </div>
                 <p className="text-xs text-neutral-400 font-mono animate-pulse text-center">
-                  {lang === "pt" ? "Consultando arquivos históricos..." : "Consulting historical database archives..."}
+                  {lang === "pt" ? "Consultando arquivos históricos..." : lang === "es" ? "Consultando archivos históricos..." : lang === "de" ? "Historische Daten werden durchsucht..." : "Consulting historical database archives..."}
                 </p>
               </div>
             ) : detailError ? (
@@ -1659,7 +1658,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   onClick={() => setActiveDetailType(null)}
                   className="px-4 py-1.5 bg-neutral-850 hover:bg-neutral-800 text-neutral-300 text-xs font-mono rounded-lg transition"
                 >
-                  {lang === "pt" ? "Fechar" : "Close"}
+                  {lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : lang === "de" ? "Schließen" : "Close"}
                 </button>
               </div>
             ) : detailData ? (
@@ -1668,8 +1667,8 @@ export const BandSection: React.FC<BandSectionProps> = ({
                 <div>
                   <span className="text-[10px] bg-red-950/60 border border-red-900/45 text-red-400 px-2.5 py-0.5 rounded-full font-mono uppercase font-bold tracking-widest leading-none block w-max">
                     {activeDetailType === "member" 
-                      ? (lang === "pt" ? "Membro de Banda • Perfil" : "Band Member • Profile")
-                      : (lang === "pt" ? "Lançamento Oficial • Dossiê" : "Official Release • Dossier")
+                      ? (lang === "pt" ? "Membro de Banda • Perfil" : lang === "es" ? "Miembro de la Banda • Perfil" : lang === "de" ? "Bandmitglied • Profil" : "Band Member • Profile")
+                      : (lang === "pt" ? "Lançamento Oficial • Dossiê" : lang === "es" ? "Lanzamiento Oficial • Dossier" : lang === "de" ? "Offizielle Veröffentlichung • Dossier" : "Official Release • Dossier")
                     }
                   </span>
                   <h3 className="text-lg font-black text-white uppercase tracking-wider font-mono mt-2 pr-6 leading-tight">
@@ -1687,7 +1686,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                         className="inline-flex items-center gap-2 bg-emerald-950/40 border border-emerald-900/50 hover:bg-emerald-900/40 text-emerald-400 hover:text-emerald-300 px-3 py-1.5 rounded-lg text-[10px] font-mono transition duration-150 cursor-pointer shadow-sm"
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>{lang === "pt" ? "🎧 Ouvir Álbum no Spotify" : "🎧 Listen on Spotify"}</span>
+                        <span>{lang === "pt" ? "🎧 Ouvir Álbum no Spotify" : lang === "es" ? "🎧 Escuchar Álbum en Spotify" : lang === "de" ? "🎧 Album auf Spotify anhören" : "🎧 Listen on Spotify"}</span>
                       </a>
                     </div>
                   )}
@@ -1702,7 +1701,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                        !detailData.birthInfo.toLowerCase().includes("not found") && 
                        !detailData.birthInfo.toLowerCase().includes("offline") && (
                         <div className="grid grid-cols-1 select-text">
-                          <span className="text-[9px] text-zinc-500 font-mono uppercase tracking-wider">{lang === "pt" ? "Origem / Nascimento" : "Birth / Origin"}</span>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase tracking-wider">{lang === "pt" ? "Origem / Nascimento" : lang === "es" ? "Origen / Nacimiento" : lang === "de" ? "Herkunft / Geburt" : "Birth / Origin"}</span>
                           <p className="text-xs text-neutral-300 font-mono mt-0.5">{detailData.birthInfo}</p>
                         </div>
                       )}
@@ -1711,7 +1710,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       {detailData.instruments && 
                        detailData.instruments.length > 0 && (
                         <div>
-                          <span className="text-[9px] text-zinc-500 font-mono uppercase block mb-1 tracking-wider">{lang === "pt" ? "Instrumentos tocados" : "Instruments played"}</span>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block mb-1 tracking-wider">{lang === "pt" ? "Instrumentos tocados" : lang === "es" ? "Instrumentos ejecutados" : lang === "de" ? "Gespielte Instrumente" : "Instruments played"}</span>
                           <div className="flex flex-wrap gap-1">
                             {detailData.instruments.map((ins: string, i: number) => (
                               <span key={i} className="text-[9px] font-mono bg-neutral-950 text-neutral-300 px-2 py-0.5 rounded border border-neutral-850">
@@ -1728,7 +1727,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                        !detailData.contributions.toLowerCase().includes("miembro activo indispensable") && 
                        !detailData.contributions.toLowerCase().includes("crucial band member") && (
                         <div>
-                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Papel & Atuação" : "Historical Role & Style"}</span>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Papel & Atuação" : lang === "es" ? "Rol & Estilo Histórico" : lang === "de" ? "Rolle & Stil" : "Historical Role & Style"}</span>
                           <p className="text-xs text-neutral-300 leading-relaxed mt-1 bg-neutral-950/40 p-3 border border-neutral-850 rounded font-sans whitespace-pre-line select-text">
                             {detailData.contributions}
                           </p>
@@ -1739,7 +1738,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       {detailData.otherBands && 
                        detailData.otherBands.length > 0 && (
                         <div>
-                          <span className="text-[9px] text-zinc-500 font-mono uppercase block mb-1 tracking-wider">{lang === "pt" ? "Outras Bandas Conhecidas" : "Other Notable Band Affiliations"}</span>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block mb-1 tracking-wider">{lang === "pt" ? "Outras Bandas Conhecidas" : lang === "es" ? "Otras Bandas Conocidas" : lang === "de" ? "Weitere bekannte Bands" : "Other Notable Band Affiliations"}</span>
                           <div className="flex flex-wrap gap-1">
                             {detailData.otherBands.map((ob: string, i: number) => (
                               <span key={i} className="text-[9px] font-mono bg-neutral-950 text-amber-500 px-2.5 py-0.5 rounded border border-neutral-850 font-bold">
@@ -1756,7 +1755,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                        !detailData.trivia.toLowerCase().includes("famoso por sus") && 
                        !detailData.trivia.toLowerCase().includes("well-known for") && (
                         <div>
-                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Fatos Notáveis & Curiosidades" : "Gear & Trivia"}</span>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Fatos Notáveis & Curiosidades" : lang === "es" ? "Equipo & Curiosidades" : lang === "de" ? "Ausrüstung & Wissenswertes" : "Gear & Trivia"}</span>
                           <p className="text-xs text-zinc-400 mt-1 italic font-sans pl-2.5 border-l-2 border-amber-600/50 select-text">
                             {detailData.trivia}
                           </p>
@@ -1782,7 +1781,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                        !detailData.releaseInfo.toLowerCase().includes("independent/major label") && 
                        !detailData.releaseInfo.toLowerCase().includes("não encontrado") && (
                         <div>
-                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Lançamento Oficial" : "Official Release Date"}</span>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Lançamento Oficial" : lang === "es" ? "Fecha de Lanzamiento" : lang === "de" ? "Veröffentlichungsdatum" : "Official Release Date"}</span>
                           <p className="text-xs text-neutral-300 font-mono mt-0.5">{detailData.releaseInfo}</p>
                         </div>
                       )}
@@ -1792,7 +1791,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                        !detailData.genre.toLowerCase().includes("heavy metal / hard rock") && 
                        !detailData.genre.toLowerCase().includes("não encontrado") && (
                         <div>
-                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Estilo & Temas Líricos" : "Style & Lyrical Themes"}</span>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Estilo & Temas Líricos" : lang === "es" ? "Estilo & Temas Líricos" : lang === "de" ? "Stil & Lyrische Themen" : "Style & Lyrical Themes"}</span>
                           <p className="text-xs text-neutral-300 mt-0.5 capitalize">{detailData.genre}</p>
                         </div>
                       )}
@@ -1801,7 +1800,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                       {detailData.tracklist && 
                        detailData.tracklist.length > 0 && (
                         <div>
-                          <span className="text-[9px] text-zinc-500 font-mono uppercase block mb-1.5 tracking-wider">{lang === "pt" ? "Lista Original de Músicas" : "Original Tracklist"}</span>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block mb-1.5 tracking-wider">{lang === "pt" ? "Lista Original de Músicas" : lang === "es" ? "Lista Original de Canciones" : lang === "de" ? "Ursprüngliche Tracklist" : "Original Tracklist"}</span>
                           <div className="bg-neutral-950 border border-neutral-850 rounded-lg overflow-hidden divide-y divide-neutral-850 select-text">
                             {detailData.tracklist.map((tk: any, i: number) => (
                               <div key={i} className="flex justify-between items-center px-3 py-1.5 text-xs font-mono">
@@ -1819,7 +1818,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                        !detailData.anecdote.toLowerCase().includes("grabado en sesiones") && 
                        !detailData.anecdote.toLowerCase().includes("recorded during a high-activity") && (
                         <div>
-                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Backstory de Produção & Curiosidades" : "Recording Backstory & Trivia"}</span>
+                          <span className="text-[9px] text-zinc-500 font-mono uppercase block tracking-wider">{lang === "pt" ? "Backstory de Produção & Curiosidades" : lang === "es" ? "Historia de Producción & Curiosidades" : lang === "de" ? "Entstehungsgeschichte & Wissenswertes" : "Recording Backstory & Trivia"}</span>
                           <p className="text-xs text-stone-400 leading-relaxed mt-1 bg-neutral-950/40 p-3 border border-neutral-850 rounded font-sans select-text">
                             {detailData.anecdote}
                           </p>
@@ -1845,13 +1844,13 @@ export const BandSection: React.FC<BandSectionProps> = ({
                     onClick={() => setActiveDetailType(null)}
                     className="px-4 py-1.5 bg-neutral-800 hover:bg-neutral-700 hover:text-white text-zinc-300 text-xs font-mono font-bold rounded-lg transition cursor-pointer"
                   >
-                    {lang === "pt" ? "Fechar Dossiê" : "Close dossier"}
+                    {lang === "pt" ? "Fechar Dossiê" : lang === "es" ? "Cerrar Dossier" : lang === "de" ? "Dossier schließen" : "Close dossier"}
                   </button>
                 </div>
               </div>
             ) : (
               <div className="py-6 text-center">
-                <p className="text-xs text-neutral-400 font-mono">{lang === "pt" ? "Buscando dados no além..." : "Searching files..."}</p>
+                <p className="text-xs text-neutral-400 font-mono">{lang === "pt" ? "Buscando dados no além..." : lang === "es" ? "Buscando datos..." : lang === "de" ? "Daten werden geladen..." : "Searching files..."}</p>
               </div>
             )}
           </div>
@@ -1861,9 +1860,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
       {/* BAND SHARE MODAL OVERLAY */}
       {sharingBand && (() => {
         const shareText = (() => {
-          const bioText = typeof sharingBand.bio === "string" 
-            ? sharingBand.bio 
-            : (sharingBand.bio?.[lang] || sharingBand.bio?.pt || sharingBand.bio?.en || sharingBand.bio?.es || "");
+          const bioText = getBioText(sharingBand.bio, lang);
           
           const membersText = sharingBand.members && sharingBand.members.length > 0
             ? sharingBand.members.map(m => `• ${m.name} (${m.role})`).join("\n")
@@ -1880,40 +1877,40 @@ export const BandSection: React.FC<BandSectionProps> = ({
 
           let text = `🎵 *${sharingBand.name}* 🎵\n`;
           text += `━━━━━━━━━━━━━━━━━━━━\n`;
-          text += `⚡ ${lang === "pt" ? "Gênero" : lang === "es" ? "Género" : "Genre"}: ${sharingBand.genre}\n`;
-          text += `🌍 ${lang === "pt" ? "País" : lang === "es" ? "País" : "Country"}: ${sharingBand.country}\n`;
+          text += `⚡ ${lang === "pt" ? "Gênero" : lang === "es" ? "Género" : lang === "de" ? "Genre" : "Genre"}: ${sharingBand.genre}\n`;
+          text += `🌍 ${lang === "pt" ? "País" : lang === "es" ? "País" : lang === "de" ? "Land" : "Country"}: ${sharingBand.country}\n`;
           if (sharingBand.formationYear) {
-            text += `📅 ${lang === "pt" ? "Ano de Formação" : lang === "es" ? "Año de Formación" : "Year Formed"}: ${sharingBand.formationYear}\n`;
+            text += `📅 ${lang === "pt" ? "Ano de Formação" : lang === "es" ? "Año de Formación" : lang === "de" ? "Gründungsjahr" : "Year Formed"}: ${sharingBand.formationYear}\n`;
           }
           text += `━━━━━━━━━━━━━━━━━━━━\n\n`;
 
           if (bioText.trim() !== "") {
-            text += `📖 *${lang === "pt" ? "Biografia" : lang === "es" ? "Biografía" : "Biography"}:*\n${bioText}\n\n`;
+            text += `📖 *${lang === "pt" ? "Biografia" : lang === "es" ? "Biografía" : lang === "de" ? "Biografie" : "Biography"}:*\n${bioText}\n\n`;
           }
 
           if (membersText) {
-            text += `👥 *${lang === "pt" ? "Integrantes" : lang === "es" ? "Integrantes" : "Members"}:*\n${membersText}\n\n`;
+            text += `👥 *${lang === "pt" ? "Integrantes" : lang === "es" ? "Integrantes" : lang === "de" ? "Mitglieder" : "Members"}:*\n${membersText}\n\n`;
           }
 
           if (discographyText) {
-            text += `📀 *${lang === "pt" ? "Discografia" : lang === "es" ? "Discografía" : "Discography"}:*\n${discographyText}\n\n`;
+            text += `📀 *${lang === "pt" ? "Discografia" : lang === "es" ? "Discografía" : lang === "de" ? "Diskografie" : "Discography"}:*\n${discographyText}\n\n`;
           }
 
           if (instagramValue || websiteValue) {
-            text += `🔗 *Redes Sociais:*\n`;
+            text += `🔗 *${lang === "de" ? "Soziale Netzwerke" : "Redes Sociais"}:*\n`;
             if (instagramValue) text += `• Instagram: ${instagramValue}\n`;
             if (websiteValue) text += `• Website: ${websiteValue}\n`;
             text += `\n`;
           }
 
           if (emailValue || phoneValue) {
-            text += `📞 *${lang === "pt" ? "Contato" : lang === "es" ? "Contacto" : "Contact"}:*\n`;
+            text += `📞 *${lang === "pt" ? "Contato" : lang === "es" ? "Contacto" : lang === "de" ? "Kontakt" : "Contact"}:*\n`;
             if (emailValue) text += `• E-mail: ${emailValue}\n`;
             if (phoneValue) text += `• Tel: ${phoneValue}\n`;
             text += `\n`;
           }
 
-          text += `🤘 Compartilhado via Stay Metal 🤘`;
+          text += `🤘 ${lang === "de" ? "Geteilt über Stay Metal" : "Compartilhado via Stay Metal"} 🤘`;
           return text;
         })();
 
@@ -1945,20 +1942,22 @@ export const BandSection: React.FC<BandSectionProps> = ({
               <button
                 onClick={() => setSharingBand(null)}
                 className="absolute top-4 right-4 p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-lg border border-neutral-800 transition cursor-pointer"
-                title="Close"
+                title={lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : lang === "de" ? "Schließen" : "Close"}
               >
                 <X size={14} />
               </button>
 
               <div>
                 <h3 className="text-sm font-mono font-bold text-red-500 uppercase tracking-widest">
-                  📢 {lang === "pt" ? "Compartilhar Banda" : lang === "es" ? "Compartir Banda" : "Share Band"}
+                  📢 {lang === "pt" ? "Compartilhar Banda" : lang === "es" ? "Compartir Banda" : lang === "de" ? "Band teilen" : "Share Band"}
                 </h3>
                 <p className="text-xs text-neutral-400 font-mono mt-1">
                   {lang === "pt" 
                     ? "Veja o texto gerado e escolha como deseja compartilhar:" 
                     : lang === "es"
                     ? "Vea el texto generado y elija cómo desea compartir:"
+                    : lang === "de"
+                    ? "Überprüfen Sie den Text und wählen Sie die Freigabeoption:"
                     : "Review the generated text and choose how you want to share:"}
                 </p>
               </div>
@@ -1979,8 +1978,8 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   }`}
                 >
                   📋 {copiedText 
-                    ? (lang === "pt" ? "Copiado!" : lang === "es" ? "¡Copiado!" : "Copied!") 
-                    : (lang === "pt" ? "Copiar Texto" : lang === "es" ? "Copiar Texto" : "Copy Text")}
+                    ? (lang === "pt" ? "Copiado!" : lang === "es" ? "¡Copiado!" : lang === "de" ? "Kopiert!" : "Copied!") 
+                    : (lang === "pt" ? "Copiar Texto" : lang === "es" ? "Copiar Texto" : lang === "de" ? "Text kopieren" : "Copy Text")}
                 </button>
 
                 <a
@@ -1989,14 +1988,14 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-900/40 rounded-lg text-xs font-mono font-bold transition duration-200 flex items-center justify-center gap-2 cursor-pointer text-center"
                 >
-                  💬 {lang === "pt" ? "WhatsApp" : "WhatsApp"}
+                  💬 WhatsApp
                 </a>
 
                 <a
                   href={emailUrl}
                   className="px-4 py-2 bg-blue-950/40 hover:bg-blue-900/40 text-blue-400 border border-blue-900/40 rounded-lg text-xs font-mono font-bold transition duration-200 flex items-center justify-center gap-2 cursor-pointer text-center"
                 >
-                  ✉️ {lang === "pt" ? "Enviar por E-mail" : lang === "es" ? "Enviar por Correo" : "Send Email"}
+                  ✉️ {lang === "pt" ? "Enviar por E-mail" : lang === "es" ? "Enviar por Correo" : lang === "de" ? "Per E-Mail senden" : "Send Email"}
                 </a>
 
                 {typeof navigator !== 'undefined' && navigator.share && (
@@ -2004,7 +2003,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                     onClick={handleNativeShare}
                     className="px-4 py-2 bg-purple-950/40 hover:bg-purple-900/40 text-purple-400 border border-purple-900/40 rounded-lg text-xs font-mono font-bold transition duration-200 flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    📱 {lang === "pt" ? "Sistema / Outros" : lang === "es" ? "Sistema / Otros" : "System Share"}
+                    📱 {lang === "pt" ? "Sistema / Outros" : lang === "es" ? "Sistema / Otros" : lang === "de" ? "System / Andere" : "System Share"}
                   </button>
                 )}
               </div>
@@ -2014,7 +2013,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   onClick={() => setSharingBand(null)}
                   className="px-4 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-zinc-300 text-xs font-mono font-bold rounded-lg transition cursor-pointer"
                 >
-                  {lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : "Close"}
+                  {lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : lang === "de" ? "Schließen" : "Close"}
                 </button>
               </div>
             </div>
@@ -2046,14 +2045,14 @@ export const BandSection: React.FC<BandSectionProps> = ({
               <button
                 onClick={() => setQrBand(null)}
                 className="absolute top-4 right-4 p-1.5 bg-neutral-950 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-lg border border-neutral-800 transition cursor-pointer"
-                title="Close"
+                title={lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : lang === "de" ? "Schließen" : "Close"}
               >
                 <X size={14} />
               </button>
 
               <div className="space-y-1">
                 <h3 className="text-sm font-mono font-bold text-red-500 uppercase tracking-widest">
-                  📱 {lang === "pt" ? "Compartilhar via QR Code" : lang === "es" ? "Compartir vía QR Code" : "Scan to Share"}
+                  📱 {lang === "pt" ? "Compartilhar via QR Code" : lang === "es" ? "Compartir vía QR Code" : lang === "de" ? "Über QR-Code teilen" : "Scan to Share"}
                 </h3>
                 <p className="text-xs text-neutral-400 font-mono">
                   {qrBand.name}
@@ -2081,7 +2080,7 @@ export const BandSection: React.FC<BandSectionProps> = ({
                   onClick={() => setQrBand(null)}
                   className="px-6 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-zinc-300 text-xs font-mono font-bold rounded-lg transition cursor-pointer"
                 >
-                  {lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : "Close"}
+                  {lang === "pt" ? "Fechar" : lang === "es" ? "Cerrar" : lang === "de" ? "Schließen" : "Close"}
                 </button>
               </div>
             </div>

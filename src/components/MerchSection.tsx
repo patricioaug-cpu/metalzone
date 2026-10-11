@@ -8,7 +8,7 @@ import { ShoppingBag, Plus, Trash2, Send, ExternalLink } from "lucide-react";
 interface MerchSectionProps {
   merch: MerchItem[];
   user: User | null;
-  lang: "pt" | "en" | "es";
+  lang: "pt" | "en" | "es" | "de";
   onAddMerch: (item: Omit<MerchItem, "id">) => Promise<boolean>;
   onDeleteMerch: (id: string) => Promise<void>;
 }

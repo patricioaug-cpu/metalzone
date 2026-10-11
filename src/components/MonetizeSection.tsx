@@ -3,7 +3,7 @@ import { translations } from "../translations";
 import { DollarSign, Landmark, Store, Award, TrendingUp, Sparkles, CheckCircle } from "lucide-react";
 
 interface MonetizeSectionProps {
-  lang: "pt" | "en" | "es";
+  lang: "pt" | "en" | "es" | "de";
 }
 
 export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
@@ -67,6 +67,33 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
           title: "4. Acceso VIP Premium",
           desc: "Sección exclusiva de entrevistas completas y descargas de álbumes en formato de alta fidelidad para fanáticos legionarios.",
           profit: "USD 2.99 / membresía mensual",
+          icon: <Sparkles className="text-blue-500" size={20} />
+        }
+      ];
+    } else if (lang === "de") {
+      return [
+        {
+          title: "1. B2B-Band-Sponsoring & Feature-Spots",
+          desc: "Unabhängige Bands und Plattenlabels zahlen ein monatliches Abo, um neue Alben und Musikvideos oben im globalen Feed zu platzieren.",
+          profit: "15 € - 50 € / Monat pro Band",
+          icon: <Award className="text-amber-500" size={20} />
+        },
+        {
+          title: "2. Zielgerichtete Werbung für Equipment & Luthiers",
+          desc: "Spezifische Werbeplätze für Instrumentenhersteller, Effektpedale, Musikschulen und Metal-Festivals.",
+          profit: "Direkte B2B-Werbeverträge mit Equipment-Marken",
+          icon: <TrendingUp className="text-rose-500" size={20} />
+        },
+        {
+          title: "3. Exklusiver Merchandise-Vertrieb",
+          desc: "Direktverkauf von Stay Metal T-Shirts, Hoodies und Patches mit Qualitätsgarantie von Patrício.",
+          profit: "Hohe Margen bei exklusiver Fanbekleidung",
+          icon: <Store className="text-emerald-500" size={20} />
+        },
+        {
+          title: "4. VIP-Mitgliedschaft für Metalheads",
+          desc: "Exklusiver Zugang zu Verlosungen, Festival-Ticket-Vorverkäufen und tiefgründigen Interviews.",
+          profit: "2,99 € / Monat pro VIP-Mitglied",
           icon: <Sparkles className="text-blue-500" size={20} />
         }
       ];
@@ -144,7 +171,7 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
             </div>
 
             <div className="mt-5 pt-3 border-t border-neutral-850/60 flex items-center justify-between text-[11px] font-mono">
-              <span className="text-neutral-500 uppercase">{lang === "pt" ? "Est. Lucro" : "Est. Profit"}</span>
+              <span className="text-neutral-500 uppercase">{lang === "pt" ? "Est. Lucro" : lang === "es" ? "Ganancia Est." : lang === "de" ? "Gesch. Gewinn" : "Est. Profit"}</span>
               <span className="text-emerald-400 font-bold">{idea.profit}</span>
             </div>
           </div>
@@ -155,11 +182,15 @@ export const MonetizeSection: React.FC<MonetizeSectionProps> = ({ lang }) => {
       <div className="p-5 bg-neutral-950 border border-neutral-850 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-1">
           <h4 className="text-xs font-bold text-white uppercase font-mono flex items-center gap-1">
-            🚀 {lang === "pt" ? "Pronto para decolar de forma mundial na Play Store?" : "Ready to launch globally on Play Store?"}
+            🚀 {lang === "pt" ? "Pronto para decolar de forma mundial na Play Store?" : lang === "es" ? "¿Listo para despegar mundialmente en Play Store?" : lang === "de" ? "Bereit für den weltweiten Start im Play Store?" : "Ready to launch globally on Play Store?"}
           </h4>
           <p className="text-[11px] text-neutral-400 max-w-xl font-sans font-medium">
             {lang === "pt"
               ? "Este aplicativo está totalmente estruturado e compatível com as diretrizes do Google Play Console. Use essas estratégias de monetização para transformar sua paixão por heavy metal em um aplicativo lucrativo!"
+              : lang === "es"
+              ? "Esta aplicación está estructurada y es compatible con Google Play Console. ¡Utilice estas estrategias de monetización!"
+              : lang === "de"
+              ? "Diese Anwendung ist vollständig strukturiert und kompatibel mit den Google Play Console Richtlinien. Nutzen Sie diese Monetarisierungsstrategien!"
               : "This application conforms strictly to standard high-performance guidelines. Deploy seamlessly to play store and customize these direct monetization engines with your partners!"}
           </p>
         </div>

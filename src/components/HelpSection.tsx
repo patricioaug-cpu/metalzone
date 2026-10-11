@@ -3,7 +3,7 @@ import { translations } from "../translations";
 import { Mail, Phone, MessageSquare, Send, CheckCircle } from "lucide-react";
 
 interface HelpSectionProps {
-  lang: "pt" | "en" | "es";
+  lang: "pt" | "en" | "es" | "de";
 }
 
 export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
@@ -47,6 +47,17 @@ export const HelpSection: React.FC<HelpSectionProps> = ({ lang }) => {
         {
           q: "¿Quién administra o aprueba las peticiones en el catálogo?",
           a: "El administrador y desarrollador (patricioaug@gmail.com) cuenta con poderes para moderar o publicar nuevos elementos, manteniendo el orden de la plataforma."
+        }
+      ];
+    } else if (lang === "de") {
+      return [
+        {
+          q: "Wie trage ich neue Bands, Festivals oder Konzerte ein?",
+          a: "Alle neuen Inhalte (Metal-Bands, Festivals und Konzerte) werden direkt über die Kontaktaufnahme mit dem Entwickler per E-Mail oder WhatsApp eingetragen!"
+        },
+        {
+          q: "Wer verwaltet und genehmigt die Bands im Katalog?",
+          a: "Der Entwickler und Administrator (patricioaug@gmail.com) verwaltet die gesamte Datenbank offiziell und stellt die Qualität der Informationen sicher."
         }
       ];
     } else {

@@ -22,6 +22,7 @@ export interface TranslationDict {
   langPT: string;
   langEN: string;
   langES: string;
+  langDE: string;
 
   // User Stats
   statsTitle: string;
@@ -153,6 +154,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     langPT: "Português (BR)",
     langEN: "English (EN)",
     langES: "Español (ES)",
+    langDE: "Deutsch (DE)",
 
     statsTitle: "Comunidade Stay Metal",
     statsOnline: "Metalheads Online",
@@ -272,6 +274,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     langPT: "Português (BR)",
     langEN: "English (EN)",
     langES: "Español (ES)",
+    langDE: "Deutsch (DE)",
 
     statsTitle: "Stay Metal Community",
     statsOnline: "Metalheads Online",
@@ -391,6 +394,7 @@ export const translations: { [lang: string]: TranslationDict } = {
     langPT: "Português (BR)",
     langEN: "English (EN)",
     langES: "Español (ES)",
+    langDE: "Deutsch (DE)",
 
     statsTitle: "Comunidad Stay Metal",
     statsOnline: "Metalheads Online",
@@ -487,5 +491,190 @@ export const translations: { [lang: string]: TranslationDict } = {
     monetizeTitle: "Estrategias de Negocio y Monetización",
     monetizeSubtitle: "Cómo transformar Stay Metal en la mayor red publicitaria B2B de Metal y generar ingresos pasivos",
     monetizeIntro: "Un nicho tan apaixonado presenta impresionantes oportunidades de marketing y patrocinio con marcas premium:"
+  },
+  de: {
+    appName: "Stay Metal",
+    appSubtitle: "Das weltweite Epizentrum für Heavy Metal & Rock",
+    refreshBtn: "Aktualisieren",
+    refreshing: "Synchronisieren...",
+    searchPlaceholder: "Bands, Genres suchen (z. B. Death Metal)...",
+    allGenres: "Alle Genres",
+    filterByCountry: "Nach Land filtern",
+    allCountries: "Alle Länder",
+    
+    navBands: "Bands",
+    navFestivals: "Festivals",
+    navShows: "Konzerttermine",
+    navNews: "Nachrichten",
+    navMerch: "Merchandise",
+    navHelp: "Hilfe & Tutorial",
+    navAdmin: "Admin-Bereich",
+    navMonetization: "Monetarisierungstipps",
+
+    langPT: "Português (BR)",
+    langEN: "English (EN)",
+    langES: "Español (ES)",
+    langDE: "Deutsch (DE)",
+
+    statsTitle: "Stay Metal Community",
+    statsOnline: "Metalheads Online",
+    statsRegistered: "Registrierte Mitglieder",
+
+    formationYear: "Gründungsjahr",
+    originCountry: "Herkunftsland",
+    granularGenre: "Spezifisches Subgenre",
+    members: "Mitglieder",
+    discography: "Diskografie (Alben & EPs)",
+    contactsHeader: "Booking-Kontakte",
+    socialsHeader: "Soziale Netzwerke",
+    noBandsFound: "Keine Metal-Bands für diese Filter gefunden.",
+    approvedText: "Offizieller Katalog",
+    pendingText: "Wartet auf Admin-Freigabe",
+    submitBandBtn: "Neue Band eintragen",
+    aiCompleteBtn: "Mit KI ergänzen (Gemini)",
+    aiCompleting: "Durchsuche Metal-Enzyklopädie...",
+
+    countdownTitle: "Metal-Countdown läuft",
+    days: "Tage",
+    hours: "Stunden",
+    minutes: "Min",
+    seconds: "Sek",
+    buyTickets: "Tickets sichern",
+    festivalBanner: "Weltweite Rock- & Metal-Festivals",
+    localShowsTitle: "Kommende Konzerte & Tourneen",
+    noEventsFound: "Derzeit keine Events oder Festivals eingetragen.",
+    lineup: "Line-up / Bestätigte Bands",
+
+    newsTab: "Heavy Metal News & Veröffentlichungen",
+    noNewsFound: "Noch keine Nachrichten veröffentlicht.",
+    readMore: "Vollständigen Artikel lesen",
+
+    merchTitle: "Exklusiver Merchandise von Patrício",
+    merchSubtitle: "Ausgewählte Premium-Produkte speziell für den Headbanger-Lifestyle",
+    buyMerchBtn: "Per WhatsApp beim Entwickler bestellen",
+
+    helpTitle: "Hilfe & Support",
+    helpWelcome: "Willkommen bei Stay Metal! So nutzt du die weltweite Heavy-Metal-Plattform:",
+    faqTitle: "Häufig gestellte Fragen (FAQ)",
+    contactDeveloperTitle: "Entwickler kontaktieren",
+    contactDeveloperText: "Um neue Bands, Festivals, Konzerte oder News einzutragen oder bei Fragen, kontaktiere direkt den Entwickler!",
+
+    loginTitle: "Bei Stay Metal anmelden",
+    registerTitle: "Benutzerkonto erstellen",
+    emailLabel: "E-Mail-Adresse",
+    passwordLabel: "Passwort",
+    confirmPasswordLabel: "Passwort bestätigen",
+    forgotPasswordLabel: "Passwort vergessen?",
+    changePasswordLabel: "Sicherheitspasswort ändern",
+    newPasswordLabel: "Neues Passwort",
+    loginBtn: "Anmelden",
+    registerBtn: "Konto erstellen",
+    logoutBtn: "Abmelden",
+    forgotPasswordBtn: "Wiederherstellungs-Link senden",
+    changePasswordBtn: "Passwort aktualisieren",
+    orText: "oder fortfahren als",
+    dontHaveAccount: "Noch kein Konto?",
+    alreadyHaveAccount: "Bereits registriert?",
+    guestModeBtn: "Gastmodus (Ohne Login)",
+    authSuccessMsg: "Authentifizierung erfolgreich durchgeführt!",
+    authErrorMsg: "Authentifizierungsfehler: Bitte Angaben überprüfen.",
+
+    submitBandTitle: "Band für Katalog vorschlagen",
+    submitEventTitle: "Konzert oder Festival eintragen",
+    submitNewsTitle: "Heavy Metal News verfassen",
+    submitMerchTitle: "Merch-Artikel hinzufügen (Nur Admin)",
+    bandNameField: "Bandname",
+    bandGenreField: "Spezifisches Genre (z. B. Melodic Death Metal)",
+    bandCountryField: "Land",
+    bandYearField: "Gründungsjahr",
+    bandBioField: "Geschichte / Biografie der Band",
+    bandLogoField: "Logo-URL (leer lassen für Standardbild)",
+    bandPhotoField: "Foto-URL der Band (optional)",
+    bandMembersField: "Mitglieder (Name; Instrument, Status; z.B. Chuck; Gitarre, active)",
+    bandDiscographyField: "Diskografie (Album; Jahr, Typ; z.B. Nightfall; 1987, Album)",
+    bandMembersPlaceholder: "Z. B. Bruce Dickinson; Gesang, active (eine Zeile pro Mitglied)",
+    bandDiscographyPlaceholder: "Z. B. Powerslave; 1984, Album (eine Zeile pro Album)",
+    addBtn: "Eintrag hinzufügen",
+    saveBtn: "Zur Überprüfung senden",
+    cancelBtn: "Abbrechen",
+    successSubmitted: "Eintrag gesendet! Wartet auf Überprüfung durch Patrício.",
+
+    adminDashboard: "Administrator-Dashboard",
+    adminWelcome: "Willkommen, Patrício! Du hast die volle Kontrolle zum Genehmigen, Bearbeiten oder Löschen von Katalogeinträgen.",
+    pendingValidation: "Ausstehende Anträge zur Überprüfung",
+    approveBtn: "Genehmigen & Veröffentlichen",
+    deleteBtn: "Dauerhaft löschen",
+    editBtn: "Details bearbeiten",
+    noPendingItems: "Derzeit keine ausstehenden Anträge. Alles erledigt!",
+    onlyAdminPrompt: "Exklusiver Bereich für patricioaug@gmail.com",
+
+    monetizeTitle: "Geschäftsstrategie & Monetarisierung",
+    monetizeSubtitle: "Wie Stay Metal zum führenden B2B-Katalog im Heavy-Metal-Bereich ausgebaut werden kann",
+    monetizeIntro: "Mit einer hoch engagierten Metalhead-Community bietet Stay Metal hervorragende Monetarisierungschancen:"
   }
 };
+
+/**
+ * Resolves a band's biography according to the active language (pt, en, es, de).
+ * Handles string bios, multi-language objects, and fallback auto-translations!
+ */
+export function getBioText(bio: any, lang: string = "pt"): string {
+  if (!bio) return "";
+
+  if (typeof bio === "object" && bio !== null) {
+    if (bio[lang] && typeof bio[lang] === "string" && bio[lang].trim() !== "") {
+      return bio[lang];
+    }
+    const fallback = bio.pt || bio.en || bio.es || bio.de || Object.values(bio).find(v => typeof v === "string" && (v as string).trim() !== "") || "";
+    if (!fallback) return "";
+    return autoTranslateBio(String(fallback), lang);
+  }
+
+  if (typeof bio === "string") {
+    return autoTranslateBio(bio, lang);
+  }
+
+  return String(bio);
+}
+
+function autoTranslateBio(text: string, targetLang: string): string {
+  if (!text || typeof text !== "string") return "";
+  const s = text.trim();
+  if (targetLang === "pt") return s;
+
+  if (targetLang === "en") {
+    return s
+      .replace(/Uma das bandas mais influentes/gi, "One of the most influential bands")
+      .replace(/Uma das bandas mais aclamadas/gi, "One of the most acclaimed bands")
+      .replace(/Pioneiros do/gi, "Pioneers of")
+      .replace(/Liderada por/gi, "Led by")
+      .replace(/Famosos por/gi, "Famous for")
+      .replace(/vocais guturais/gi, "guttural vocals")
+      .replace(/riffs pesados/gi, "heavy riffs");
+  }
+
+  if (targetLang === "es") {
+    return s
+      .replace(/Uma das bandas mais influentes/gi, "Una de las bandas más influyentes")
+      .replace(/Uma das bandas mais aclamadas/gi, "Una de las bandas más aclamadas")
+      .replace(/Pioneiros do/gi, "Pioneros del")
+      .replace(/Liderada por/gi, "Liderada por")
+      .replace(/Famosos por/gi, "Famosos por")
+      .replace(/vocais guturais/gi, "voces guturales")
+      .replace(/riffs pesados/gi, "riffs pesados");
+  }
+
+  if (targetLang === "de") {
+    return s
+      .replace(/Uma das bandas mais influentes/gi, "Eine der einflussreichsten Bands")
+      .replace(/Uma das bandas mais aclamadas/gi, "Eine der gefeiertsten Bands")
+      .replace(/Pioneiros do/gi, "Pioniere des")
+      .replace(/Liderada por/gi, "Geführt von")
+      .replace(/Famosos por/gi, "Berühmt für")
+      .replace(/vocais guturais/gi, "Gutturalgesang")
+      .replace(/riffs pesados/gi, "schwere Riffs");
+  }
+
+  return s;
+}
+

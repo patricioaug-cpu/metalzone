@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { EventItem } from "../firebase";
-import { translations } from "../translations";
+import { translations, getBioText } from "../translations";
 import { User } from "firebase/auth";
 import { getProxiedImageUrl } from "../utils/imageProxy";
 import { 
@@ -13,7 +13,7 @@ import { QRCodeSVG } from "qrcode.react";
 interface FestivalSectionProps {
   events: EventItem[];
   user: User | null;
-  lang: "pt" | "en" | "es";
+  lang: "pt" | "en" | "es" | "de";
   onAddEvent: (event: Omit<EventItem, "id">) => Promise<boolean>;
   onDeleteEvent: (id: string) => Promise<void>;
   favorites: string[];
@@ -113,7 +113,7 @@ const FestivalImage: React.FC<{ url?: string; name: string; isFestival: boolean 
 };
 
 // Separate component for live countdown calculation to prevent global re-renders
-const FestivalCountdown: React.FC<{ targetDate: string; lang: "pt" | "en" | "es" }> = ({ targetDate, lang }) => {
+const FestivalCountdown: React.FC<{ targetDate: string; lang: "pt" | "en" | "es" | "de" }> = ({ targetDate, lang }) => {
   const t = translations[lang];
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -527,7 +527,7 @@ export const FestivalSection: React.FC<FestivalSectionProps> = ({
                               <span className="text-white font-bold">{lb.name}</span>
                               <span className="text-[9px] text-rose-500 shrink-0 capitalize font-bold">{lb.genre}</span>
                             </div>
-                            <p className="text-[10px] text-neutral-400 mt-1 pl-1 border-l border-rose-950/60 leading-snug">{lb.bio}</p>
+                            <p className="text-[10px] text-neutral-400 mt-1 pl-1 border-l border-rose-950/60 leading-snug">{getBioText(lb.bio, lang)}</p>
                           </div>
                           {lb.socials?.instagram && (
                             <span className="text-[9px] text-neutral-500 text-right block mt-2 self-end">
